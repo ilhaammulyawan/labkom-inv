@@ -12,6 +12,7 @@ import Maintenance from "./pages/Maintenance";
 import QRPrint from "./pages/QRPrint";
 import Reports from "./pages/Reports";
 import Guide from "./pages/Guide";
+import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
