@@ -1,18 +1,48 @@
 import { Monitor, Laptop, Printer, Server, AlertTriangle, CheckCircle, Package } from "lucide-react";
 import { KpiCard } from "@/components/KpiCard";
 import { ConditionBadge, StatusBadge } from "@/components/ConditionBadge";
-import { items, categories, rooms, maintenanceRecords, getCategoryName, getRoomName, formatCurrency } from "@/lib/mock-data";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { useItems } from "@/hooks/useItems";
+import { useCategories } from "@/hooks/useCategories";
+import { useRooms } from "@/hooks/useRooms";
+import { useMaintenanceRecords } from "@/hooks/useMaintenance";
+import { formatCurrency } from "@/lib/mock-data";
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useNavigate } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CHART_COLORS = ['hsl(217,91%,60%)', 'hsl(160,84%,39%)', 'hsl(38,92%,50%)', 'hsl(0,84%,60%)', 'hsl(199,89%,48%)', 'hsl(280,65%,60%)', 'hsl(340,75%,55%)', 'hsl(30,80%,55%)'];
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const totalPC = items.filter(i => i.category_id === 'cat-1').length;
-  const totalLaptop = items.filter(i => i.category_id === 'cat-2').length;
-  const totalMonitor = items.filter(i => i.category_id === 'cat-3').length;
-  const totalPrinter = items.filter(i => i.category_id === 'cat-4').length;
+  const { data: items = [], isLoading: loadingItems } = useItems();
+  const { data: categories = [] } = useCategories();
+  const { data: rooms = [] } = useRooms();
+  const { data: maintenanceRecords = [] } = useMaintenanceRecords();
+
+  const getCategoryName = (id: string | null) => categories.find(c => c.id === id)?.name || 'Unknown';
+  const getRoomName = (id: string | null) => rooms.find(r => r.id === id)?.name || 'Unknown';
+
+  if (loadingItems) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <div><h1 className="text-2xl font-bold tracking-tight">Dashboard</h1></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)}
+        </div>
+      </div>
+    );
+  }
+
+  // Find category IDs by name
+  const pcCatId = categories.find(c => c.name === 'Komputer/PC')?.id;
+  const laptopCatId = categories.find(c => c.name === 'Laptop')?.id;
+  const monitorCatId = categories.find(c => c.name === 'Monitor')?.id;
+  const printerCatId = categories.find(c => c.name === 'Printer/Scanner')?.id;
+
+  const totalPC = items.filter(i => i.category_id === pcCatId).length;
+  const totalLaptop = items.filter(i => i.category_id === laptopCatId).length;
+  const totalMonitor = items.filter(i => i.category_id === monitorCatId).length;
+  const totalPrinter = items.filter(i => i.category_id === printerCatId).length;
   const totalBaik = items.filter(i => i.condition === 'Baik').length;
   const totalRusak = items.filter(i => i.condition === 'Rusak Ringan' || i.condition === 'Rusak Berat').length;
   const totalAsset = items.reduce((sum, i) => sum + (i.price || 0), 0);
@@ -34,12 +64,7 @@ const Dashboard = () => {
     value: items.filter(i => i.room_id === r.id).length,
   })).filter(d => d.value > 0);
 
-  const recentItems = [...items].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5);
-  const needService = items.filter(i => {
-    if (!i.last_service_date) return false;
-    const diff = (Date.now() - new Date(i.last_service_date).getTime()) / (1000 * 60 * 60 * 24);
-    return diff > 180;
-  });
+  const recentItems = [...items].slice(0, 5);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -108,7 +133,7 @@ const Dashboard = () => {
         <div className="kpi-card">
           <h3 className="text-sm font-semibold mb-4">Perbaikan Terkini</h3>
           <div className="space-y-3">
-            {maintenanceRecords.map(m => {
+            {maintenanceRecords.slice(0, 5).map(m => {
               const item = items.find(i => i.id === m.item_id);
               return (
                 <div key={m.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
@@ -126,6 +151,7 @@ const Dashboard = () => {
                 </div>
               );
             })}
+            {maintenanceRecords.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">Belum ada catatan perbaikan</p>}
           </div>
         </div>
       </div>

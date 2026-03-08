@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { items, categories, rooms, getCategoryName, getRoomName, formatCurrency } from "@/lib/mock-data";
+import { useItems } from "@/hooks/useItems";
+import { useCategories } from "@/hooks/useCategories";
+import { useRooms } from "@/hooks/useRooms";
 import { ConditionBadge, StatusBadge } from "@/components/ConditionBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, PlusCircle, QrCode, Eye } from "lucide-react";
+import { Search, PlusCircle, Eye } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const InventoryList = () => {
   const navigate = useNavigate();
@@ -13,6 +16,13 @@ const InventoryList = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [conditionFilter, setConditionFilter] = useState("all");
   const [roomFilter, setRoomFilter] = useState("all");
+
+  const { data: items = [], isLoading } = useItems();
+  const { data: categories = [] } = useCategories();
+  const { data: rooms = [] } = useRooms();
+
+  const getCategoryName = (id: string | null) => categories.find(c => c.id === id)?.name || 'Unknown';
+  const getRoomName = (id: string | null) => rooms.find(r => r.id === id)?.name || 'Unknown';
 
   const filtered = items.filter(item => {
     const matchSearch = search === "" || item.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -23,6 +33,18 @@ const InventoryList = () => {
     const matchRoom = roomFilter === "all" || item.room_id === roomFilter;
     return matchSearch && matchCategory && matchCondition && matchRoom;
   });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <Skeleton className="h-8 w-48" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-10" />)}
+        </div>
+        <Skeleton className="h-64" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">

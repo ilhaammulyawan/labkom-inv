@@ -1,14 +1,29 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { getItemById, getCategoryName, getRoomName, formatCurrency, maintenanceRecords } from "@/lib/mock-data";
+import { useItem } from "@/hooks/useItems";
+import { useItemMaintenanceRecords } from "@/hooks/useMaintenance";
+import { useCategories } from "@/hooks/useCategories";
+import { useRooms } from "@/hooks/useRooms";
+import { formatCurrency } from "@/lib/mock-data";
 import { ConditionBadge, StatusBadge, MaintenanceBadge } from "@/components/ConditionBadge";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
 import { ArrowLeft, Edit, Printer, Monitor, Cpu, HardDrive, Wifi, Calendar, MapPin, Wrench } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ItemDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const item = getItemById(id || "");
+  const { data: item, isLoading } = useItem(id);
+  const { data: itemMaintenance = [] } = useItemMaintenanceRecords(id);
+  const { data: categories = [] } = useCategories();
+  const { data: rooms = [] } = useRooms();
+
+  const getCategoryName = (cid: string | null) => categories.find(c => c.id === cid)?.name || 'Unknown';
+  const getRoomName = (rid: string | null) => rooms.find(r => r.id === rid)?.name || 'Unknown';
+
+  if (isLoading) {
+    return <div className="space-y-6 animate-fade-in max-w-5xl"><Skeleton className="h-8 w-64" /><Skeleton className="h-64" /></div>;
+  }
 
   if (!item) {
     return (
@@ -22,8 +37,10 @@ const ItemDetail = () => {
   }
 
   const qrUrl = `${window.location.origin}/item/${item.id}`;
-  const itemMaintenance = maintenanceRecords.filter(m => m.item_id === item.id);
-  const isPC = item.category_id === 'cat-1' || item.category_id === 'cat-2' || item.category_id === 'cat-9';
+
+  // Determine category type
+  const catName = getCategoryName(item.category_id);
+  const isPC = ['Komputer/PC', 'Laptop', 'Server'].includes(catName);
 
   const specs = [
     { label: 'Hostname', value: item.hostname, icon: Monitor },
@@ -56,7 +73,6 @@ const ItemDetail = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          {/* Info Umum */}
           <div className="kpi-card">
             <h3 className="text-sm font-semibold mb-4">Informasi Umum</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -73,7 +89,6 @@ const ItemDetail = () => {
             </div>
           </div>
 
-          {/* Spesifikasi */}
           {specs.length > 0 && (
             <div className="kpi-card">
               <h3 className="text-sm font-semibold mb-4">Spesifikasi Teknis</h3>
@@ -91,7 +106,6 @@ const ItemDetail = () => {
             </div>
           )}
 
-          {/* Riwayat Perbaikan */}
           {itemMaintenance.length > 0 && (
             <div className="kpi-card">
               <h3 className="text-sm font-semibold mb-4 flex items-center gap-2"><Wrench className="h-4 w-4" /> Riwayat Perbaikan</h3>
@@ -112,7 +126,6 @@ const ItemDetail = () => {
           )}
         </div>
 
-        {/* QR Code Sidebar */}
         <div className="space-y-6">
           <div className="kpi-card flex flex-col items-center">
             <h3 className="text-sm font-semibold mb-4">QR Code</h3>
