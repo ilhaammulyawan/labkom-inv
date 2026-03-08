@@ -12,6 +12,8 @@ import AddItem from "./pages/AddItem";
 import Maintenance from "./pages/Maintenance";
 import QRPrint from "./pages/QRPrint";
 import ScanQR from "./pages/ScanQR";
+import ManageCategories from "./pages/ManageCategories";
+import ManageRooms from "./pages/ManageRooms";
 import Reports from "./pages/Reports";
 import Guide from "./pages/Guide";
 import SettingsPage from "./pages/SettingsPage";
@@ -38,6 +40,8 @@ function ProtectedRoutes() {
         <Route path="/reports" element={<Reports />} />
         <Route path="/guide" element={<Guide />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/categories" element={<ManageCategories />} />
+        <Route path="/rooms" element={<ManageRooms />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AppLayout>

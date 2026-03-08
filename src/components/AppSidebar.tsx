@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Package, PlusCircle, Wrench, FileText, QrCode,
-  BookOpen, Settings, Monitor, LogOut,
+  BookOpen, Settings, Monitor, LogOut, Tag, MapPin,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { NavLink } from "@/components/NavLink";
@@ -19,6 +19,8 @@ const mainNav = [
   { title: "Scan QR", url: "/scan-qr", icon: QrCode },
   { title: "Cetak QR", url: "/qr-print", icon: QrCode },
   { title: "Laporan", url: "/reports", icon: FileText },
+  { title: "Kategori", url: "/categories", icon: Tag },
+  { title: "Ruangan", url: "/rooms", icon: MapPin },
   { title: "Buku Panduan", url: "/guide", icon: BookOpen },
   { title: "Pengaturan", url: "/settings", icon: Settings },
 ];
