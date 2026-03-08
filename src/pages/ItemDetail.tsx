@@ -21,7 +21,7 @@ const ItemDetail = () => {
     );
   }
 
-  const qrUrl = `${window.location.origin}/inventory/${item.id}`;
+  const qrUrl = `${window.location.origin}/item/${item.id}`;
   const itemMaintenance = maintenanceRecords.filter(m => m.item_id === item.id);
   const isPC = item.category_id === 'cat-1' || item.category_id === 'cat-2' || item.category_id === 'cat-9';
 

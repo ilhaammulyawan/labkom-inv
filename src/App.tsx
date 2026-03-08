@@ -15,6 +15,7 @@ import Reports from "./pages/Reports";
 import Guide from "./pages/Guide";
 import SettingsPage from "./pages/SettingsPage";
 import Login from "./pages/Login";
+import PublicItemDetail from "./pages/PublicItemDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/item/:id" element={<PublicItemDetail />} />
       <Route path="/*" element={<ProtectedRoutes />} />
     </Routes>
   );

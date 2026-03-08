@@ -76,7 +76,7 @@ const QRPrint = () => {
           <div className="print-area grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {selectedItems.map(item => (
               <div key={item.id} className="border border-border rounded-lg p-3 flex flex-col items-center bg-card" style={{ minWidth: `${parseInt(labelSize) * 35}px` }}>
-                <QRCodeSVG value={`${window.location.origin}/inventory/${item.id}`} size={parseInt(labelSize) * 30} level="M" />
+                <QRCodeSVG value={`${window.location.origin}/item/${item.id}`} size={parseInt(labelSize) * 30} level="M" />
                 <p className="text-[9px] font-mono font-bold mt-2 text-center">{item.inventory_code}</p>
                 <p className="text-[8px] text-muted-foreground text-center truncate max-w-full">{item.name}</p>
               </div>
