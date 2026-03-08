@@ -12,6 +12,7 @@ import Maintenance from "./pages/Maintenance";
 import QRPrint from "./pages/QRPrint";
 import Reports from "./pages/Reports";
 import Guide from "./pages/Guide";
+import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/qr-print" element={<QRPrint />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/guide" element={<Guide />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AppLayout>

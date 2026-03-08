@@ -1,7 +1,6 @@
 import {
   LayoutDashboard, Package, PlusCircle, Wrench, FileText, QrCode,
-  BookOpen, Settings, Monitor, Laptop, Printer, Wifi, Keyboard,
-  Headphones, Server, Cpu, FileCode, PackageOpen, FolderOpen
+  BookOpen, Settings, Monitor,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -19,6 +18,7 @@ const mainNav = [
   { title: "Cetak QR", url: "/qr-print", icon: QrCode },
   { title: "Laporan", url: "/reports", icon: FileText },
   { title: "Buku Panduan", url: "/guide", icon: BookOpen },
+  { title: "Pengaturan", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {
