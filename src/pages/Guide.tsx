@@ -1,5 +1,6 @@
-import { BookOpen, ChevronRight } from "lucide-react";
+import { BookOpen, ChevronRight, Search } from "lucide-react";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 const chapters = [
   {
