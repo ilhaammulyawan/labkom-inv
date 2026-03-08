@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAppSettings } from "@/hooks/useAppSettings";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
@@ -27,8 +28,9 @@ const mainNav = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
+  const { state, setOpenMobile } = useSidebar();
   const collapsed = state === "collapsed";
+  const isMobile = useIsMobile();
   const location = useLocation();
   const { logout, username } = useAuth();
   const { logoUrl, settings } = useAppSettings();
@@ -38,6 +40,12 @@ export function AppSidebar() {
   const isActive = (path: string) => {
     if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
+  };
+
+  const handleNavClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
   };
 
   return (
@@ -72,7 +80,12 @@ export function AppSidebar() {
               {mainNav.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <NavLink to={item.url} end={item.url === "/"} activeClassName="bg-sidebar-accent text-sidebar-primary font-semibold">
+                    <NavLink 
+                      to={item.url} 
+                      end={item.url === "/"} 
+                      activeClassName="bg-sidebar-accent text-sidebar-primary font-semibold"
+                      onClick={handleNavClick}
+                    >
                       <item.icon className="h-4 w-4" />
                       {!collapsed && <span>{item.title}</span>}
                     </NavLink>
@@ -87,7 +100,13 @@ export function AppSidebar() {
       <SidebarFooter className="p-3 border-t border-sidebar-border space-y-2">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={logout} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+            <SidebarMenuButton 
+              onClick={() => {
+                handleNavClick();
+                logout();
+              }} 
+              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+            >
               <LogOut className="h-4 w-4" />
               {!collapsed && <span>Keluar</span>}
             </SidebarMenuButton>
