@@ -40,6 +40,8 @@ function ProtectedRoutes() {
         <Route path="/reports" element={<Reports />} />
         <Route path="/guide" element={<Guide />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/categories" element={<ManageCategories />} />
+        <Route path="/rooms" element={<ManageRooms />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AppLayout>
