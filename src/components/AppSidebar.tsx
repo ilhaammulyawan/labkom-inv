@@ -70,10 +70,18 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-3 border-t border-sidebar-border">
+      <SidebarFooter className="p-3 border-t border-sidebar-border space-y-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={logout} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+              <LogOut className="h-4 w-4" />
+              {!collapsed && <span>Keluar</span>}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
         {!collapsed && (
           <div className="text-[10px] text-sidebar-foreground/40 text-center">
-            SiiLaKu v1.0 © 2026
+            Login: <span className="font-semibold">{username}</span> · SiiLaKu v1.0 © 2026
           </div>
         )}
       </SidebarFooter>
