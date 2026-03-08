@@ -11,6 +11,7 @@ import ItemDetail from "./pages/ItemDetail";
 import AddItem from "./pages/AddItem";
 import Maintenance from "./pages/Maintenance";
 import QRPrint from "./pages/QRPrint";
+import ScanQR from "./pages/ScanQR";
 import Reports from "./pages/Reports";
 import Guide from "./pages/Guide";
 import SettingsPage from "./pages/SettingsPage";
