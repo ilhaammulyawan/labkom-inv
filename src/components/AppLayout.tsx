@@ -32,6 +32,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <main className="flex-1 overflow-auto p-4 md:p-6">
             {children}
           </main>
+          <footer className="h-8 flex items-center justify-center border-t border-border bg-card shrink-0">
+            <p className="text-[10px] text-muted-foreground">
+              Developed by <span className="font-semibold text-primary">Guru Informatika</span>
+            </p>
+          </footer>
         </div>
       </div>
     </SidebarProvider>
