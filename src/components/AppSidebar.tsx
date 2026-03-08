@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Package, PlusCircle, Wrench, FileText, QrCode,
-  BookOpen, Settings, Monitor, LogOut,
+  BookOpen, Settings, Monitor, LogOut, Tag, MapPin,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { NavLink } from "@/components/NavLink";
