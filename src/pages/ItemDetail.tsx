@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useItem } from "@/hooks/useItems";
+import { useItem, useDeleteItem } from "@/hooks/useItems";
 import { useItemMaintenanceRecords } from "@/hooks/useMaintenance";
 import { useCategories } from "@/hooks/useCategories";
 import { useRooms } from "@/hooks/useRooms";
@@ -7,8 +8,11 @@ import { formatCurrency } from "@/lib/mock-data";
 import { ConditionBadge, StatusBadge, MaintenanceBadge } from "@/components/ConditionBadge";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
-import { ArrowLeft, Edit, Printer, Monitor, Cpu, HardDrive, Wifi, Calendar, MapPin, Wrench } from "lucide-react";
+import { ArrowLeft, Edit, Printer, Monitor, Cpu, HardDrive, Wifi, Calendar, MapPin, Wrench, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import EditItemDialog from "@/components/EditItemDialog";
 
 const ItemDetail = () => {
   const { id } = useParams();
@@ -17,6 +21,10 @@ const ItemDetail = () => {
   const { data: itemMaintenance = [] } = useItemMaintenanceRecords(id);
   const { data: categories = [] } = useCategories();
   const { data: rooms = [] } = useRooms();
+  const deleteItem = useDeleteItem();
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const getCategoryName = (cid: string | null) => categories.find(c => c.id === cid)?.name || 'Unknown';
   const getRoomName = (rid: string | null) => rooms.find(r => r.id === rid)?.name || 'Unknown';
@@ -36,11 +44,18 @@ const ItemDetail = () => {
     );
   }
 
-  const qrUrl = `${window.location.origin}/item/${item.id}`;
+  const handleDelete = async () => {
+    try {
+      await deleteItem.mutateAsync(item.id);
+      toast.success("Barang berhasil dihapus!");
+      navigate("/inventory");
+    } catch (err: any) {
+      toast.error("Gagal menghapus barang", { description: err.message });
+    }
+  };
 
-  // Determine category type
+  const qrUrl = `${window.location.origin}/item/${item.id}`;
   const catName = getCategoryName(item.category_id);
-  const isPC = ['Komputer/PC', 'Laptop', 'Server'].includes(catName);
 
   const specs = [
     { label: 'Hostname', value: item.hostname, icon: Monitor },
@@ -66,8 +81,11 @@ const ItemDetail = () => {
           <h1 className="text-xl font-bold tracking-tight">{item.name}</h1>
           <p className="text-sm text-muted-foreground font-mono">{item.inventory_code}</p>
         </div>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
           <Edit className="mr-2 h-3.5 w-3.5" /> Edit
+        </Button>
+        <Button variant="outline" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30" onClick={() => setDeleteOpen(true)}>
+          <Trash2 className="mr-2 h-3.5 w-3.5" /> Hapus
         </Button>
       </div>
 
@@ -140,6 +158,27 @@ const ItemDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Edit Dialog */}
+      <EditItemDialog item={item} open={editOpen} onOpenChange={setEditOpen} />
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Barang</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus <strong>{item.name}</strong> ({item.inventory_code})? Tindakan ini tidak dapat dibatalkan dan semua data terkait akan hilang.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {deleteItem.isPending ? "Menghapus..." : "Ya, Hapus"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
