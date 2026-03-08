@@ -1,7 +1,6 @@
 import {
   LayoutDashboard, Package, PlusCircle, Wrench, FileText, QrCode,
-  BookOpen, Settings, Monitor, Laptop, Printer, Wifi, Keyboard,
-  Headphones, Server, Cpu, FileCode, PackageOpen, FolderOpen
+  BookOpen, Settings, Monitor,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
