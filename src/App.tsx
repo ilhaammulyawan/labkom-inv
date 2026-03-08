@@ -15,6 +15,7 @@ import Reports from "./pages/Reports";
 import Guide from "./pages/Guide";
 import SettingsPage from "./pages/SettingsPage";
 import Login from "./pages/Login";
+import PublicItemDetail from "./pages/PublicItemDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
