@@ -5,6 +5,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
@@ -30,6 +31,10 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const location = useLocation();
   const { logout, username } = useAuth();
+  const { logoUrl, settings } = useAppSettings();
+  const appName = settings["app_name"] || "SiiLaKu";
+  const appSubtitle = settings["app_subtitle"] || "Inventaris Lab Komputer";
+
   const isActive = (path: string) => {
     if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
@@ -39,13 +44,19 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
-          <div className="gradient-primary rounded-lg p-2 flex items-center justify-center">
-            <Monitor className="h-5 w-5 text-primary-foreground" />
-          </div>
+          {logoUrl ? (
+            <div className="rounded-lg h-9 w-9 overflow-hidden flex items-center justify-center shrink-0">
+              <img src={logoUrl} alt="Logo" className="h-full w-full object-contain" />
+            </div>
+          ) : (
+            <div className="gradient-primary rounded-lg p-2 flex items-center justify-center">
+              <Monitor className="h-5 w-5 text-primary-foreground" />
+            </div>
+          )}
           {!collapsed && (
             <div className="animate-fade-in">
-              <h1 className="text-sm font-bold text-sidebar-accent-foreground tracking-tight">SiiLaKu</h1>
-              <p className="text-[10px] text-sidebar-foreground leading-tight">Inventaris Lab Komputer</p>
+              <h1 className="text-sm font-bold text-sidebar-accent-foreground tracking-tight">{appName}</h1>
+              <p className="text-[10px] text-sidebar-foreground leading-tight">{appSubtitle}</p>
             </div>
           )}
         </div>
@@ -84,7 +95,7 @@ export function AppSidebar() {
         </SidebarMenu>
         {!collapsed && (
           <div className="text-[10px] text-sidebar-foreground/40 text-center">
-            Login: <span className="font-semibold">{username}</span> · SiiLaKu v1.0 © 2026
+            Login: <span className="font-semibold">{username}</span> · {appName} v1.0 © 2026
           </div>
         )}
       </SidebarFooter>

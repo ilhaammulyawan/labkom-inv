@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Monitor, LogIn, Eye, EyeOff, UserPlus, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 type Mode = "login" | "signup" | "forgot";
 
@@ -19,6 +20,10 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const { login, signup, resetPassword } = useAuth();
   const navigate = useNavigate();
+  const { logoUrl, settings } = useAppSettings();
+
+  const appName = settings["app_name"] || "SiiLaKu";
+  const appSubtitle = settings["app_subtitle"] || "Sistem Informasi Inventaris Laboratorium Komputer";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,11 +77,17 @@ export default function Login() {
       <div className="w-full max-w-md space-y-6">
         {/* Logo & Title */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl gradient-primary mx-auto">
-            <Monitor className="h-8 w-8 text-primary-foreground" />
-          </div>
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">SiiLaKu</h1>
-          <p className="text-sm text-muted-foreground">Sistem Informasi Inventaris Laboratorium Komputer</p>
+          {logoUrl ? (
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl overflow-hidden mx-auto">
+              <img src={logoUrl} alt="Logo" className="h-full w-full object-contain" />
+            </div>
+          ) : (
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl gradient-primary mx-auto">
+              <Monitor className="h-8 w-8 text-primary-foreground" />
+            </div>
+          )}
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">{appName}</h1>
+          <p className="text-sm text-muted-foreground">{appSubtitle}</p>
         </div>
 
         <Card className="border-border shadow-lg">
@@ -88,7 +99,6 @@ export default function Login() {
             </h2>
           </CardHeader>
           <CardContent>
-            {/* LOGIN */}
             {mode === "login" && (
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
@@ -117,7 +127,6 @@ export default function Login() {
               </form>
             )}
 
-            {/* SIGNUP */}
             {mode === "signup" && (
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
@@ -147,7 +156,6 @@ export default function Login() {
               </form>
             )}
 
-            {/* FORGOT PASSWORD */}
             {mode === "forgot" && (
               <form onSubmit={handleForgotPassword} className="space-y-4">
                 <p className="text-xs text-muted-foreground">Masukkan email Anda, kami akan mengirim link untuk reset password.</p>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Settings as SettingsIcon, Upload, Save, Building, Palette, Shield, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,8 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { useAppSettings, uploadAppLogo } from "@/hooks/useAppSettings";
 
 const SettingsPage = () => {
+  const { settings, logoUrl, updateSetting } = useAppSettings();
   const [appName, setAppName] = useState("SiiLaKu");
   const [appSubtitle, setAppSubtitle] = useState("Sistem Informasi Inventaris Laboratorium Komputer");
   const [institutionName, setInstitutionName] = useState("");
@@ -17,9 +19,27 @@ const SettingsPage = () => {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
   const [reportHeader, setReportHeader] = useState("");
   const [inventoryPrefix, setInventoryPrefix] = useState("INV");
   const [qrPublicAccess, setQrPublicAccess] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Load saved settings
+  useEffect(() => {
+    if (settings["app_name"]) setAppName(settings["app_name"]);
+    if (settings["app_subtitle"]) setAppSubtitle(settings["app_subtitle"]);
+    if (settings["institution_name"]) setInstitutionName(settings["institution_name"]);
+    if (settings["institution_address"]) setInstitutionAddress(settings["institution_address"]);
+    if (settings["lab_manager"]) setLabManager(settings["lab_manager"]);
+    if (settings["lab_manager_nip"]) setLabManagerNip(settings["lab_manager_nip"]);
+    if (settings["phone"]) setPhone(settings["phone"]);
+    if (settings["email"]) setEmail(settings["email"]);
+    if (settings["report_header"]) setReportHeader(settings["report_header"]);
+    if (settings["inventory_prefix"]) setInventoryPrefix(settings["inventory_prefix"]);
+    if (settings["qr_public_access"]) setQrPublicAccess(settings["qr_public_access"] === "true");
+    if (logoUrl) setLogoPreview(logoUrl);
+  }, [settings, logoUrl]);
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -28,14 +48,55 @@ const SettingsPage = () => {
         toast.error("Ukuran file maksimal 2MB");
         return;
       }
+      setLogoFile(file);
       const reader = new FileReader();
       reader.onloadend = () => setLogoPreview(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSave = () => {
-    toast.success("Pengaturan berhasil disimpan! (Demo)");
+  const handleRemoveLogo = () => {
+    setLogoPreview(null);
+    setLogoFile(null);
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      // Upload logo if changed
+      let finalLogoUrl = logoUrl;
+      if (logoFile) {
+        finalLogoUrl = await uploadAppLogo(logoFile);
+        setLogoFile(null);
+      }
+      if (!logoPreview && logoUrl) {
+        finalLogoUrl = "";
+      }
+
+      const pairs: Record<string, string> = {
+        app_name: appName,
+        app_subtitle: appSubtitle,
+        institution_name: institutionName,
+        institution_address: institutionAddress,
+        lab_manager: labManager,
+        lab_manager_nip: labManagerNip,
+        phone,
+        email,
+        report_header: reportHeader,
+        inventory_prefix: inventoryPrefix,
+        qr_public_access: String(qrPublicAccess),
+        app_logo: finalLogoUrl || "",
+      };
+
+      for (const [key, value] of Object.entries(pairs)) {
+        await updateSetting.mutateAsync({ key, value });
+      }
+
+      toast.success("Pengaturan berhasil disimpan!");
+    } catch (err: any) {
+      toast.error("Gagal menyimpan pengaturan", { description: err.message });
+    }
+    setIsSaving(false);
   };
 
   return (
@@ -74,13 +135,14 @@ const SettingsPage = () => {
         {/* Logo Upload */}
         <div className="space-y-2">
           <Label className="text-xs">Logo Aplikasi</Label>
+          <p className="text-[10px] text-muted-foreground">Logo akan ditampilkan di halaman login dan sidebar</p>
           <div className="flex items-center gap-4">
             <div className="h-20 w-20 rounded-xl border-2 border-dashed border-border flex items-center justify-center bg-muted/30 overflow-hidden shrink-0">
               {logoPreview ? (
                 <div className="relative h-full w-full">
                   <img src={logoPreview} alt="Logo" className="h-full w-full object-contain p-1" />
                   <button
-                    onClick={() => setLogoPreview(null)}
+                    onClick={handleRemoveLogo}
                     className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center"
                   >
                     <X className="h-3 w-3" />
@@ -171,8 +233,8 @@ const SettingsPage = () => {
 
       <div className="flex justify-end gap-3 pb-6">
         <Button variant="outline">Reset</Button>
-        <Button onClick={handleSave} className="gradient-primary text-primary-foreground border-0">
-          <Save className="mr-2 h-4 w-4" /> Simpan Pengaturan
+        <Button onClick={handleSave} disabled={isSaving} className="gradient-primary text-primary-foreground border-0">
+          <Save className="mr-2 h-4 w-4" /> {isSaving ? "Menyimpan..." : "Simpan Pengaturan"}
         </Button>
       </div>
     </div>
