@@ -70,11 +70,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
           </header>
-          <main className="flex-1 overflow-auto p-4 md:p-6">
+          <main className="flex-1 overflow-auto p-3 md:p-6">
             {children}
           </main>
-          <footer className="h-8 flex items-center justify-center border-t border-border bg-card shrink-0">
-            <p className="text-[10px] text-muted-foreground">
+          <footer className="h-7 md:h-8 flex items-center justify-center border-t border-border bg-card shrink-0 px-2">
+            <p className="text-[9px] md:text-[10px] text-muted-foreground text-center">
               Developed by <span className="font-semibold text-primary">Guru Informatika</span>
             </p>
           </footer>
