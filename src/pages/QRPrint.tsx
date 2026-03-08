@@ -1,14 +1,20 @@
 import { useState } from "react";
-import { items, getCategoryName } from "@/lib/mock-data";
+import { useItems } from "@/hooks/useItems";
+import { useCategories } from "@/hooks/useCategories";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { QRCodeSVG } from "qrcode.react";
 import { Printer, QrCode } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const QRPrint = () => {
   const [selected, setSelected] = useState<string[]>([]);
   const [labelSize, setLabelSize] = useState("3");
+  const { data: items = [], isLoading } = useItems();
+  const { data: categories = [] } = useCategories();
+
+  const getCategoryName = (id: string | null) => categories.find(c => c.id === id)?.name || 'Unknown';
 
   const toggle = (id: string) => {
     setSelected(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
@@ -18,6 +24,10 @@ const QRPrint = () => {
   const handlePrint = () => window.print();
 
   const selectedItems = items.filter(i => selected.includes(i.id));
+
+  if (isLoading) {
+    return <div className="space-y-6 animate-fade-in"><Skeleton className="h-8 w-48" /><Skeleton className="h-64" /></div>;
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -41,14 +51,13 @@ const QRPrint = () => {
         </div>
       </div>
 
-      {/* Selection Table */}
       <div className="kpi-card p-0 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="bg-muted/50">
                 <th className="py-3 px-4 text-left">
-                  <Checkbox checked={selected.length === items.length} onCheckedChange={selectAll} />
+                  <Checkbox checked={selected.length === items.length && items.length > 0} onCheckedChange={selectAll} />
                 </th>
                 <th className="py-3 px-4 text-left font-semibold text-muted-foreground">Kode</th>
                 <th className="py-3 px-4 text-left font-semibold text-muted-foreground">Nama</th>
@@ -69,7 +78,6 @@ const QRPrint = () => {
         </div>
       </div>
 
-      {/* Preview */}
       {selectedItems.length > 0 && (
         <div>
           <h3 className="text-sm font-semibold mb-4">Preview Label</h3>

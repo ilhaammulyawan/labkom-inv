@@ -1,12 +1,31 @@
 import { useParams } from "react-router-dom";
-import { getItemById, getCategoryName, getRoomName, formatCurrency, maintenanceRecords } from "@/lib/mock-data";
+import { useItem } from "@/hooks/useItems";
+import { useItemMaintenanceRecords } from "@/hooks/useMaintenance";
+import { useCategories } from "@/hooks/useCategories";
+import { useRooms } from "@/hooks/useRooms";
+import { formatCurrency } from "@/lib/mock-data";
 import { ConditionBadge, StatusBadge, MaintenanceBadge } from "@/components/ConditionBadge";
 import { QRCodeSVG } from "qrcode.react";
 import { Monitor, Cpu, HardDrive, Wifi, Calendar, MapPin, Wrench, Printer, AlertTriangle, Package } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PublicItemDetail = () => {
   const { id } = useParams();
-  const item = getItemById(id || "");
+  const { data: item, isLoading } = useItem(id);
+  const { data: itemMaintenance = [] } = useItemMaintenanceRecords(id);
+  const { data: categories = [] } = useCategories();
+  const { data: rooms = [] } = useRooms();
+
+  const getCategoryName = (cid: string | null) => categories.find(c => c.id === cid)?.name || 'Unknown';
+  const getRoomName = (rid: string | null) => rooms.find(r => r.id === rid)?.name || 'Unknown';
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Skeleton className="h-64 w-full max-w-lg" />
+      </div>
+    );
+  }
 
   if (!item) {
     return (
@@ -21,8 +40,6 @@ const PublicItemDetail = () => {
       </div>
     );
   }
-
-  const itemMaintenance = maintenanceRecords.filter(m => m.item_id === item.id);
 
   const specs = [
     { label: 'Hostname', value: item.hostname, icon: Monitor },
@@ -40,7 +57,6 @@ const PublicItemDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="sticky top-0 z-10 bg-primary text-primary-foreground px-4 py-3 shadow-md">
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <div className="h-9 w-9 rounded-lg bg-primary-foreground/20 flex items-center justify-center shrink-0">
@@ -54,7 +70,6 @@ const PublicItemDetail = () => {
       </header>
 
       <div className="max-w-lg mx-auto p-4 space-y-4 pb-8">
-        {/* Item Name Card */}
         <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
           <div className="flex items-start gap-3">
             <div className="flex-1 min-w-0">
@@ -72,7 +87,6 @@ const PublicItemDetail = () => {
           </div>
         </div>
 
-        {/* Info Umum */}
         <div className="rounded-xl border border-border bg-card p-4 shadow-sm space-y-3">
           <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Informasi Umum</h3>
           <div className="grid grid-cols-2 gap-3 text-xs">
@@ -91,7 +105,6 @@ const PublicItemDetail = () => {
           )}
         </div>
 
-        {/* Spesifikasi */}
         {specs.length > 0 && (
           <div className="rounded-xl border border-border bg-card p-4 shadow-sm space-y-3">
             <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Spesifikasi Teknis</h3>
@@ -109,7 +122,6 @@ const PublicItemDetail = () => {
           </div>
         )}
 
-        {/* Riwayat Perbaikan */}
         {itemMaintenance.length > 0 && (
           <div className="rounded-xl border border-border bg-card p-4 shadow-sm space-y-3">
             <h3 className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
@@ -131,7 +143,6 @@ const PublicItemDetail = () => {
           </div>
         )}
 
-        {/* Footer */}
         <p className="text-center text-[10px] text-muted-foreground pt-2">
           Developed by <span className="font-semibold text-primary">Guru Informatika</span>
         </p>

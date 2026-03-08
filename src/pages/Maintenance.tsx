@@ -1,14 +1,24 @@
 import { useState } from "react";
-import { items, maintenanceRecords, getItemById, formatCurrency } from "@/lib/mock-data";
+import { useItems } from "@/hooks/useItems";
+import { useMaintenanceRecords } from "@/hooks/useMaintenance";
+import { formatCurrency } from "@/lib/mock-data";
 import { MaintenanceBadge } from "@/components/ConditionBadge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Wrench, PlusCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Maintenance = () => {
   const [statusFilter, setStatusFilter] = useState("all");
+  const { data: items = [] } = useItems();
+  const { data: maintenanceRecords = [], isLoading } = useMaintenanceRecords();
 
+  const getItemById = (id: string) => items.find(i => i.id === id);
   const filtered = maintenanceRecords.filter(m => statusFilter === "all" || m.status === statusFilter);
+
+  if (isLoading) {
+    return <div className="space-y-6 animate-fade-in"><Skeleton className="h-8 w-64" /><Skeleton className="h-32" /><Skeleton className="h-32" /></div>;
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { categories, rooms } from "@/lib/mock-data";
+import { useCategories } from "@/hooks/useCategories";
+import { useRooms } from "@/hooks/useRooms";
+import { useInsertItem, type ItemInsert } from "@/hooks/useItems";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,16 +13,81 @@ import { toast } from "sonner";
 
 const AddItem = () => {
   const navigate = useNavigate();
-  const [categoryId, setCategoryId] = useState("");
-  const isPC = categoryId === 'cat-1' || categoryId === 'cat-2' || categoryId === 'cat-9';
-  const isMonitor = categoryId === 'cat-3';
-  const isPrinter = categoryId === 'cat-4';
-  const isNetwork = categoryId === 'cat-5';
+  const { data: categories = [] } = useCategories();
+  const { data: rooms = [] } = useRooms();
+  const insertItem = useInsertItem();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [categoryId, setCategoryId] = useState("");
+  const [roomId, setRoomId] = useState("");
+  const [name, setName] = useState("");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [serialNumber, setSerialNumber] = useState("");
+  const [condition, setCondition] = useState("");
+  const [hostname, setHostname] = useState("");
+  const [cpu, setCpu] = useState("");
+  const [ram, setRam] = useState("");
+  const [storage, setStorage] = useState("");
+  const [vga, setVga] = useState("");
+  const [os, setOs] = useState("");
+  const [osLicense, setOsLicense] = useState("");
+  const [ipAddress, setIpAddress] = useState("");
+  const [macAddress, setMacAddress] = useState("");
+  const [screenSize, setScreenSize] = useState("");
+  const [printerType, setPrinterType] = useState("");
+  const [yearManufactured, setYearManufactured] = useState("");
+  const [yearAcquired, setYearAcquired] = useState("");
+  const [price, setPrice] = useState("");
+  const [lastServiceDate, setLastServiceDate] = useState("");
+  const [notes, setNotes] = useState("");
+  const [inventoryCode, setInventoryCode] = useState("");
+
+  const catName = categories.find(c => c.id === categoryId)?.name || '';
+  const isPC = ['Komputer/PC', 'Laptop', 'Server'].includes(catName);
+  const isMonitor = catName === 'Monitor';
+  const isPrinter = catName === 'Printer/Scanner';
+  const isNetwork = catName === 'Jaringan';
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Barang berhasil ditambahkan! (Demo)");
-    navigate("/inventory");
+    if (!inventoryCode || !name || !brand || !categoryId || !roomId || !condition) {
+      toast.error("Harap isi semua field yang wajib (*)");
+      return;
+    }
+    const item: ItemInsert = {
+      inventory_code: inventoryCode,
+      category_id: categoryId,
+      room_id: roomId,
+      name,
+      brand,
+      model,
+      serial_number: serialNumber,
+      condition: condition as any,
+      hostname: hostname || undefined,
+      cpu: cpu || undefined,
+      ram: ram || undefined,
+      storage: storage || undefined,
+      vga: vga || undefined,
+      os: os || undefined,
+      os_license: osLicense || undefined,
+      ip_address: ipAddress || undefined,
+      mac_address: macAddress || undefined,
+      screen_size: screenSize || undefined,
+      printer_type: printerType || undefined,
+      year_manufactured: yearManufactured ? parseInt(yearManufactured) : undefined,
+      year_acquired: yearAcquired ? parseInt(yearAcquired) : undefined,
+      price: price ? parseInt(price) : undefined,
+      last_service_date: lastServiceDate || undefined,
+      notes: notes || undefined,
+    };
+
+    try {
+      await insertItem.mutateAsync(item);
+      toast.success("Barang berhasil ditambahkan!");
+      navigate("/inventory");
+    } catch (err: any) {
+      toast.error("Gagal menambah barang", { description: err.message });
+    }
   };
 
   return (
@@ -40,6 +107,10 @@ const AddItem = () => {
           <h3 className="text-sm font-semibold">Informasi Dasar</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
+              <Label className="text-xs">Kode Inventaris *</Label>
+              <Input placeholder="INV-PC-005" value={inventoryCode} onChange={e => setInventoryCode(e.target.value)} required />
+            </div>
+            <div className="space-y-1.5">
               <Label className="text-xs">Kategori *</Label>
               <Select value={categoryId} onValueChange={setCategoryId} required>
                 <SelectTrigger><SelectValue placeholder="Pilih kategori" /></SelectTrigger>
@@ -48,21 +119,14 @@ const AddItem = () => {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Ruangan *</Label>
-              <Select required>
+              <Select value={roomId} onValueChange={setRoomId} required>
                 <SelectTrigger><SelectValue placeholder="Pilih ruangan" /></SelectTrigger>
                 <SelectContent>{rooms.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5 sm:col-span-2">
-              <Label className="text-xs">Nama Barang *</Label>
-              <Input placeholder="contoh: PC Desktop Lab 1 - Meja 01" required />
-            </div>
-            <div className="space-y-1.5"><Label className="text-xs">Merk *</Label><Input placeholder="Dell, HP, Lenovo..." required /></div>
-            <div className="space-y-1.5"><Label className="text-xs">Model/Type</Label><Input placeholder="OptiPlex 7090" /></div>
-            <div className="space-y-1.5"><Label className="text-xs">Serial Number</Label><Input placeholder="SN-XXXXX" /></div>
             <div className="space-y-1.5">
               <Label className="text-xs">Kondisi *</Label>
-              <Select required>
+              <Select value={condition} onValueChange={setCondition} required>
                 <SelectTrigger><SelectValue placeholder="Pilih kondisi" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Baik">Baik</SelectItem>
@@ -72,23 +136,29 @@ const AddItem = () => {
                 </SelectContent>
               </Select>
             </div>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label className="text-xs">Nama Barang *</Label>
+              <Input placeholder="contoh: PC Desktop Lab 1 - Meja 01" value={name} onChange={e => setName(e.target.value)} required />
+            </div>
+            <div className="space-y-1.5"><Label className="text-xs">Merk *</Label><Input placeholder="Dell, HP, Lenovo..." value={brand} onChange={e => setBrand(e.target.value)} required /></div>
+            <div className="space-y-1.5"><Label className="text-xs">Model/Type</Label><Input placeholder="OptiPlex 7090" value={model} onChange={e => setModel(e.target.value)} /></div>
+            <div className="space-y-1.5"><Label className="text-xs">Serial Number</Label><Input placeholder="SN-XXXXX" value={serialNumber} onChange={e => setSerialNumber(e.target.value)} /></div>
           </div>
         </div>
 
-        {/* PC/Laptop Specs */}
         {isPC && (
           <div className="kpi-card space-y-4">
-            <h3 className="text-sm font-semibold">Spesifikasi {categoryId === 'cat-2' ? 'Laptop' : categoryId === 'cat-9' ? 'Server' : 'PC'}</h3>
+            <h3 className="text-sm font-semibold">Spesifikasi {catName === 'Laptop' ? 'Laptop' : catName === 'Server' ? 'Server' : 'PC'}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5"><Label className="text-xs">Hostname</Label><Input placeholder="LAB1-PC01" /></div>
-              <div className="space-y-1.5"><Label className="text-xs">Prosesor (CPU)</Label><Input placeholder="Intel Core i5-11500" /></div>
-              <div className="space-y-1.5"><Label className="text-xs">RAM</Label><Input placeholder="16 GB DDR4" /></div>
-              <div className="space-y-1.5"><Label className="text-xs">Penyimpanan</Label><Input placeholder="SSD 512GB" /></div>
-              <div className="space-y-1.5"><Label className="text-xs">VGA/Graphics</Label><Input placeholder="Intel UHD 730" /></div>
-              <div className="space-y-1.5"><Label className="text-xs">Sistem Operasi</Label><Input placeholder="Windows 11 Pro" /></div>
-              <div className="space-y-1.5"><Label className="text-xs">Lisensi OS</Label><Input placeholder="OEM / Retail" /></div>
-              <div className="space-y-1.5"><Label className="text-xs">IP Address</Label><Input placeholder="192.168.1.101" /></div>
-              <div className="space-y-1.5"><Label className="text-xs">MAC Address</Label><Input placeholder="AA:BB:CC:DD:EE:FF" /></div>
+              <div className="space-y-1.5"><Label className="text-xs">Hostname</Label><Input placeholder="LAB1-PC01" value={hostname} onChange={e => setHostname(e.target.value)} /></div>
+              <div className="space-y-1.5"><Label className="text-xs">Prosesor (CPU)</Label><Input placeholder="Intel Core i5-11500" value={cpu} onChange={e => setCpu(e.target.value)} /></div>
+              <div className="space-y-1.5"><Label className="text-xs">RAM</Label><Input placeholder="16 GB DDR4" value={ram} onChange={e => setRam(e.target.value)} /></div>
+              <div className="space-y-1.5"><Label className="text-xs">Penyimpanan</Label><Input placeholder="SSD 512GB" value={storage} onChange={e => setStorage(e.target.value)} /></div>
+              <div className="space-y-1.5"><Label className="text-xs">VGA/Graphics</Label><Input placeholder="Intel UHD 730" value={vga} onChange={e => setVga(e.target.value)} /></div>
+              <div className="space-y-1.5"><Label className="text-xs">Sistem Operasi</Label><Input placeholder="Windows 11 Pro" value={os} onChange={e => setOs(e.target.value)} /></div>
+              <div className="space-y-1.5"><Label className="text-xs">Lisensi OS</Label><Input placeholder="OEM / Retail" value={osLicense} onChange={e => setOsLicense(e.target.value)} /></div>
+              <div className="space-y-1.5"><Label className="text-xs">IP Address</Label><Input placeholder="192.168.1.101" value={ipAddress} onChange={e => setIpAddress(e.target.value)} /></div>
+              <div className="space-y-1.5"><Label className="text-xs">MAC Address</Label><Input placeholder="AA:BB:CC:DD:EE:FF" value={macAddress} onChange={e => setMacAddress(e.target.value)} /></div>
             </div>
           </div>
         )}
@@ -97,7 +167,7 @@ const AddItem = () => {
           <div className="kpi-card space-y-4">
             <h3 className="text-sm font-semibold">Spesifikasi Monitor</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5"><Label className="text-xs">Ukuran Layar</Label><Input placeholder="24 inch" /></div>
+              <div className="space-y-1.5"><Label className="text-xs">Ukuran Layar</Label><Input placeholder="24 inch" value={screenSize} onChange={e => setScreenSize(e.target.value)} /></div>
             </div>
           </div>
         )}
@@ -108,15 +178,16 @@ const AddItem = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label className="text-xs">Jenis Printer</Label>
-                <Select><SelectTrigger><SelectValue placeholder="Pilih jenis" /></SelectTrigger>
+                <Select value={printerType} onValueChange={setPrinterType}>
+                  <SelectTrigger><SelectValue placeholder="Pilih jenis" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="inkjet">Inkjet</SelectItem>
-                    <SelectItem value="laser">Laser</SelectItem>
-                    <SelectItem value="thermal">Thermal</SelectItem>
+                    <SelectItem value="Inkjet">Inkjet</SelectItem>
+                    <SelectItem value="Laser">Laser</SelectItem>
+                    <SelectItem value="Thermal">Thermal</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1.5"><Label className="text-xs">IP Address</Label><Input placeholder="192.168.1.200" /></div>
+              <div className="space-y-1.5"><Label className="text-xs">IP Address</Label><Input placeholder="192.168.1.200" value={ipAddress} onChange={e => setIpAddress(e.target.value)} /></div>
             </div>
           </div>
         )}
@@ -125,7 +196,7 @@ const AddItem = () => {
           <div className="kpi-card space-y-4">
             <h3 className="text-sm font-semibold">Spesifikasi Jaringan</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5"><Label className="text-xs">IP Address</Label><Input placeholder="192.168.1.1" /></div>
+              <div className="space-y-1.5"><Label className="text-xs">IP Address</Label><Input placeholder="192.168.1.1" value={ipAddress} onChange={e => setIpAddress(e.target.value)} /></div>
             </div>
           </div>
         )}
@@ -133,17 +204,19 @@ const AddItem = () => {
         <div className="kpi-card space-y-4">
           <h3 className="text-sm font-semibold">Informasi Tambahan</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5"><Label className="text-xs">Tahun Pembuatan</Label><Input type="number" placeholder="2023" /></div>
-            <div className="space-y-1.5"><Label className="text-xs">Tahun Perolehan</Label><Input type="number" placeholder="2023" /></div>
-            <div className="space-y-1.5"><Label className="text-xs">Harga (Rp)</Label><Input type="number" placeholder="10000000" /></div>
-            <div className="space-y-1.5"><Label className="text-xs">Tanggal Service Terakhir</Label><Input type="date" /></div>
-            <div className="space-y-1.5 sm:col-span-2"><Label className="text-xs">Catatan</Label><Textarea placeholder="Catatan tambahan..." rows={3} /></div>
+            <div className="space-y-1.5"><Label className="text-xs">Tahun Pembuatan</Label><Input type="number" placeholder="2023" value={yearManufactured} onChange={e => setYearManufactured(e.target.value)} /></div>
+            <div className="space-y-1.5"><Label className="text-xs">Tahun Perolehan</Label><Input type="number" placeholder="2023" value={yearAcquired} onChange={e => setYearAcquired(e.target.value)} /></div>
+            <div className="space-y-1.5"><Label className="text-xs">Harga (Rp)</Label><Input type="number" placeholder="10000000" value={price} onChange={e => setPrice(e.target.value)} /></div>
+            <div className="space-y-1.5"><Label className="text-xs">Tanggal Service Terakhir</Label><Input type="date" value={lastServiceDate} onChange={e => setLastServiceDate(e.target.value)} /></div>
+            <div className="space-y-1.5 sm:col-span-2"><Label className="text-xs">Catatan</Label><Textarea placeholder="Catatan tambahan..." rows={3} value={notes} onChange={e => setNotes(e.target.value)} /></div>
           </div>
         </div>
 
         <div className="flex gap-3 justify-end">
           <Button type="button" variant="outline" onClick={() => navigate("/inventory")}>Batal</Button>
-          <Button type="submit" className="gradient-primary text-primary-foreground border-0"><Save className="mr-2 h-4 w-4" /> Simpan</Button>
+          <Button type="submit" disabled={insertItem.isPending} className="gradient-primary text-primary-foreground border-0">
+            <Save className="mr-2 h-4 w-4" /> {insertItem.isPending ? "Menyimpan..." : "Simpan"}
+          </Button>
         </div>
       </form>
     </div>
