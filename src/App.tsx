@@ -11,6 +11,7 @@ import ItemDetail from "./pages/ItemDetail";
 import AddItem from "./pages/AddItem";
 import Maintenance from "./pages/Maintenance";
 import QRPrint from "./pages/QRPrint";
+import ScanQR from "./pages/ScanQR";
 import Reports from "./pages/Reports";
 import Guide from "./pages/Guide";
 import SettingsPage from "./pages/SettingsPage";
@@ -32,6 +33,7 @@ function ProtectedRoutes() {
         <Route path="/inventory/add" element={<AddItem />} />
         <Route path="/inventory/:id" element={<ItemDetail />} />
         <Route path="/maintenance" element={<Maintenance />} />
+        <Route path="/scan-qr" element={<ScanQR />} />
         <Route path="/qr-print" element={<QRPrint />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/guide" element={<Guide />} />
