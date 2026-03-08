@@ -48,6 +48,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/item/:id" element={<PublicItemDetail />} />
       <Route path="/*" element={<ProtectedRoutes />} />
     </Routes>
   );
