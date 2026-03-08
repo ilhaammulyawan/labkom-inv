@@ -33,6 +33,7 @@ function ProtectedRoutes() {
         <Route path="/inventory/add" element={<AddItem />} />
         <Route path="/inventory/:id" element={<ItemDetail />} />
         <Route path="/maintenance" element={<Maintenance />} />
+        <Route path="/scan-qr" element={<ScanQR />} />
         <Route path="/qr-print" element={<QRPrint />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/guide" element={<Guide />} />

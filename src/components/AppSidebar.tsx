@@ -16,6 +16,7 @@ const mainNav = [
   { title: "Inventaris", url: "/inventory", icon: Package },
   { title: "Tambah Barang", url: "/inventory/add", icon: PlusCircle },
   { title: "Perbaikan", url: "/maintenance", icon: Wrench },
+  { title: "Scan QR", url: "/scan-qr", icon: QrCode },
   { title: "Cetak QR", url: "/qr-print", icon: QrCode },
   { title: "Laporan", url: "/reports", icon: FileText },
   { title: "Buku Panduan", url: "/guide", icon: BookOpen },
