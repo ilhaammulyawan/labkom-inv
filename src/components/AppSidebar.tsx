@@ -18,6 +18,7 @@ const mainNav = [
   { title: "Cetak QR", url: "/qr-print", icon: QrCode },
   { title: "Laporan", url: "/reports", icon: FileText },
   { title: "Buku Panduan", url: "/guide", icon: BookOpen },
+  { title: "Pengaturan", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {

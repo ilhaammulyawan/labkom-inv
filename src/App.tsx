@@ -33,6 +33,7 @@ const App = () => (
             <Route path="/qr-print" element={<QRPrint />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/guide" element={<Guide />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AppLayout>
