@@ -29,28 +29,28 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0">
-          <header className="h-14 flex items-center justify-between border-b border-border bg-card px-4 shrink-0">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger />
+          <header className="h-12 md:h-14 flex items-center justify-between border-b border-border bg-card px-2 md:px-4 shrink-0">
+            <div className="flex items-center gap-1 md:gap-2">
+              <SidebarTrigger className="h-8 w-8 md:h-9 md:w-9" />
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="relative">
+            <div className="flex items-center gap-1 md:gap-2">
+              <Button variant="ghost" size="icon" className="relative h-8 w-8 md:h-9 md:w-9">
                 <Bell className="h-4 w-4" />
-                <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-destructive text-[10px] text-destructive-foreground flex items-center justify-center font-bold">3</span>
+                <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 md:h-4 md:w-4 rounded-full bg-destructive text-[8px] md:text-[10px] text-destructive-foreground flex items-center justify-center font-bold">3</span>
               </Button>
-              <div className="pl-2 border-l border-border">
+              <div className="pl-1 md:pl-2 border-l border-border">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-muted/50 transition-colors outline-none">
-                      <Avatar className="h-8 w-8">
+                    <button className="flex items-center gap-1.5 md:gap-2 rounded-lg px-1.5 md:px-2 py-1 md:py-1.5 hover:bg-muted/50 transition-colors outline-none">
+                      <Avatar className="h-7 w-7 md:h-8 md:w-8">
                         <AvatarImage src={profile?.avatar_url || undefined} alt={displayName} />
-                        <AvatarFallback className="text-xs font-bold bg-primary text-primary-foreground">
+                        <AvatarFallback className="text-[10px] md:text-xs font-bold bg-primary text-primary-foreground">
                           {initials}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="hidden sm:block text-left">
-                        <p className="text-xs font-semibold leading-tight">{displayName}</p>
-                        <p className="text-[10px] text-muted-foreground">{user?.email}</p>
+                      <div className="hidden sm:block text-left max-w-[120px] md:max-w-none">
+                        <p className="text-xs font-semibold leading-tight truncate">{displayName}</p>
+                        <p className="text-[10px] text-muted-foreground truncate">{user?.email}</p>
                       </div>
                     </button>
                   </DropdownMenuTrigger>
