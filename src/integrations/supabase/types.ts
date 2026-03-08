@@ -56,6 +56,161 @@ export type Database = {
         }
         Relationships: []
       }
+      items: {
+        Row: {
+          brand: string
+          category_id: string | null
+          condition: Database["public"]["Enums"]["item_condition"]
+          cpu: string | null
+          created_at: string
+          hostname: string | null
+          id: string
+          image_url: string | null
+          inventory_code: string
+          ip_address: string | null
+          last_service_date: string | null
+          mac_address: string | null
+          model: string
+          name: string
+          notes: string | null
+          os: string | null
+          os_license: string | null
+          price: number | null
+          printer_type: string | null
+          ram: string | null
+          room_id: string | null
+          screen_size: string | null
+          serial_number: string
+          status: Database["public"]["Enums"]["item_status"]
+          storage: string | null
+          vga: string | null
+          year_acquired: number | null
+          year_manufactured: number | null
+        }
+        Insert: {
+          brand?: string
+          category_id?: string | null
+          condition?: Database["public"]["Enums"]["item_condition"]
+          cpu?: string | null
+          created_at?: string
+          hostname?: string | null
+          id?: string
+          image_url?: string | null
+          inventory_code: string
+          ip_address?: string | null
+          last_service_date?: string | null
+          mac_address?: string | null
+          model?: string
+          name: string
+          notes?: string | null
+          os?: string | null
+          os_license?: string | null
+          price?: number | null
+          printer_type?: string | null
+          ram?: string | null
+          room_id?: string | null
+          screen_size?: string | null
+          serial_number?: string
+          status?: Database["public"]["Enums"]["item_status"]
+          storage?: string | null
+          vga?: string | null
+          year_acquired?: number | null
+          year_manufactured?: number | null
+        }
+        Update: {
+          brand?: string
+          category_id?: string | null
+          condition?: Database["public"]["Enums"]["item_condition"]
+          cpu?: string | null
+          created_at?: string
+          hostname?: string | null
+          id?: string
+          image_url?: string | null
+          inventory_code?: string
+          ip_address?: string | null
+          last_service_date?: string | null
+          mac_address?: string | null
+          model?: string
+          name?: string
+          notes?: string | null
+          os?: string | null
+          os_license?: string | null
+          price?: number | null
+          printer_type?: string | null
+          ram?: string | null
+          room_id?: string | null
+          screen_size?: string | null
+          serial_number?: string
+          status?: Database["public"]["Enums"]["item_status"]
+          storage?: string | null
+          vga?: string | null
+          year_acquired?: number | null
+          year_manufactured?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "items_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_records: {
+        Row: {
+          action: string | null
+          cost: number | null
+          created_at: string
+          description: string
+          id: string
+          issue_date: string
+          item_id: string
+          repair_date: string | null
+          status: Database["public"]["Enums"]["maintenance_status"]
+          technician: string
+        }
+        Insert: {
+          action?: string | null
+          cost?: number | null
+          created_at?: string
+          description: string
+          id?: string
+          issue_date?: string
+          item_id: string
+          repair_date?: string | null
+          status?: Database["public"]["Enums"]["maintenance_status"]
+          technician?: string
+        }
+        Update: {
+          action?: string | null
+          cost?: number | null
+          created_at?: string
+          description?: string
+          id?: string
+          issue_date?: string
+          item_id?: string
+          repair_date?: string | null
+          status?: Database["public"]["Enums"]["maintenance_status"]
+          technician?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_records_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -109,7 +264,9 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      item_condition: "Baik" | "Rusak Ringan" | "Rusak Berat" | "Diperbaiki"
+      item_status: "Aktif" | "Dipinjam" | "Dihapus"
+      maintenance_status: "Antrian" | "Dalam Perbaikan" | "Selesai"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -236,6 +393,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      item_condition: ["Baik", "Rusak Ringan", "Rusak Berat", "Diperbaiki"],
+      item_status: ["Aktif", "Dipinjam", "Dihapus"],
+      maintenance_status: ["Antrian", "Dalam Perbaikan", "Selesai"],
+    },
   },
 } as const
