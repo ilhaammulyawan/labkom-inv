@@ -66,6 +66,7 @@ const AddItem = () => {
   const [lastServiceDate, setLastServiceDate] = useState("");
   const [notes, setNotes] = useState("");
   const [inventoryCode, setInventoryCode] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
 
   const catName = categories.find(c => c.id === categoryId)?.name || '';
   const isPC = ['Komputer/PC', 'Laptop', 'Server'].includes(catName);
