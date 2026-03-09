@@ -161,7 +161,24 @@ const AddItem = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label className="text-xs">Kode Inventaris *</Label>
-              <Input placeholder="INV-PC-005" value={inventoryCode} onChange={e => setInventoryCode(e.target.value)} required />
+              <div className="flex gap-2">
+                <Input 
+                  placeholder="Auto-generate setelah pilih kategori" 
+                  value={inventoryCode} 
+                  onChange={e => setInventoryCode(e.target.value)} 
+                  required 
+                  className="flex-1"
+                />
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="icon"
+                  onClick={handleRegenerateCode}
+                  title="Generate ulang kode"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Kategori *</Label>
