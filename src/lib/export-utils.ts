@@ -80,10 +80,12 @@ async function pdfHeader(doc: jsPDF, title: string, settings: Record<string, str
     doc.text(addr, centerX, 19, { align: "center" });
   }
 
-  // Separator line
+  // Separator line — double line style
   doc.setDrawColor(50, 50, 50);
-  doc.setLineWidth(0.5);
-  doc.line(14, 23, pageW - 14, 23);
+  doc.setLineWidth(0.8);
+  doc.line(14, 22, pageW - 14, 22);
+  doc.setLineWidth(0.3);
+  doc.line(14, 24, pageW - 14, 24);
 
   // Report title
   doc.setFontSize(11);
