@@ -210,47 +210,66 @@ const ItemDetail = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Hidden print content */}
-      <div ref={printRef} className="hidden">
-        <div className="header">
+      {/* Hidden print content — only visible during print */}
+      <div className="print-area" style={{display:'none'}}>
+        <style>{`
+          @media print {
+            .print-area { display: block !important; font-family: 'Segoe UI', sans-serif; color: #111; }
+            .print-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; border-bottom: 2px solid #333; padding-bottom: 12px; }
+            .print-header h1 { font-size: 20px; margin: 0 0 4px; }
+            .print-code { font-family: monospace; color: #555; font-size: 12px; }
+            .print-section { margin-top: 16px; border: 1px solid #ddd; border-radius: 6px; padding: 12px; page-break-inside: avoid; }
+            .print-section h3 { font-size: 13px; font-weight: 700; margin: 0 0 10px; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+            .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+            .print-field label { font-size: 10px; color: #888; display: block; }
+            .print-field p { font-size: 12px; font-weight: 600; margin: 2px 0 0; }
+            .print-spec { background: #f5f5f5; border-radius: 4px; padding: 5px 8px; font-size: 11px; }
+            .print-spec .spec-label { color: #888; font-size: 9px; display: block; }
+            .print-spec .spec-val { font-family: monospace; font-weight: 600; }
+            .print-maintenance { padding: 6px 10px; background: #f9f9f9; border-radius: 4px; margin-bottom: 6px; font-size: 11px; }
+            .print-img { max-width: 180px; max-height: 180px; border-radius: 6px; border: 1px solid #ddd; }
+          }
+        `}</style>
+        <div className="print-header">
           <div>
             <h1>{item.name}</h1>
-            <p className="code">{item.inventory_code}</p>
+            <p className="print-code">{item.inventory_code}</p>
           </div>
-          {item.image_url && <img src={item.image_url} alt={item.name} />}
+          {item.image_url && <img className="print-img" src={item.image_url} alt={item.name} />}
         </div>
-        <div className="section">
+        <div className="print-section">
           <h3>Informasi Umum</h3>
-          <div className="grid">
-            <div className="field"><label>Kategori</label><p>{getCategoryName(item.category_id)}</p></div>
-            <div className="field"><label>Merk / Model</label><p>{item.brand} {item.model}</p></div>
-            <div className="field"><label>Serial Number</label><p style={{fontFamily:'monospace'}}>{item.serial_number}</p></div>
-            <div className="field"><label>Ruangan</label><p>{getRoomName(item.room_id)}</p></div>
-            <div className="field"><label>Kondisi</label><p>{item.condition}</p></div>
-            <div className="field"><label>Status</label><p>{item.status}</p></div>
-            {item.year_acquired && <div className="field"><label>Tahun Perolehan</label><p>{item.year_acquired}</p></div>}
-            {item.price && <div className="field"><label>Harga</label><p>{formatCurrency(item.price)}</p></div>}
-            {item.last_service_date && <div className="field"><label>Service Terakhir</label><p>{item.last_service_date}</p></div>}
-            {item.notes && <div className="field"><label>Catatan</label><p>{item.notes}</p></div>}
+          <div className="print-grid">
+            <div className="print-field"><label>Kategori</label><p>{getCategoryName(item.category_id)}</p></div>
+            <div className="print-field"><label>Merk / Model</label><p>{item.brand} {item.model}</p></div>
+            <div className="print-field"><label>Serial Number</label><p style={{fontFamily:'monospace'}}>{item.serial_number || '-'}</p></div>
+            <div className="print-field"><label>Ruangan</label><p>{getRoomName(item.room_id)}</p></div>
+            <div className="print-field"><label>Kondisi</label><p>{item.condition}</p></div>
+            <div className="print-field"><label>Status</label><p>{item.status}</p></div>
+            {item.year_acquired && <div className="print-field"><label>Tahun Perolehan</label><p>{item.year_acquired}</p></div>}
+            {item.price && <div className="print-field"><label>Harga</label><p>{formatCurrency(item.price)}</p></div>}
+            {item.last_service_date && <div className="print-field"><label>Service Terakhir</label><p>{item.last_service_date}</p></div>}
+            {item.notes && <div className="print-field" style={{gridColumn:'span 2'}}><label>Catatan</label><p>{item.notes}</p></div>}
           </div>
         </div>
         {specs.length > 0 && (
-          <div className="section">
+          <div className="print-section">
             <h3>Spesifikasi Teknis</h3>
-            <div className="grid">
+            <div className="print-grid">
               {specs.map(spec => (
-                <div key={spec.label} className="spec">
-                  <div><span className="label">{spec.label}</span><br/><span className="val">{spec.value}</span></div>
+                <div key={spec.label} className="print-spec">
+                  <span className="spec-label">{spec.label}</span>
+                  <span className="spec-val">{spec.value}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
         {itemMaintenance.length > 0 && (
-          <div className="section">
+          <div className="print-section">
             <h3>Riwayat Perbaikan</h3>
             {itemMaintenance.map(m => (
-              <div key={m.id} className="maintenance">
+              <div key={m.id} className="print-maintenance">
                 <strong>{m.issue_date}</strong> — {m.status}<br/>
                 {m.description}
                 {m.action && <><br/>Tindakan: {m.action}</>}
