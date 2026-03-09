@@ -25,6 +25,23 @@ function ts() {
   return new Date().toISOString().slice(0, 10);
 }
 
+// ── Image loader helper ──
+
+async function loadImageAsDataUrl(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
 // ── Excel helpers ──
 
 function downloadXlsx(ws: XLSX.WorkSheet, filename: string) {
@@ -35,17 +52,32 @@ function downloadXlsx(ws: XLSX.WorkSheet, filename: string) {
 
 // ── PDF helpers ──
 
-function pdfHeader(doc: jsPDF, title: string, settings: Record<string, string>) {
+async function pdfHeader(doc: jsPDF, title: string, settings: Record<string, string>) {
   const inst = settings["institution_name"] || "";
   const addr = settings["institution_address"] || "";
+  const logoUrl = settings["app_logo"] || "";
+  let startX = 14;
+  let logoEndY = 0;
+
+  // Add logo if available
+  if (logoUrl) {
+    const logoData = await loadImageAsDataUrl(logoUrl);
+    if (logoData) {
+      doc.addImage(logoData, "PNG", 14, 8, 20, 20);
+      startX = 38;
+      logoEndY = 28;
+    }
+  }
+
+  const pageW = doc.internal.pageSize.getWidth();
   doc.setFontSize(14);
-  doc.text(inst, doc.internal.pageSize.getWidth() / 2, 15, { align: "center" });
+  doc.text(inst, (pageW + startX - 14) / 2 + (startX - 14) / 2, 15, { align: "center" });
   doc.setFontSize(9);
-  doc.text(addr, doc.internal.pageSize.getWidth() / 2, 21, { align: "center" });
+  doc.text(addr, (pageW + startX - 14) / 2 + (startX - 14) / 2, 21, { align: "center" });
   doc.setFontSize(12);
-  doc.text(title, doc.internal.pageSize.getWidth() / 2, 30, { align: "center" });
+  doc.text(title, pageW / 2, 30, { align: "center" });
   doc.setFontSize(8);
-  doc.text(`Dicetak: ${today()}`, 14, 37);
+  doc.text(`Dicetak: ${today()}`, startX, 37);
   return 42;
 }
 
