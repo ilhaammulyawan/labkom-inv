@@ -70,6 +70,17 @@ const PublicItemDetail = () => {
       </header>
 
       <div className="max-w-lg mx-auto p-4 space-y-4 pb-8">
+        {/* Foto Barang */}
+        {item.image_url && (
+          <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
+            <img
+              src={item.image_url}
+              alt={item.name}
+              className="w-full h-auto object-contain max-h-72 bg-muted/30"
+            />
+          </div>
+        )}
+
         <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
           <div className="flex items-start gap-3">
             <div className="flex-1 min-w-0">
