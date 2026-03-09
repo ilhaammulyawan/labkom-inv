@@ -56,6 +56,7 @@ const VALID_CONDITIONS = ["Baik", "Rusak Ringan", "Rusak Berat", "Diperbaiki"];
 const ImportExcel = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { isAdmin, isLoading: roleLoading } = useUserRole();
   const { data: categories = [] } = useCategories();
   const { data: rooms = [] } = useRooms();
   const insertItem = useInsertItem();
@@ -65,6 +66,14 @@ const ImportExcel = () => {
   const [isImporting, setIsImporting] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
   const [importedCount, setImportedCount] = useState(0);
+
+  // Redirect non-admin users
+  useEffect(() => {
+    if (!roleLoading && !isAdmin) {
+      toast.error("Akses ditolak", { description: "Hanya admin yang dapat import data" });
+      navigate("/inventory");
+    }
+  }, [isAdmin, roleLoading, navigate]);
 
   const downloadTemplate = () => {
     const ws = XLSX.utils.aoa_to_sheet([
