@@ -232,10 +232,13 @@ const ItemDetail = () => {
             .print-img { max-width: 180px; max-height: 180px; border-radius: 6px; border: 1px solid #ddd; }
           }
         `}</style>
-        <div className="print-header">
-          <div>
-            <h1>{item.name}</h1>
-            <p className="print-code">{item.inventory_code}</p>
+         <div className="print-header">
+          <div className="print-header-left">
+            {settings?.app_logo && <img className="print-logo" src={settings.app_logo} alt="Logo" />}
+            <div>
+              <h1>{item.name}</h1>
+              <p className="print-code">{item.inventory_code}</p>
+            </div>
           </div>
           {item.image_url && <img className="print-img" src={item.image_url} alt={item.name} />}
         </div>
