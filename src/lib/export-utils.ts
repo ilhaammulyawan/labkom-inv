@@ -391,9 +391,9 @@ export function exportJadwalMaintenanceExcel(schedules: MaintenanceSchedule[], i
   downloadXlsx(ws, `Laporan_Jadwal_Maintenance_${ts()}.xlsx`);
 }
 
-export function exportJadwalMaintenancePdf(schedules: MaintenanceSchedule[], items: InventoryItem[], settings: Record<string, string>) {
+export async function exportJadwalMaintenancePdf(schedules: MaintenanceSchedule[], items: InventoryItem[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN JADWAL MAINTENANCE", settings);
+  const startY = await pdfHeader(doc, "LAPORAN JADWAL MAINTENANCE", settings);
   const todayStr = new Date().toISOString().split("T")[0];
   const overdue = schedules.filter(s => s.is_active && s.next_due_date <= todayStr).length;
   const aktif = schedules.filter(s => s.is_active).length;
