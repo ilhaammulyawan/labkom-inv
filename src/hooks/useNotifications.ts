@@ -13,6 +13,7 @@ export interface AppNotification {
   severity: "warning" | "destructive" | "info";
   link?: string;
   entityId?: string;
+}
 
 export function useNotifications() {
   const { data: schedules = [] } = useMaintenanceSchedules();
