@@ -101,11 +101,16 @@ const InventoryList = () => {
           <h1 className="text-2xl font-bold tracking-tight">Inventaris</h1>
           <p className="text-sm text-muted-foreground">{filtered.length} dari {items.length} barang</p>
         </div>
-        {isAdmin && (
-          <Button onClick={() => navigate("/inventory/add")} className="gradient-primary text-primary-foreground border-0 shadow-md">
-            <PlusCircle className="mr-2 h-4 w-4" /> Tambah Barang
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={handlePrintTable} disabled={filtered.length === 0}>
+            <Printer className="mr-2 h-4 w-4" /> Print
           </Button>
-        )}
+          {isAdmin && (
+            <Button onClick={() => navigate("/inventory/add")} className="gradient-primary text-primary-foreground border-0 shadow-md">
+              <PlusCircle className="mr-2 h-4 w-4" /> Tambah Barang
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">

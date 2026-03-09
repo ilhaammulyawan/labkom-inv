@@ -236,6 +236,57 @@ const ItemDetail = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Hidden print content */}
+      <div ref={printRef} className="hidden">
+        <div className="header">
+          <div>
+            <h1>{item.name}</h1>
+            <p className="code">{item.inventory_code}</p>
+          </div>
+          {item.image_url && <img src={item.image_url} alt={item.name} />}
+        </div>
+        <div className="section">
+          <h3>Informasi Umum</h3>
+          <div className="grid">
+            <div className="field"><label>Kategori</label><p>{getCategoryName(item.category_id)}</p></div>
+            <div className="field"><label>Merk / Model</label><p>{item.brand} {item.model}</p></div>
+            <div className="field"><label>Serial Number</label><p style={{fontFamily:'monospace'}}>{item.serial_number}</p></div>
+            <div className="field"><label>Ruangan</label><p>{getRoomName(item.room_id)}</p></div>
+            <div className="field"><label>Kondisi</label><p>{item.condition}</p></div>
+            <div className="field"><label>Status</label><p>{item.status}</p></div>
+            {item.year_acquired && <div className="field"><label>Tahun Perolehan</label><p>{item.year_acquired}</p></div>}
+            {item.price && <div className="field"><label>Harga</label><p>{formatCurrency(item.price)}</p></div>}
+            {item.last_service_date && <div className="field"><label>Service Terakhir</label><p>{item.last_service_date}</p></div>}
+            {item.notes && <div className="field"><label>Catatan</label><p>{item.notes}</p></div>}
+          </div>
+        </div>
+        {specs.length > 0 && (
+          <div className="section">
+            <h3>Spesifikasi Teknis</h3>
+            <div className="grid">
+              {specs.map(spec => (
+                <div key={spec.label} className="spec">
+                  <div><span className="label">{spec.label}</span><br/><span className="val">{spec.value}</span></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {itemMaintenance.length > 0 && (
+          <div className="section">
+            <h3>Riwayat Perbaikan</h3>
+            {itemMaintenance.map(m => (
+              <div key={m.id} className="maintenance">
+                <strong>{m.issue_date}</strong> — {m.status}<br/>
+                {m.description}
+                {m.action && <><br/>Tindakan: {m.action}</>}
+                <br/><small>Teknisi: {m.technician}{m.cost ? ` • Biaya: ${formatCurrency(m.cost)}` : ''}</small>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
