@@ -3,7 +3,9 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import type { InventoryItem } from "@/hooks/useItems";
 import type { MaintenanceRecord } from "@/hooks/useMaintenance";
+import type { MaintenanceSchedule } from "@/hooks/useMaintenanceSchedules";
 import type { Borrowing } from "@/hooks/useBorrowings";
+import type { SoftwareItem } from "@/hooks/useSoftwareInventory";
 import type { Category } from "@/hooks/useCategories";
 import type { Room } from "@/hooks/useRooms";
 import { formatCurrency } from "@/lib/mock-data";
@@ -325,4 +327,209 @@ export function exportPeminjamanPdf(borrowings: Borrowing[], items: InventoryIte
     headStyles: { fillColor: [41, 55, 76] },
   });
   doc.save(`Laporan_Peminjaman_${ts()}.pdf`);
+}
+
+// ══════════════════════════════════════════════
+// 7. Laporan Jadwal Maintenance
+// ══════════════════════════════════════════════
+
+const FREQ_LABELS: Record<string, string> = {
+  weekly: "Mingguan", monthly: "Bulanan", quarterly: "3 Bulanan",
+  biannual: "6 Bulanan", yearly: "Tahunan",
+};
+
+export function exportJadwalMaintenanceExcel(schedules: MaintenanceSchedule[], items: InventoryItem[]) {
+  const rows = schedules.map((s, idx) => {
+    const item = items.find((i) => i.id === s.item_id);
+    return {
+      No: idx + 1,
+      "Kode Barang": item?.inventory_code ?? "-",
+      "Nama Barang": item?.name ?? "-",
+      "Judul Jadwal": s.title,
+      "Deskripsi": s.description ?? "-",
+      "Frekuensi": FREQ_LABELS[s.frequency] ?? s.frequency,
+      "Jadwal Berikutnya": s.next_due_date,
+      "Terakhir Dilakukan": s.last_performed_date ?? "-",
+      "Teknisi": s.assigned_technician ?? "-",
+      "Status": s.is_active ? "Aktif" : "Nonaktif",
+    };
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws["!cols"] = [{ wch: 4 }, { wch: 14 }, { wch: 24 }, { wch: 20 }, { wch: 24 }, { wch: 12 }, { wch: 14 }, { wch: 14 }, { wch: 16 }, { wch: 10 }];
+  downloadXlsx(ws, `Laporan_Jadwal_Maintenance_${ts()}.xlsx`);
+}
+
+export function exportJadwalMaintenancePdf(schedules: MaintenanceSchedule[], items: InventoryItem[], settings: Record<string, string>) {
+  const doc = new jsPDF({ orientation: "landscape" });
+  const startY = pdfHeader(doc, "LAPORAN JADWAL MAINTENANCE", settings);
+  const todayStr = new Date().toISOString().split("T")[0];
+  const overdue = schedules.filter(s => s.is_active && s.next_due_date <= todayStr).length;
+  const aktif = schedules.filter(s => s.is_active).length;
+
+  doc.setFontSize(9);
+  doc.text(`Rekap: Total (${schedules.length}), Aktif (${aktif}), Jatuh Tempo (${overdue})`, 14, startY);
+
+  autoTable(doc, {
+    startY: startY + 6,
+    head: [["No", "Kode", "Nama Barang", "Judul", "Frekuensi", "Jadwal Berikutnya", "Terakhir", "Teknisi", "Status"]],
+    body: schedules.map((s, idx) => {
+      const item = items.find((i) => i.id === s.item_id);
+      return [
+        idx + 1, item?.inventory_code ?? "-", item?.name ?? "-",
+        s.title, FREQ_LABELS[s.frequency] ?? s.frequency, s.next_due_date,
+        s.last_performed_date ?? "-", s.assigned_technician ?? "-",
+        s.is_active ? "Aktif" : "Nonaktif",
+      ];
+    }),
+    styles: { fontSize: 7 },
+    headStyles: { fillColor: [41, 55, 76] },
+  });
+  doc.save(`Laporan_Jadwal_Maintenance_${ts()}.pdf`);
+}
+
+// ══════════════════════════════════════════════
+// 8. Laporan Software & Lisensi
+// ══════════════════════════════════════════════
+
+export function exportSoftwareExcel(software: SoftwareItem[], items: InventoryItem[]) {
+  const rows = software.map((s, idx) => {
+    const item = items.find((i) => i.id === s.item_id);
+    return {
+      No: idx + 1,
+      "Kode Barang": item?.inventory_code ?? "-",
+      "Nama Perangkat": item?.name ?? "-",
+      "Software": s.software_name,
+      "Versi": s.version ?? "-",
+      "Tipe Lisensi": s.license_type ?? "-",
+      "License Key": s.license_key ?? "-",
+      "Kadaluarsa": s.expiry_date ?? "-",
+      "Catatan": s.notes ?? "-",
+    };
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws["!cols"] = [{ wch: 4 }, { wch: 14 }, { wch: 22 }, { wch: 22 }, { wch: 10 }, { wch: 14 }, { wch: 24 }, { wch: 12 }, { wch: 20 }];
+  downloadXlsx(ws, `Laporan_Software_${ts()}.xlsx`);
+}
+
+export function exportSoftwarePdf(software: SoftwareItem[], items: InventoryItem[], settings: Record<string, string>) {
+  const doc = new jsPDF({ orientation: "landscape" });
+  const startY = pdfHeader(doc, "LAPORAN SOFTWARE & LISENSI", settings);
+  const todayStr = new Date().toISOString().split("T")[0];
+  const expired = software.filter(s => s.expiry_date && s.expiry_date < todayStr).length;
+
+  doc.setFontSize(9);
+  doc.text(`Rekap: Total Software (${software.length}), Lisensi Kadaluarsa (${expired})`, 14, startY);
+
+  autoTable(doc, {
+    startY: startY + 6,
+    head: [["No", "Kode", "Perangkat", "Software", "Versi", "Tipe Lisensi", "License Key", "Kadaluarsa"]],
+    body: software.map((s, idx) => {
+      const item = items.find((i) => i.id === s.item_id);
+      return [
+        idx + 1, item?.inventory_code ?? "-", item?.name ?? "-",
+        s.software_name, s.version ?? "-", s.license_type ?? "-",
+        s.license_key ?? "-", s.expiry_date ?? "-",
+      ];
+    }),
+    styles: { fontSize: 7 },
+    headStyles: { fillColor: [41, 55, 76] },
+  });
+  doc.save(`Laporan_Software_${ts()}.pdf`);
+}
+
+// ══════════════════════════════════════════════
+// 9. Laporan Barang per Ruangan
+// ══════════════════════════════════════════════
+
+export function exportPerRuanganExcel(items: InventoryItem[], cats: Category[], rooms: Room[]) {
+  const rows = items
+    .sort((a, b) => roomName(a.room_id, rooms).localeCompare(roomName(b.room_id, rooms)))
+    .map((i, idx) => ({
+      No: idx + 1,
+      "Ruangan": roomName(i.room_id, rooms),
+      "Kode Inventaris": i.inventory_code,
+      "Nama Barang": i.name,
+      "Merk": i.brand,
+      "Kategori": catName(i.category_id, cats),
+      "Kondisi": i.condition,
+      "Status": i.status,
+    }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws["!cols"] = [{ wch: 4 }, { wch: 20 }, { wch: 14 }, { wch: 26 }, { wch: 12 }, { wch: 14 }, { wch: 12 }, { wch: 10 }];
+  downloadXlsx(ws, `Laporan_Per_Ruangan_${ts()}.xlsx`);
+}
+
+export function exportPerRuanganPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+  const doc = new jsPDF({ orientation: "landscape" });
+  const startY = pdfHeader(doc, "LAPORAN BARANG PER RUANGAN", settings);
+
+  // Summary per room
+  const roomCounts = rooms.map(r => ({
+    name: r.name,
+    count: items.filter(i => i.room_id === r.id).length,
+  })).filter(r => r.count > 0);
+  const summary = roomCounts.map(r => `${r.name} (${r.count})`).join(", ");
+  doc.setFontSize(9);
+  doc.text(`Distribusi: ${summary}`, 14, startY);
+
+  const sorted = [...items].sort((a, b) => roomName(a.room_id, rooms).localeCompare(roomName(b.room_id, rooms)));
+  autoTable(doc, {
+    startY: startY + 6,
+    head: [["No", "Ruangan", "Kode", "Nama Barang", "Merk", "Kategori", "Kondisi", "Status"]],
+    body: sorted.map((i, idx) => [
+      idx + 1, roomName(i.room_id, rooms), i.inventory_code, i.name,
+      i.brand, catName(i.category_id, cats), i.condition, i.status,
+    ]),
+    styles: { fontSize: 7 },
+    headStyles: { fillColor: [41, 55, 76] },
+  });
+  doc.save(`Laporan_Per_Ruangan_${ts()}.pdf`);
+}
+
+// ══════════════════════════════════════════════
+// 10. Laporan Barang per Kategori
+// ══════════════════════════════════════════════
+
+export function exportPerKategoriExcel(items: InventoryItem[], cats: Category[], rooms: Room[]) {
+  const rows = items
+    .sort((a, b) => catName(a.category_id, cats).localeCompare(catName(b.category_id, cats)))
+    .map((i, idx) => ({
+      No: idx + 1,
+      "Kategori": catName(i.category_id, cats),
+      "Kode Inventaris": i.inventory_code,
+      "Nama Barang": i.name,
+      "Merk": i.brand,
+      "Ruangan": roomName(i.room_id, rooms),
+      "Kondisi": i.condition,
+      "Status": i.status,
+    }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws["!cols"] = [{ wch: 4 }, { wch: 16 }, { wch: 14 }, { wch: 26 }, { wch: 12 }, { wch: 16 }, { wch: 12 }, { wch: 10 }];
+  downloadXlsx(ws, `Laporan_Per_Kategori_${ts()}.xlsx`);
+}
+
+export function exportPerKategoriPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+  const doc = new jsPDF({ orientation: "landscape" });
+  const startY = pdfHeader(doc, "LAPORAN BARANG PER KATEGORI", settings);
+
+  const catCounts = cats.map(c => ({
+    name: c.name,
+    count: items.filter(i => i.category_id === c.id).length,
+  })).filter(c => c.count > 0);
+  const summary = catCounts.map(c => `${c.name} (${c.count})`).join(", ");
+  doc.setFontSize(9);
+  doc.text(`Distribusi: ${summary}`, 14, startY);
+
+  const sorted = [...items].sort((a, b) => catName(a.category_id, cats).localeCompare(catName(b.category_id, cats)));
+  autoTable(doc, {
+    startY: startY + 6,
+    head: [["No", "Kategori", "Kode", "Nama Barang", "Merk", "Ruangan", "Kondisi", "Status"]],
+    body: sorted.map((i, idx) => [
+      idx + 1, catName(i.category_id, cats), i.inventory_code, i.name,
+      i.brand, roomName(i.room_id, rooms), i.condition, i.status,
+    ]),
+    styles: { fontSize: 7 },
+    headStyles: { fillColor: [41, 55, 76] },
+  });
+  doc.save(`Laporan_Per_Kategori_${ts()}.pdf`);
 }
