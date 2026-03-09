@@ -469,6 +469,7 @@ export type Database = {
         | "Ditolak"
         | "Dipinjam"
         | "Dikembalikan"
+        | "Pengembalian"
       item_condition: "Baik" | "Rusak Ringan" | "Rusak Berat" | "Diperbaiki"
       item_status: "Aktif" | "Dipinjam" | "Dihapus"
       maintenance_status: "Antrian" | "Dalam Perbaikan" | "Selesai"
@@ -606,6 +607,7 @@ export const Constants = {
         "Ditolak",
         "Dipinjam",
         "Dikembalikan",
+        "Pengembalian",
       ],
       item_condition: ["Baik", "Rusak Ringan", "Rusak Berat", "Diperbaiki"],
       item_status: ["Aktif", "Dipinjam", "Dihapus"],
