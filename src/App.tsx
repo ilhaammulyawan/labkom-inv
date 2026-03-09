@@ -52,6 +52,10 @@ function ProtectedRoutes() {
         <Route path="/inventory/import" element={<ImportExcel />} />
         <Route path="/inventory/:id" element={<ItemDetail />} />
         <Route path="/maintenance" element={<Maintenance />} />
+        <Route path="/maintenance/schedule" element={<MaintenanceSchedule />} />
+        <Route path="/software" element={<SoftwareInventory />} />
+        <Route path="/borrowings" element={<Borrowings />} />
+        <Route path="/activity-log" element={<ActivityLog />} />
         <Route path="/scan-qr" element={<ScanQR />} />
         <Route path="/qr-print" element={<QRPrint />} />
         <Route path="/reports" element={<Reports />} />
