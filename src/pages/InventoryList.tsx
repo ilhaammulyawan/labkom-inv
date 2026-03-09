@@ -4,6 +4,7 @@ import { useItems } from "@/hooks/useItems";
 import { useCategories } from "@/hooks/useCategories";
 import { useRooms } from "@/hooks/useRooms";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { ConditionBadge, StatusBadge } from "@/components/ConditionBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
