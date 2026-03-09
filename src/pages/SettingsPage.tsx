@@ -18,6 +18,8 @@ const SettingsPage = () => {
   const [institutionAddress, setInstitutionAddress] = useState("");
   const [labManager, setLabManager] = useState("");
   const [labManagerNip, setLabManagerNip] = useState("");
+  const [principalName, setPrincipalName] = useState("");
+  const [principalNip, setPrincipalNip] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
