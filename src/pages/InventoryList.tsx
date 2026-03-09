@@ -148,6 +148,44 @@ const InventoryList = () => {
           </table>
         </div>
       </div>
+
+      {/* Hidden print content */}
+      <div className="print-area" style={{display:'none'}}>
+        <style>{`
+          @media print {
+            .print-area { display: block !important; font-family: 'Segoe UI', sans-serif; color: #111; }
+            .print-area h1 { font-size: 18px; margin: 0 0 4px; }
+            .print-area .print-sub { color: #666; font-size: 12px; margin-bottom: 12px; }
+            .print-area table { width: 100%; border-collapse: collapse; font-size: 11px; }
+            .print-area th { background: #f0f0f0; text-align: left; padding: 6px 8px; font-weight: 600; border-bottom: 2px solid #ddd; }
+            .print-area td { padding: 5px 8px; border-bottom: 1px solid #eee; }
+            .print-area .mono { font-family: monospace; }
+          }
+        `}</style>
+        <h1>Daftar Inventaris Barang</h1>
+        <p className="print-sub">Total: {filtered.length} barang • Dicetak: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>No</th><th>Kode</th><th>Nama Barang</th><th>Merk</th><th>Kategori</th><th>Ruangan</th><th>Kondisi</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((item, i) => (
+              <tr key={item.id}>
+                <td>{i + 1}</td>
+                <td className="mono">{item.inventory_code}</td>
+                <td>{item.name}</td>
+                <td>{item.brand}</td>
+                <td>{getCategoryName(item.category_id)}</td>
+                <td>{getRoomName(item.room_id)}</td>
+                <td>{item.condition}</td>
+                <td>{item.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
