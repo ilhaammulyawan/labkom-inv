@@ -11,6 +11,7 @@ import { toast } from "sonner";
 
 const ManageRooms = () => {
   const { data: rooms, isLoading } = useRooms();
+  const { isAdmin } = useUserRole();
   const createMut = useCreateRoom();
   const updateMut = useUpdateRoom();
   const deleteMut = useDeleteRoom();
