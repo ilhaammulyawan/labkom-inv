@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { HandCoins, PlusCircle, CheckCircle, XCircle, Undo2, Trash2 } from "lucide-react";
+import { HandCoins, PlusCircle, CheckCircle, XCircle, Undo2, Trash2, PackageCheck, ArrowRightLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
@@ -20,7 +20,17 @@ const STATUS_COLORS: Record<BorrowingStatus, string> = {
   Disetujui: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
   Ditolak: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
   Dipinjam: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
+  Pengembalian: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
   Dikembalikan: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+};
+
+const STATUS_LABELS: Record<BorrowingStatus, string> = {
+  Menunggu: "Menunggu Persetujuan",
+  Disetujui: "Disetujui",
+  Ditolak: "Ditolak",
+  Dipinjam: "Sedang Dipinjam",
+  Pengembalian: "Menunggu Konfirmasi Pengembalian",
+  Dikembalikan: "Selesai Dikembalikan",
 };
 
 const BorrowingsPage = () => {
@@ -80,7 +90,7 @@ const BorrowingsPage = () => {
         ...(newStatus === "Dikembalikan" ? { actual_return_date: new Date().toISOString().split("T")[0] } : {}),
         ...(newStatus === "Disetujui" || newStatus === "Ditolak" ? { approved_by: user?.id } : {}),
       });
-      toast({ title: "Berhasil", description: `Status diubah ke "${newStatus}"` });
+      toast({ title: "Berhasil", description: `Status diubah ke "${STATUS_LABELS[newStatus]}"` });
     } catch (e: any) {
       toast({ title: "Gagal", description: e.message, variant: "destructive" });
     }
@@ -95,6 +105,7 @@ const BorrowingsPage = () => {
   const getItemById = (id: string) => items.find(i => i.id === id);
   const filtered = borrowings.filter(b => statusFilter === "all" || b.status === statusFilter);
   const today = new Date().toISOString().split("T")[0];
+  const isOwner = (b: Borrowing) => user?.id === b.borrower_id;
 
   if (isLoading) return <div className="space-y-6 animate-fade-in"><Skeleton className="h-8 w-64" /><Skeleton className="h-32" /></div>;
 
@@ -113,16 +124,31 @@ const BorrowingsPage = () => {
       </div>
 
       <Select value={statusFilter} onValueChange={setStatusFilter}>
-        <SelectTrigger className="w-48"><SelectValue placeholder="Filter status" /></SelectTrigger>
+        <SelectTrigger className="w-56"><SelectValue placeholder="Filter status" /></SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Semua Status</SelectItem>
-          <SelectItem value="Menunggu">Menunggu</SelectItem>
+          <SelectItem value="Menunggu">Menunggu Persetujuan</SelectItem>
           <SelectItem value="Disetujui">Disetujui</SelectItem>
-          <SelectItem value="Dipinjam">Dipinjam</SelectItem>
+          <SelectItem value="Dipinjam">Sedang Dipinjam</SelectItem>
+          <SelectItem value="Pengembalian">Menunggu Konfirmasi</SelectItem>
           <SelectItem value="Dikembalikan">Dikembalikan</SelectItem>
           <SelectItem value="Ditolak">Ditolak</SelectItem>
         </SelectContent>
       </Select>
+
+      {/* Flow info */}
+      <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground bg-muted/50 rounded-lg p-3">
+        <span className="font-medium">Alur:</span>
+        <Badge variant="outline" className="text-[10px] h-5">User Ajukan</Badge>
+        <ArrowRightLeft className="h-3 w-3" />
+        <Badge variant="outline" className="text-[10px] h-5">Admin Setujui</Badge>
+        <ArrowRightLeft className="h-3 w-3" />
+        <Badge variant="outline" className="text-[10px] h-5">Admin Serahkan</Badge>
+        <ArrowRightLeft className="h-3 w-3" />
+        <Badge variant="outline" className="text-[10px] h-5">User Kembalikan</Badge>
+        <ArrowRightLeft className="h-3 w-3" />
+        <Badge variant="outline" className="text-[10px] h-5">Admin Terima</Badge>
+      </div>
 
       <div className="space-y-4">
         {filtered.map(b => {
@@ -135,7 +161,7 @@ const BorrowingsPage = () => {
                   <p className="text-sm font-semibold">{item?.name || "Unknown"}</p>
                   <p className="text-[11px] text-muted-foreground font-mono">{item?.inventory_code}</p>
                 </div>
-                <Badge className={`text-[10px] ${STATUS_COLORS[b.status]}`}>{b.status}</Badge>
+                <Badge className={`text-[10px] ${STATUS_COLORS[b.status]}`}>{STATUS_LABELS[b.status]}</Badge>
               </div>
               <div className="text-xs space-y-1">
                 <p><span className="text-muted-foreground">Peminjam:</span> {b.borrower_name}</p>
@@ -149,33 +175,50 @@ const BorrowingsPage = () => {
                 {b.actual_return_date && <p><span className="text-muted-foreground">Dikembalikan:</span> {b.actual_return_date}</p>}
                 {b.notes && <p><span className="text-muted-foreground">Catatan:</span> {b.notes}</p>}
               </div>
-              {isAdmin && (
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {b.status === "Menunggu" && (
-                    <>
-                      <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => handleStatusChange(b, "Disetujui")}>
-                        <CheckCircle className="h-3 w-3" /> Setujui
-                      </Button>
-                      <Button size="sm" variant="outline" className="h-7 text-xs gap-1 text-destructive" onClick={() => handleStatusChange(b, "Ditolak")}>
-                        <XCircle className="h-3 w-3" /> Tolak
-                      </Button>
-                    </>
-                  )}
-                  {b.status === "Disetujui" && (
-                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => handleStatusChange(b, "Dipinjam")}>
-                      <HandCoins className="h-3 w-3" /> Serahkan
-                    </Button>
-                  )}
-                  {b.status === "Dipinjam" && (
-                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => handleStatusChange(b, "Dikembalikan")}>
-                      <Undo2 className="h-3 w-3" /> Dikembalikan
-                    </Button>
-                  )}
-                  <Button size="sm" variant="outline" className="h-7 text-xs gap-1 text-destructive hover:text-destructive" onClick={() => setDeleteId(b.id)}>
-                    <Trash2 className="h-3 w-3" /> Hapus
+
+              {/* Action buttons based on role and status */}
+              <div className="flex flex-wrap gap-2 pt-1">
+                {/* User: can return item when status is Dipinjam and they own it */}
+                {b.status === "Dipinjam" && isOwner(b) && !isAdmin && (
+                  <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => handleStatusChange(b, "Pengembalian")}>
+                    <Undo2 className="h-3 w-3" /> Kembalikan Barang
                   </Button>
-                </div>
-              )}
+                )}
+
+                {/* Admin actions */}
+                {isAdmin && (
+                  <>
+                    {b.status === "Menunggu" && (
+                      <>
+                        <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => handleStatusChange(b, "Disetujui")}>
+                          <CheckCircle className="h-3 w-3" /> Setujui
+                        </Button>
+                        <Button size="sm" variant="outline" className="h-7 text-xs gap-1 text-destructive" onClick={() => handleStatusChange(b, "Ditolak")}>
+                          <XCircle className="h-3 w-3" /> Tolak
+                        </Button>
+                      </>
+                    )}
+                    {b.status === "Disetujui" && (
+                      <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => handleStatusChange(b, "Dipinjam")}>
+                        <HandCoins className="h-3 w-3" /> Serahkan Barang
+                      </Button>
+                    )}
+                    {b.status === "Dipinjam" && (
+                      <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => handleStatusChange(b, "Pengembalian")}>
+                        <Undo2 className="h-3 w-3" /> Tandai Pengembalian
+                      </Button>
+                    )}
+                    {b.status === "Pengembalian" && (
+                      <Button size="sm" variant="outline" className="h-7 text-xs gap-1 text-green-600" onClick={() => handleStatusChange(b, "Dikembalikan")}>
+                        <PackageCheck className="h-3 w-3" /> Terima Pengembalian
+                      </Button>
+                    )}
+                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1 text-destructive hover:text-destructive" onClick={() => setDeleteId(b.id)}>
+                      <Trash2 className="h-3 w-3" /> Hapus
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           );
         })}

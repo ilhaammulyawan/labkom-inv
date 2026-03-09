@@ -1,0 +1,1 @@
+ALTER TYPE public.borrowing_status ADD VALUE IF NOT EXISTS 'Pengembalian';
