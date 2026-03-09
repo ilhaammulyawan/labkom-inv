@@ -36,9 +36,13 @@ export function AppSidebar() {
   const isMobile = useIsMobile();
   const location = useLocation();
   const { logout, username } = useAuth();
+  const { isAdmin } = useUserRole();
   const { logoUrl, settings } = useAppSettings();
   const appName = settings["app_name"] || "SiiLaKu";
   const appSubtitle = settings["app_subtitle"] || "Inventaris Lab Komputer";
+
+  // Filter nav items based on role
+  const mainNav = allNavItems.filter(item => !item.adminOnly || isAdmin);
 
   const isActive = (path: string) => {
     if (path === "/") return location.pathname === "/";

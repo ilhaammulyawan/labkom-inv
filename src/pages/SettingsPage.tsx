@@ -233,12 +233,14 @@ const SettingsPage = () => {
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 pb-6">
-        <Button variant="outline">Reset</Button>
-        <Button onClick={handleSave} disabled={isSaving} className="gradient-primary text-primary-foreground border-0">
-          <Save className="mr-2 h-4 w-4" /> {isSaving ? "Menyimpan..." : "Simpan Pengaturan"}
-        </Button>
-      </div>
+      {isAdmin && (
+        <div className="flex justify-end gap-3 pb-6">
+          <Button variant="outline">Reset</Button>
+          <Button onClick={handleSave} disabled={isSaving} className="gradient-primary text-primary-foreground border-0">
+            <Save className="mr-2 h-4 w-4" /> {isSaving ? "Menyimpan..." : "Simpan Pengaturan"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
