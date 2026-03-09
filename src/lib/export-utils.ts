@@ -443,9 +443,9 @@ export function exportSoftwareExcel(software: SoftwareItem[], items: InventoryIt
   downloadXlsx(ws, `Laporan_Software_${ts()}.xlsx`);
 }
 
-export function exportSoftwarePdf(software: SoftwareItem[], items: InventoryItem[], settings: Record<string, string>) {
+export async function exportSoftwarePdf(software: SoftwareItem[], items: InventoryItem[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN SOFTWARE & LISENSI", settings);
+  const startY = await pdfHeader(doc, "LAPORAN SOFTWARE & LISENSI", settings);
   const todayStr = new Date().toISOString().split("T")[0];
   const expired = software.filter(s => s.expiry_date && s.expiry_date < todayStr).length;
 
