@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useAppSettings, uploadAppLogo } from "@/hooks/useAppSettings";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const SettingsPage = () => {
   const { settings, logoUrl, updateSetting } = useAppSettings();
