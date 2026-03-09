@@ -285,6 +285,17 @@ const AddItem = () => {
         )}
 
         <div className="kpi-card space-y-4">
+          <h3 className="text-sm font-semibold">Foto Barang</h3>
+          <ImageUpload
+            bucket="item-images"
+            folder="items"
+            currentUrl={imageUrl || null}
+            onUploaded={setImageUrl}
+            onRemoved={() => setImageUrl("")}
+          />
+        </div>
+
+        <div className="kpi-card space-y-4">
           <h3 className="text-sm font-semibold">Informasi Tambahan</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5"><Label className="text-xs">Tahun Pembuatan</Label><Input type="number" placeholder="2023" value={yearManufactured} onChange={e => setYearManufactured(e.target.value)} /></div>
