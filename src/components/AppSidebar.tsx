@@ -1,6 +1,7 @@
 import {
   LayoutDashboard, Package, PlusCircle, Wrench, FileText, QrCode,
   BookOpen, Settings, Monitor, LogOut, Tag, MapPin, FileSpreadsheet, Users,
+  CalendarClock, AppWindow, HandCoins, History,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
