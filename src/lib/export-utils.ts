@@ -231,9 +231,9 @@ export function exportPerbaikanExcel(records: MaintenanceRecord[], items: Invent
   downloadXlsx(ws, `Laporan_Perbaikan_${ts()}.xlsx`);
 }
 
-export function exportPerbaikanPdf(records: MaintenanceRecord[], items: InventoryItem[], settings: Record<string, string>) {
+export async function exportPerbaikanPdf(records: MaintenanceRecord[], items: InventoryItem[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN PERBAIKAN BARANG", settings);
+  const startY = await pdfHeader(doc, "LAPORAN PERBAIKAN BARANG", settings);
   autoTable(doc, {
     startY,
     head: [["No", "Kode", "Nama Barang", "Tgl Lapor", "Deskripsi", "Teknisi", "Tgl Selesai", "Tindakan", "Biaya", "Status"]],
