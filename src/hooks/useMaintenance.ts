@@ -64,3 +64,38 @@ export function useInsertMaintenance() {
     },
   });
 }
+
+export function useUpdateMaintenance() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...updates }: Partial<MaintenanceRecord> & { id: string }) => {
+      const { data, error } = await supabase
+        .from("maintenance_records")
+        .update(updates as any)
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["maintenance_records"] });
+    },
+  });
+}
+
+export function useDeleteMaintenance() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("maintenance_records")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["maintenance_records"] });
+    },
+  });
+}
