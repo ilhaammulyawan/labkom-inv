@@ -24,6 +24,7 @@ const ItemDetail = () => {
   const { data: categories = [] } = useCategories();
   const { data: rooms = [] } = useRooms();
   const { isAdmin } = useUserRole();
+  const { settings } = useAppSettings();
   const deleteItem = useDeleteItem();
 
   const [editOpen, setEditOpen] = useState(false);
