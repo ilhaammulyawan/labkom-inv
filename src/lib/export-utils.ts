@@ -58,17 +58,16 @@ async function pdfHeader(doc: jsPDF, title: string, settings: Record<string, str
   const logoUrl = settings["app_logo"] || "";
   const pageW = doc.internal.pageSize.getWidth();
   const centerX = pageW / 2;
-  let headerBottom = 30;
 
+  // Logo: 14mm x 14mm, positioned at top-left
   if (logoUrl) {
     const logoData = await loadImageAsDataUrl(logoUrl);
     if (logoData) {
-      // Logo on the left, text centered on the page
-      doc.addImage(logoData, "PNG", 14, 8, 18, 18);
+      doc.addImage(logoData, "PNG", 14, 8, 14, 14);
     }
   }
 
-  // Institution name & address always centered on page
+  // Institution name & address centered on page
   if (inst) {
     doc.setFontSize(13);
     doc.setFont("helvetica", "bold");
@@ -80,25 +79,24 @@ async function pdfHeader(doc: jsPDF, title: string, settings: Record<string, str
     doc.text(addr, centerX, 19, { align: "center" });
   }
 
-  // Separator line — double line style
+  // Separator line — below logo area (Y=24)
   doc.setDrawColor(50, 50, 50);
   doc.setLineWidth(0.8);
-  doc.line(14, 22, pageW - 14, 22);
-  doc.setLineWidth(0.3);
   doc.line(14, 24, pageW - 14, 24);
+  doc.setLineWidth(0.3);
+  doc.line(14, 25.5, pageW - 14, 25.5);
 
   // Report title
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
-  doc.text(title, centerX, 29, { align: "center" });
+  doc.text(title, centerX, 31, { align: "center" });
   doc.setFont("helvetica", "normal");
 
   // Print date
   doc.setFontSize(8);
-  doc.text(`Dicetak: ${today()}`, 14, 35);
-  headerBottom = 40;
+  doc.text(`Dicetak: ${today()}`, 14, 37);
 
-  return headerBottom;
+  return 42;
 }
 
 // ══════════════════════════════════════════════
