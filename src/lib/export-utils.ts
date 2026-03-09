@@ -181,9 +181,9 @@ export function exportKondisiExcel(items: InventoryItem[], cats: Category[], roo
   downloadXlsx(ws, `Laporan_Kondisi_${ts()}.xlsx`);
 }
 
-export function exportKondisiPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+export async function exportKondisiPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
   const doc = new jsPDF();
-  const startY = pdfHeader(doc, "LAPORAN KONDISI BARANG", settings);
+  const startY = await pdfHeader(doc, "LAPORAN KONDISI BARANG", settings);
 
   const baik = items.filter((i) => i.condition === "Baik").length;
   const ringan = items.filter((i) => i.condition === "Rusak Ringan").length;
