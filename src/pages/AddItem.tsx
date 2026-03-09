@@ -1,20 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCategories } from "@/hooks/useCategories";
 import { useRooms } from "@/hooks/useRooms";
-import { useInsertItem, type ItemInsert } from "@/hooks/useItems";
+import { useInsertItem, useItems, type ItemInsert } from "@/hooks/useItems";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+
+// Mapping kategori ke prefix kode
+const categoryPrefixMap: Record<string, string> = {
+  'Komputer/PC': 'PC',
+  'Laptop': 'LPT',
+  'Monitor': 'MON',
+  'Printer/Scanner': 'PRT',
+  'Jaringan': 'NET',
+  'Server': 'SRV',
+  'Proyektor': 'PRJ',
+  'UPS': 'UPS',
+  'Lainnya': 'OTH',
+};
 
 const AddItem = () => {
   const navigate = useNavigate();
   const { data: categories = [] } = useCategories();
   const { data: rooms = [] } = useRooms();
+  const { data: items = [] } = useItems();
   const insertItem = useInsertItem();
 
   const [categoryId, setCategoryId] = useState("");
@@ -47,6 +61,45 @@ const AddItem = () => {
   const isMonitor = catName === 'Monitor';
   const isPrinter = catName === 'Printer/Scanner';
   const isNetwork = catName === 'Jaringan';
+
+  // Generate kode inventaris otomatis
+  const generateInventoryCode = (selectedCategoryId: string) => {
+    const category = categories.find(c => c.id === selectedCategoryId);
+    if (!category) return '';
+
+    const prefix = categoryPrefixMap[category.name] || 'INV';
+    const year = new Date().getFullYear().toString().slice(-2);
+    
+    // Cari nomor urut terbesar untuk prefix ini
+    const existingCodes = items
+      .filter(item => item.inventory_code.startsWith(`${prefix}-${year}`))
+      .map(item => {
+        const match = item.inventory_code.match(new RegExp(`${prefix}-${year}-(\\d+)`));
+        return match ? parseInt(match[1]) : 0;
+      });
+    
+    const maxNumber = existingCodes.length > 0 ? Math.max(...existingCodes) : 0;
+    const nextNumber = (maxNumber + 1).toString().padStart(4, '0');
+    
+    return `${prefix}-${year}-${nextNumber}`;
+  };
+
+  // Auto-generate kode saat kategori berubah
+  useEffect(() => {
+    if (categoryId) {
+      const newCode = generateInventoryCode(categoryId);
+      setInventoryCode(newCode);
+    }
+  }, [categoryId]);
+
+  const handleRegenerateCode = () => {
+    if (categoryId) {
+      const newCode = generateInventoryCode(categoryId);
+      setInventoryCode(newCode);
+    } else {
+      toast.error("Pilih kategori terlebih dahulu");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
