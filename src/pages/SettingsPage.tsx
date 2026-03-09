@@ -199,6 +199,14 @@ const SettingsPage = () => {
             <Input value={labManagerNip} onChange={e => setLabManagerNip(e.target.value)} placeholder="198501012010011001" />
           </div>
           <div className="space-y-1.5">
+            <Label className="text-xs">Kepala Sekolah / Pimpinan</Label>
+            <Input value={principalName} onChange={e => setPrincipalName(e.target.value)} placeholder="Nama lengkap" />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">NIP Kepala Sekolah</Label>
+            <Input value={principalNip} onChange={e => setPrincipalNip(e.target.value)} placeholder="198501012010011001" />
+          </div>
+          <div className="space-y-1.5">
             <Label className="text-xs">Telepon</Label>
             <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="021-12345678" />
           </div>
