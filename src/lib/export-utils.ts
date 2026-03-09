@@ -145,9 +145,9 @@ export function exportSpesifikasiExcel(items: InventoryItem[], cats: Category[],
   downloadXlsx(ws, `Laporan_Spesifikasi_PC_${ts()}.xlsx`);
 }
 
-export function exportSpesifikasiPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+export async function exportSpesifikasiPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN SPESIFIKASI KOMPUTER", settings);
+  const startY = await pdfHeader(doc, "LAPORAN SPESIFIKASI KOMPUTER", settings);
   const pcItems = items.filter((i) => i.cpu || i.ram || i.storage);
   autoTable(doc, {
     startY,
