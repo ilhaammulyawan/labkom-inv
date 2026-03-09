@@ -5,6 +5,7 @@ import { useItemMaintenanceRecords } from "@/hooks/useMaintenance";
 import { useCategories } from "@/hooks/useCategories";
 import { useRooms } from "@/hooks/useRooms";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { formatCurrency } from "@/lib/mock-data";
 import { ConditionBadge, StatusBadge, MaintenanceBadge } from "@/components/ConditionBadge";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ const ItemDetail = () => {
   const { data: categories = [] } = useCategories();
   const { data: rooms = [] } = useRooms();
   const { isAdmin } = useUserRole();
+  const { settings } = useAppSettings();
   const deleteItem = useDeleteItem();
 
   const [editOpen, setEditOpen] = useState(false);
@@ -230,10 +232,13 @@ const ItemDetail = () => {
             .print-img { max-width: 180px; max-height: 180px; border-radius: 6px; border: 1px solid #ddd; }
           }
         `}</style>
-        <div className="print-header">
-          <div>
-            <h1>{item.name}</h1>
-            <p className="print-code">{item.inventory_code}</p>
+         <div className="print-header">
+          <div className="print-header-left">
+            {settings?.app_logo && <img className="print-logo" src={settings.app_logo} alt="Logo" />}
+            <div>
+              <h1>{item.name}</h1>
+              <p className="print-code">{item.inventory_code}</p>
+            </div>
           </div>
           {item.image_url && <img className="print-img" src={item.image_url} alt={item.name} />}
         </div>
