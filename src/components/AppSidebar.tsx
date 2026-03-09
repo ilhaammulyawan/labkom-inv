@@ -3,6 +3,7 @@ import {
   BookOpen, Settings, Monitor, LogOut, Tag, MapPin, FileSpreadsheet,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAppSettings } from "@/hooks/useAppSettings";
