@@ -128,6 +128,9 @@ const ItemDetail = () => {
             </Button>
           </>
         )}
+        <Button variant="outline" size="sm" onClick={handlePrintDetail}>
+          <Printer className="mr-2 h-3.5 w-3.5" /> Print
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
