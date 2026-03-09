@@ -273,3 +273,56 @@ export function exportNilaiPdf(items: InventoryItem[], cats: Category[], rooms: 
 
   doc.save(`Laporan_Nilai_Aset_${ts()}.pdf`);
 }
+
+// ══════════════════════════════════════════════
+// 6. Laporan Peminjaman
+// ══════════════════════════════════════════════
+
+export function exportPeminjamanExcel(borrowings: Borrowing[], items: InventoryItem[]) {
+  const rows = borrowings.map((b, idx) => {
+    const item = items.find((i) => i.id === b.item_id);
+    return {
+      No: idx + 1,
+      "Kode Barang": item?.inventory_code ?? "-",
+      "Nama Barang": item?.name ?? "-",
+      "Peminjam": b.borrower_name,
+      "Keperluan": b.purpose ?? "-",
+      "Tgl Pinjam": b.borrow_date,
+      "Tgl Kembali (Rencana)": b.expected_return_date,
+      "Tgl Kembali (Aktual)": b.actual_return_date ?? "-",
+      "Status": b.status,
+      "Catatan": b.notes ?? "-",
+    };
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws["!cols"] = [{ wch: 4 }, { wch: 14 }, { wch: 24 }, { wch: 18 }, { wch: 20 }, { wch: 12 }, { wch: 16 }, { wch: 16 }, { wch: 14 }, { wch: 20 }];
+  downloadXlsx(ws, `Laporan_Peminjaman_${ts()}.xlsx`);
+}
+
+export function exportPeminjamanPdf(borrowings: Borrowing[], items: InventoryItem[], settings: Record<string, string>) {
+  const doc = new jsPDF({ orientation: "landscape" });
+  const startY = pdfHeader(doc, "LAPORAN PEMINJAMAN BARANG", settings);
+
+  const aktif = borrowings.filter((b) => b.status === "Dipinjam").length;
+  const selesai = borrowings.filter((b) => b.status === "Dikembalikan").length;
+  const menunggu = borrowings.filter((b) => b.status === "Menunggu").length;
+
+  doc.setFontSize(9);
+  doc.text(`Rekap: Aktif Dipinjam (${aktif}), Dikembalikan (${selesai}), Menunggu (${menunggu}), Total (${borrowings.length})`, 14, startY);
+
+  autoTable(doc, {
+    startY: startY + 6,
+    head: [["No", "Kode", "Nama Barang", "Peminjam", "Keperluan", "Tgl Pinjam", "Tgl Kembali", "Aktual", "Status"]],
+    body: borrowings.map((b, idx) => {
+      const item = items.find((i) => i.id === b.item_id);
+      return [
+        idx + 1, item?.inventory_code ?? "-", item?.name ?? "-",
+        b.borrower_name, b.purpose ?? "-", b.borrow_date,
+        b.expected_return_date, b.actual_return_date ?? "-", b.status,
+      ];
+    }),
+    styles: { fontSize: 7 },
+    headStyles: { fillColor: [41, 55, 76] },
+  });
+  doc.save(`Laporan_Peminjaman_${ts()}.pdf`);
+}

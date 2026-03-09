@@ -5,6 +5,7 @@ import { useItems } from "@/hooks/useItems";
 import { useCategories } from "@/hooks/useCategories";
 import { useRooms } from "@/hooks/useRooms";
 import { useMaintenanceRecords } from "@/hooks/useMaintenance";
+import { useBorrowings } from "@/hooks/useBorrowings";
 import { useAppSettings } from "@/hooks/useAppSettings";
 import {
   exportInventarisExcel, exportInventarisPdf,
@@ -12,6 +13,7 @@ import {
   exportKondisiExcel, exportKondisiPdf,
   exportPerbaikanExcel, exportPerbaikanPdf,
   exportNilaiExcel, exportNilaiPdf,
+  exportPeminjamanExcel, exportPeminjamanPdf,
 } from "@/lib/export-utils";
 
 const Reports = () => {
@@ -19,9 +21,10 @@ const Reports = () => {
   const { data: categories = [], isLoading: loadCats } = useCategories();
   const { data: rooms = [], isLoading: loadRooms } = useRooms();
   const { data: maintenance = [], isLoading: loadMaint } = useMaintenanceRecords();
+  const { data: borrowings = [], isLoading: loadBorrow } = useBorrowings();
   const { settings, isLoading: loadSettings } = useAppSettings();
 
-  const loading = loadItems || loadCats || loadRooms || loadMaint || loadSettings;
+  const loading = loadItems || loadCats || loadRooms || loadMaint || loadBorrow || loadSettings;
 
   const reportTypes = [
     {
@@ -51,6 +54,13 @@ const Reports = () => {
       desc: `Riwayat perbaikan barang (${maintenance.length} catatan)`,
       onExcel: () => exportPerbaikanExcel(maintenance, items),
       onPdf: () => exportPerbaikanPdf(maintenance, items, settings),
+    },
+    {
+      id: "peminjaman",
+      name: "Laporan Peminjaman",
+      desc: `Riwayat peminjaman barang (${borrowings.length} catatan, ${borrowings.filter(b => b.status === "Dipinjam").length} aktif)`,
+      onExcel: () => exportPeminjamanExcel(borrowings, items),
+      onPdf: () => exportPeminjamanPdf(borrowings, items, settings),
     },
     {
       id: "nilai",
