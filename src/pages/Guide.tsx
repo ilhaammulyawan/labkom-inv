@@ -18,6 +18,7 @@ const chapters = [
       { title: "Registrasi", content: "Klik 'Daftar' di halaman login. Isi nama lengkap, email, dan password. Verifikasi email Anda melalui link yang dikirim ke inbox." },
       { title: "Lupa Password", content: "Klik 'Lupa Password?' di halaman login. Masukkan email Anda, lalu cek inbox untuk link reset password." },
       { title: "Edit Profil", content: "Klik avatar/nama Anda di header kanan atas, pilih 'Edit Profil'. Anda bisa mengubah nama lengkap dan mengunggah foto profil." },
+      { title: "Mode Gelap (Dark Mode)", content: "🌙 Klik ikon matahari/bulan di header kanan atas untuk mengubah tema tampilan:\n• ☀️ Terang — tampilan cerah (default)\n• 🌙 Gelap — tampilan gelap, nyaman untuk mata di ruangan minim cahaya\n• 🖥️ Sistem — otomatis mengikuti pengaturan perangkat Anda\n\nPilihan tema tersimpan otomatis dan berlaku untuk semua halaman." },
       { title: "Notifikasi", content: "🔔 Klik ikon lonceng di header untuk melihat notifikasi aktif:\n• Maintenance jatuh tempo (semua pengguna)\n• Peminjaman terlambat (pemilik & admin)\n• Permintaan peminjaman baru (admin)\n• Pengembalian menunggu konfirmasi (admin)\n\nKlik notifikasi untuk langsung menuju item terkait dengan highlight otomatis." },
     ],
   },
