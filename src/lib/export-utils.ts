@@ -99,6 +99,45 @@ async function pdfHeader(doc: jsPDF, title: string, settings: Record<string, str
   return 42;
 }
 
+function pdfSignature(doc: jsPDF, settings: Record<string, string>) {
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const labManager = settings["lab_manager"] || "___________________";
+  const labNip = settings["lab_manager_nip"] || "";
+  const principal = settings["principal_name"] || "___________________";
+  const principalNip = settings["principal_nip"] || "";
+
+  const leftX = 30;
+  const rightX = pageW - 70;
+  const topY = pageH - 45;
+
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+
+  // Left: Pengelola Lab
+  doc.text("Mengetahui,", leftX, topY);
+  doc.text("Pengelola Laboratorium", leftX, topY + 5);
+  doc.text(labManager, leftX, topY + 25);
+  doc.setLineWidth(0.3);
+  doc.line(leftX, topY + 26, leftX + 50, topY + 26);
+  if (labNip) {
+    doc.setFontSize(8);
+    doc.text(`NIP. ${labNip}`, leftX, topY + 30);
+  }
+
+  // Right: Kepala Sekolah
+  doc.setFontSize(9);
+  doc.text("Menyetujui,", rightX, topY);
+  doc.text("Kepala Sekolah", rightX, topY + 5);
+  doc.text(principal, rightX, topY + 25);
+  doc.setLineWidth(0.3);
+  doc.line(rightX, topY + 26, rightX + 50, topY + 26);
+  if (principalNip) {
+    doc.setFontSize(8);
+    doc.text(`NIP. ${principalNip}`, rightX, topY + 30);
+  }
+}
+
 // ══════════════════════════════════════════════
 // 1. Laporan Inventaris
 // ══════════════════════════════════════════════
@@ -222,6 +261,7 @@ export async function exportKondisiPdf(items: InventoryItem[], cats: Category[],
     styles: { fontSize: 7 },
     headStyles: { fillColor: [41, 55, 76] },
   });
+  pdfSignature(doc, settings);
   doc.save(`Laporan_Kondisi_${ts()}.pdf`);
 }
 
@@ -267,6 +307,7 @@ export async function exportPerbaikanPdf(records: MaintenanceRecord[], items: In
     styles: { fontSize: 7 },
     headStyles: { fillColor: [41, 55, 76] },
   });
+  pdfSignature(doc, settings);
   doc.save(`Laporan_Perbaikan_${ts()}.pdf`);
 }
 
@@ -313,16 +354,7 @@ export async function exportNilaiPdf(items: InventoryItem[], cats: Category[], r
     footStyles: { fillColor: [41, 55, 76], textColor: [255, 255, 255] },
   });
 
-  // Signature area
-  const pageH = doc.internal.pageSize.getHeight();
-  const manager = settings["lab_manager"] || "___________________";
-  const nip = settings["lab_manager_nip"] || "";
-  doc.setFontSize(9);
-  doc.text(`Mengetahui,`, doc.internal.pageSize.getWidth() - 60, pageH - 40);
-  doc.text(`Pengelola Lab`, doc.internal.pageSize.getWidth() - 60, pageH - 35);
-  doc.text(manager, doc.internal.pageSize.getWidth() - 60, pageH - 15);
-  if (nip) doc.text(`NIP. ${nip}`, doc.internal.pageSize.getWidth() - 60, pageH - 10);
-
+  pdfSignature(doc, settings);
   doc.save(`Laporan_Nilai_Aset_${ts()}.pdf`);
 }
 

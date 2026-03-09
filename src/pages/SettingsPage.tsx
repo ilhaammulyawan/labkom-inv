@@ -18,6 +18,8 @@ const SettingsPage = () => {
   const [institutionAddress, setInstitutionAddress] = useState("");
   const [labManager, setLabManager] = useState("");
   const [labManagerNip, setLabManagerNip] = useState("");
+  const [principalName, setPrincipalName] = useState("");
+  const [principalNip, setPrincipalNip] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -35,6 +37,8 @@ const SettingsPage = () => {
     if (settings["institution_address"]) setInstitutionAddress(settings["institution_address"]);
     if (settings["lab_manager"]) setLabManager(settings["lab_manager"]);
     if (settings["lab_manager_nip"]) setLabManagerNip(settings["lab_manager_nip"]);
+    if (settings["principal_name"]) setPrincipalName(settings["principal_name"]);
+    if (settings["principal_nip"]) setPrincipalNip(settings["principal_nip"]);
     if (settings["phone"]) setPhone(settings["phone"]);
     if (settings["email"]) setEmail(settings["email"]);
     if (settings["report_header"]) setReportHeader(settings["report_header"]);
@@ -82,6 +86,8 @@ const SettingsPage = () => {
         institution_address: institutionAddress,
         lab_manager: labManager,
         lab_manager_nip: labManagerNip,
+        principal_name: principalName,
+        principal_nip: principalNip,
         phone,
         email,
         report_header: reportHeader,
@@ -191,6 +197,14 @@ const SettingsPage = () => {
           <div className="space-y-1.5">
             <Label className="text-xs">NIP / NIK</Label>
             <Input value={labManagerNip} onChange={e => setLabManagerNip(e.target.value)} placeholder="198501012010011001" />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Kepala Sekolah / Pimpinan</Label>
+            <Input value={principalName} onChange={e => setPrincipalName(e.target.value)} placeholder="Nama lengkap" />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">NIP Kepala Sekolah</Label>
+            <Input value={principalNip} onChange={e => setPrincipalNip(e.target.value)} placeholder="198501012010011001" />
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Telepon</Label>
