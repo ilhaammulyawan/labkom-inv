@@ -307,6 +307,7 @@ export async function exportPerbaikanPdf(records: MaintenanceRecord[], items: In
     styles: { fontSize: 7 },
     headStyles: { fillColor: [41, 55, 76] },
   });
+  pdfSignature(doc, settings);
   doc.save(`Laporan_Perbaikan_${ts()}.pdf`);
 }
 
