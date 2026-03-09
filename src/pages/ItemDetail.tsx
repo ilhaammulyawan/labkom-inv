@@ -4,6 +4,7 @@ import { useItem, useDeleteItem } from "@/hooks/useItems";
 import { useItemMaintenanceRecords } from "@/hooks/useMaintenance";
 import { useCategories } from "@/hooks/useCategories";
 import { useRooms } from "@/hooks/useRooms";
+import { useUserRole } from "@/hooks/useUserRole";
 import { formatCurrency } from "@/lib/mock-data";
 import { ConditionBadge, StatusBadge, MaintenanceBadge } from "@/components/ConditionBadge";
 import { Button } from "@/components/ui/button";
