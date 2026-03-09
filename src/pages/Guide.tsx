@@ -50,9 +50,9 @@ const chapters = [
   {
     title: "BAB 6: QR Code",
     sections: [
-      { title: "Mencetak QR Code", content: "🖨️ Akses: Semua pengguna\n\nBuka menu 'Cetak QR' di sidebar. Pilih barang yang ingin dicetak QR-nya, atur ukuran label, lalu klik 'Cetak'." },
-      { title: "Scan QR Code", content: "📷 Akses: Semua pengguna\n\nBuka menu 'Scan QR' di sidebar atau arahkan kamera HP ke QR Code pada barang. Browser akan membuka halaman detail barang secara otomatis." },
-      { title: "Akses Publik via QR", content: "🌐 QR Code dapat diakses tanpa login (jika diaktifkan di Pengaturan oleh Admin). Pengguna publik bisa melihat detail barang dan melaporkan kerusakan." },
+      { title: "Mencetak QR Code", content: "🖨️ Akses: Semua pengguna\n\nBuka menu 'Cetak QR' di sidebar. Pilih barang yang ingin dicetak QR-nya, atur ukuran label (2×2, 3×3, atau 4×4 cm), lalu klik 'Cetak'. Anda juga bisa mencetak QR dari halaman detail barang." },
+      { title: "Scan QR Code", content: "📷 Akses: Semua pengguna\n\nBuka menu 'Scan QR' di sidebar, klik 'Mulai Scan', lalu arahkan kamera ke QR Code pada barang. Anda juga bisa mengarahkan kamera HP langsung ke QR Code — browser akan membuka halaman detail barang secara otomatis." },
+      { title: "Akses Publik via QR", content: "🌐 QR Code dapat diakses tanpa login. Halaman publik menampilkan:\n• Foto barang (jika tersedia)\n• Informasi umum (kode, nama, merk, model)\n• Kondisi & status barang\n• Spesifikasi teknis lengkap\n• Riwayat perbaikan\n\nTampilan dioptimalkan untuk perangkat mobile." },
     ],
   },
   {
