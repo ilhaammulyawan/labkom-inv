@@ -11,6 +11,10 @@ import ItemDetail from "./pages/ItemDetail";
 import AddItem from "./pages/AddItem";
 import ImportExcel from "./pages/ImportExcel";
 import Maintenance from "./pages/Maintenance";
+import MaintenanceSchedule from "./pages/MaintenanceSchedule";
+import SoftwareInventory from "./pages/SoftwareInventory";
+import Borrowings from "./pages/Borrowings";
+import ActivityLog from "./pages/ActivityLog";
 import QRPrint from "./pages/QRPrint";
 import ScanQR from "./pages/ScanQR";
 import ManageCategories from "./pages/ManageCategories";
@@ -48,6 +52,10 @@ function ProtectedRoutes() {
         <Route path="/inventory/import" element={<ImportExcel />} />
         <Route path="/inventory/:id" element={<ItemDetail />} />
         <Route path="/maintenance" element={<Maintenance />} />
+        <Route path="/maintenance/schedule" element={<MaintenanceSchedule />} />
+        <Route path="/software" element={<SoftwareInventory />} />
+        <Route path="/borrowings" element={<Borrowings />} />
+        <Route path="/activity-log" element={<ActivityLog />} />
         <Route path="/scan-qr" element={<ScanQR />} />
         <Route path="/qr-print" element={<QRPrint />} />
         <Route path="/reports" element={<Reports />} />

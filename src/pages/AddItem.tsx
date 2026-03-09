@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/ImageUpload";
 import { ArrowLeft, Save, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
@@ -65,6 +66,7 @@ const AddItem = () => {
   const [lastServiceDate, setLastServiceDate] = useState("");
   const [notes, setNotes] = useState("");
   const [inventoryCode, setInventoryCode] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
 
   const catName = categories.find(c => c.id === categoryId)?.name || '';
   const isPC = ['Komputer/PC', 'Laptop', 'Server'].includes(catName);
@@ -142,6 +144,7 @@ const AddItem = () => {
       price: price ? parseInt(price) : undefined,
       last_service_date: lastServiceDate || undefined,
       notes: notes || undefined,
+      image_url: imageUrl || undefined,
     };
 
     try {
@@ -280,6 +283,17 @@ const AddItem = () => {
             </div>
           </div>
         )}
+
+        <div className="kpi-card space-y-4">
+          <h3 className="text-sm font-semibold">Foto Barang</h3>
+          <ImageUpload
+            bucket="item-images"
+            folder="items"
+            currentUrl={imageUrl || null}
+            onUploaded={setImageUrl}
+            onRemoved={() => setImageUrl("")}
+          />
+        </div>
 
         <div className="kpi-card space-y-4">
           <h3 className="text-sm font-semibold">Informasi Tambahan</h3>
