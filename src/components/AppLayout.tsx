@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { Bell, User, LogOut, Settings } from "lucide-react";
+import { User, LogOut, Settings } from "lucide-react";
+import { NotificationPopover } from "@/components/NotificationPopover";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -34,10 +35,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <SidebarTrigger className="h-8 w-8 md:h-9 md:w-9" />
             </div>
             <div className="flex items-center gap-1 md:gap-2">
-              <Button variant="ghost" size="icon" className="relative h-8 w-8 md:h-9 md:w-9">
-                <Bell className="h-4 w-4" />
-                <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 md:h-4 md:w-4 rounded-full bg-destructive text-[8px] md:text-[10px] text-destructive-foreground flex items-center justify-center font-bold">3</span>
-              </Button>
+              <NotificationPopover />
               <div className="pl-1 md:pl-2 border-l border-border">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
