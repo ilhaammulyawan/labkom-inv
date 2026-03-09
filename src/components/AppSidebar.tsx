@@ -14,19 +14,20 @@ import {
   SidebarHeader, SidebarFooter, useSidebar,
 } from "@/components/ui/sidebar";
 
-const mainNav = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "Inventaris", url: "/inventory", icon: Package },
-  { title: "Tambah Barang", url: "/inventory/add", icon: PlusCircle },
-  { title: "Import Excel", url: "/inventory/import", icon: FileSpreadsheet },
-  { title: "Perbaikan", url: "/maintenance", icon: Wrench },
-  { title: "Scan QR", url: "/scan-qr", icon: QrCode },
-  { title: "Cetak QR", url: "/qr-print", icon: QrCode },
-  { title: "Laporan", url: "/reports", icon: FileText },
-  { title: "Kategori", url: "/categories", icon: Tag },
-  { title: "Ruangan", url: "/rooms", icon: MapPin },
-  { title: "Buku Panduan", url: "/guide", icon: BookOpen },
-  { title: "Pengaturan", url: "/settings", icon: Settings },
+// Define nav items with admin flag
+const allNavItems = [
+  { title: "Dashboard", url: "/", icon: LayoutDashboard, adminOnly: false },
+  { title: "Inventaris", url: "/inventory", icon: Package, adminOnly: false },
+  { title: "Tambah Barang", url: "/inventory/add", icon: PlusCircle, adminOnly: true },
+  { title: "Import Excel", url: "/inventory/import", icon: FileSpreadsheet, adminOnly: true },
+  { title: "Perbaikan", url: "/maintenance", icon: Wrench, adminOnly: false },
+  { title: "Scan QR", url: "/scan-qr", icon: QrCode, adminOnly: false },
+  { title: "Cetak QR", url: "/qr-print", icon: QrCode, adminOnly: false },
+  { title: "Laporan", url: "/reports", icon: FileText, adminOnly: false },
+  { title: "Kategori", url: "/categories", icon: Tag, adminOnly: true },
+  { title: "Ruangan", url: "/rooms", icon: MapPin, adminOnly: true },
+  { title: "Buku Panduan", url: "/guide", icon: BookOpen, adminOnly: false },
+  { title: "Pengaturan", url: "/settings", icon: Settings, adminOnly: true },
 ];
 
 export function AppSidebar() {
