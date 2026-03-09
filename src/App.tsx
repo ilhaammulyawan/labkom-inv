@@ -55,6 +55,7 @@ function ProtectedRoutes() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/categories" element={<ManageCategories />} />
         <Route path="/rooms" element={<ManageRooms />} />
+        <Route path="/users" element={<ManageUsers />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AppLayout>

@@ -26,6 +26,7 @@ const allNavItems = [
   { title: "Laporan", url: "/reports", icon: FileText, adminOnly: false },
   { title: "Kategori", url: "/categories", icon: Tag, adminOnly: true },
   { title: "Ruangan", url: "/rooms", icon: MapPin, adminOnly: true },
+  { title: "Pengguna", url: "/users", icon: Users, adminOnly: true },
   { title: "Buku Panduan", url: "/guide", icon: BookOpen, adminOnly: false },
   { title: "Pengaturan", url: "/settings", icon: Settings, adminOnly: true },
 ];
