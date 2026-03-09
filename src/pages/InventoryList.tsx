@@ -28,47 +28,7 @@ const InventoryList = () => {
   const getRoomName = (id: string | null) => rooms.find(r => r.id === id)?.name || 'Unknown';
 
   const handlePrintTable = () => {
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-    printWindow.document.write(`
-      <html><head><title>Daftar Inventaris</title>
-      <style>
-        body { font-family: 'Segoe UI', sans-serif; padding: 24px; color: #1a1a2e; }
-        h1 { font-size: 18px; margin-bottom: 4px; }
-        .sub { color: #666; font-size: 13px; margin-bottom: 16px; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        th { background: #f0f0f0; text-align: left; padding: 8px 10px; font-weight: 600; border-bottom: 2px solid #ddd; }
-        td { padding: 6px 10px; border-bottom: 1px solid #eee; }
-        tr:hover { background: #fafafa; }
-        .mono { font-family: monospace; }
-        @media print { body { padding: 0; } }
-      </style></head><body>
-      <h1>Daftar Inventaris Barang</h1>
-      <p class="sub">Total: ${filtered.length} barang • Dicetak: ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-      <table>
-        <thead><tr>
-          <th>No</th><th>Kode</th><th>Nama Barang</th><th>Merk</th><th>Kategori</th><th>Ruangan</th><th>Kondisi</th><th>Status</th>
-        </tr></thead>
-        <tbody>
-          ${filtered.map((item, i) => `
-            <tr>
-              <td>${i + 1}</td>
-              <td class="mono">${item.inventory_code}</td>
-              <td>${item.name}</td>
-              <td>${item.brand}</td>
-              <td>${getCategoryName(item.category_id)}</td>
-              <td>${getRoomName(item.room_id)}</td>
-              <td>${item.condition}</td>
-              <td>${item.status}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `);
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => { printWindow.print(); printWindow.close(); }, 300);
+    window.print();
   };
 
 
@@ -187,6 +147,44 @@ const InventoryList = () => {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Hidden print content */}
+      <div className="print-area" style={{display:'none'}}>
+        <style>{`
+          @media print {
+            .print-area { display: block !important; font-family: 'Segoe UI', sans-serif; color: #111; }
+            .print-area h1 { font-size: 18px; margin: 0 0 4px; }
+            .print-area .print-sub { color: #666; font-size: 12px; margin-bottom: 12px; }
+            .print-area table { width: 100%; border-collapse: collapse; font-size: 11px; }
+            .print-area th { background: #f0f0f0; text-align: left; padding: 6px 8px; font-weight: 600; border-bottom: 2px solid #ddd; }
+            .print-area td { padding: 5px 8px; border-bottom: 1px solid #eee; }
+            .print-area .mono { font-family: monospace; }
+          }
+        `}</style>
+        <h1>Daftar Inventaris Barang</h1>
+        <p className="print-sub">Total: {filtered.length} barang • Dicetak: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>No</th><th>Kode</th><th>Nama Barang</th><th>Merk</th><th>Kategori</th><th>Ruangan</th><th>Kondisi</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((item, i) => (
+              <tr key={item.id}>
+                <td>{i + 1}</td>
+                <td className="mono">{item.inventory_code}</td>
+                <td>{item.name}</td>
+                <td>{item.brand}</td>
+                <td>{getCategoryName(item.category_id)}</td>
+                <td>{getRoomName(item.room_id)}</td>
+                <td>{item.condition}</td>
+                <td>{item.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

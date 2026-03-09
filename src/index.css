@@ -151,11 +151,12 @@
 
 /* Print styles */
 @media print {
+  /* Hide everything except print-area */
   body * {
     visibility: hidden;
   }
   .print-area, .print-area * {
-    visibility: visible;
+    visibility: visible !important;
   }
   .print-area {
     position: absolute;
@@ -163,7 +164,26 @@
     top: 0;
     width: 100%;
   }
-  .no-print {
+
+  /* For detail page print: hide non-essential, show main content */
+  .no-print,
+  nav, header, aside,
+  [data-sidebar], [data-radix-popper-content-wrapper] {
+    display: none !important;
+  }
+
+  /* When no .print-area exists, print the detail-print-area */
+  .detail-print-area, .detail-print-area * {
+    visibility: visible !important;
+  }
+  .detail-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 16px;
+  }
+  .detail-print-area .print-hidden {
     display: none !important;
   }
 }
