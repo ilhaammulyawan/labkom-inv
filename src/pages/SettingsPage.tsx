@@ -11,6 +11,7 @@ import { useUserRole } from "@/hooks/useUserRole";
 
 const SettingsPage = () => {
   const { settings, logoUrl, updateSetting } = useAppSettings();
+  const { isAdmin } = useUserRole();
   const [appName, setAppName] = useState("SiiLaKu");
   const [appSubtitle, setAppSubtitle] = useState("Sistem Informasi Inventaris Laboratorium Komputer");
   const [institutionName, setInstitutionName] = useState("");
