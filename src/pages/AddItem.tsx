@@ -144,6 +144,7 @@ const AddItem = () => {
       price: price ? parseInt(price) : undefined,
       last_service_date: lastServiceDate || undefined,
       notes: notes || undefined,
+      image_url: imageUrl || undefined,
     };
 
     try {
