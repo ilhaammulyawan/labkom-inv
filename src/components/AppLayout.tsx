@@ -41,6 +41,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <SidebarTrigger className="h-8 w-8 md:h-9 md:w-9" />
             </div>
             <div className="flex items-center gap-1 md:gap-2">
+              <LanguageSwitcher />
               <ThemeToggle />
               <NotificationPopover />
               <div className="pl-1 md:pl-2 border-l border-border">
