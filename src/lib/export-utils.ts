@@ -491,9 +491,9 @@ export function exportPerRuanganExcel(items: InventoryItem[], cats: Category[], 
   downloadXlsx(ws, `Laporan_Per_Ruangan_${ts()}.xlsx`);
 }
 
-export function exportPerRuanganPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+export async function exportPerRuanganPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN BARANG PER RUANGAN", settings);
+  const startY = await pdfHeader(doc, "LAPORAN BARANG PER RUANGAN", settings);
 
   // Summary per room
   const roomCounts = rooms.map(r => ({
