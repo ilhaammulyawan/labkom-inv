@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAppSettings } from "@/hooks/useAppSettings";
@@ -14,26 +15,27 @@ import {
   SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
   SidebarHeader, SidebarFooter, useSidebar,
 } from "@/components/ui/sidebar";
+import type { TranslationKeys } from "@/i18n";
 
-// Define nav items with admin flag
-const allNavItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard, adminOnly: false },
-  { title: "Inventaris", url: "/inventory", icon: Package, adminOnly: false },
-  { title: "Tambah Barang", url: "/inventory/add", icon: PlusCircle, adminOnly: true },
-  { title: "Import Excel", url: "/inventory/import", icon: FileSpreadsheet, adminOnly: true },
-  { title: "Perbaikan", url: "/maintenance", icon: Wrench, adminOnly: false },
-  { title: "Jadwal Maintenance", url: "/maintenance/schedule", icon: CalendarClock, adminOnly: false },
-  { title: "Software Inventory", url: "/software", icon: AppWindow, adminOnly: false },
-  { title: "Peminjaman", url: "/borrowings", icon: HandCoins, adminOnly: false },
-  { title: "Scan QR", url: "/scan-qr", icon: QrCode, adminOnly: false },
-  { title: "Cetak QR", url: "/qr-print", icon: QrCode, adminOnly: false },
-  { title: "Laporan", url: "/reports", icon: FileText, adminOnly: false },
-  { title: "Riwayat", url: "/activity-log", icon: History, adminOnly: true },
-  { title: "Kategori", url: "/categories", icon: Tag, adminOnly: true },
-  { title: "Ruangan", url: "/rooms", icon: MapPin, adminOnly: true },
-  { title: "Pengguna", url: "/users", icon: Users, adminOnly: true },
-  { title: "Buku Panduan", url: "/guide", icon: BookOpen, adminOnly: false },
-  { title: "Pengaturan", url: "/settings", icon: Settings, adminOnly: true },
+// Define nav items with admin flag and translation key
+const allNavItems: { titleKey: TranslationKeys; url: string; icon: any; adminOnly: boolean }[] = [
+  { titleKey: "dashboard", url: "/", icon: LayoutDashboard, adminOnly: false },
+  { titleKey: "inventory", url: "/inventory", icon: Package, adminOnly: false },
+  { titleKey: "addItem", url: "/inventory/add", icon: PlusCircle, adminOnly: true },
+  { titleKey: "importExcel", url: "/inventory/import", icon: FileSpreadsheet, adminOnly: true },
+  { titleKey: "maintenance", url: "/maintenance", icon: Wrench, adminOnly: false },
+  { titleKey: "maintenanceSchedule", url: "/maintenance/schedule", icon: CalendarClock, adminOnly: false },
+  { titleKey: "softwareInventory", url: "/software", icon: AppWindow, adminOnly: false },
+  { titleKey: "borrowings", url: "/borrowings", icon: HandCoins, adminOnly: false },
+  { titleKey: "scanQR", url: "/scan-qr", icon: QrCode, adminOnly: false },
+  { titleKey: "printQR", url: "/qr-print", icon: QrCode, adminOnly: false },
+  { titleKey: "reports", url: "/reports", icon: FileText, adminOnly: false },
+  { titleKey: "activityLog", url: "/activity-log", icon: History, adminOnly: true },
+  { titleKey: "categories", url: "/categories", icon: Tag, adminOnly: true },
+  { titleKey: "rooms", url: "/rooms", icon: MapPin, adminOnly: true },
+  { titleKey: "users", url: "/users", icon: Users, adminOnly: true },
+  { titleKey: "guide", url: "/guide", icon: BookOpen, adminOnly: false },
+  { titleKey: "settings", url: "/settings", icon: Settings, adminOnly: true },
 ];
 
 export function AppSidebar() {
@@ -44,10 +46,10 @@ export function AppSidebar() {
   const { logout, username } = useAuth();
   const { isAdmin } = useUserRole();
   const { logoUrl, settings } = useAppSettings();
+  const { t } = useLanguage();
   const appName = settings["app_name"] || "SiiLaKu";
   const appSubtitle = settings["app_subtitle"] || "Inventaris Lab Komputer";
 
-  // Filter nav items based on role
   const mainNav = allNavItems.filter(item => !item.adminOnly || isAdmin);
 
   const isActive = (path: string) => {
@@ -86,12 +88,12 @@ export function AppSidebar() {
       <SidebarContent className="py-2">
         <SidebarGroup>
           <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-sidebar-foreground/50 px-4">
-            Menu Utama
+            {t("mainMenu")}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainNav.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.titleKey}>
                   <SidebarMenuButton asChild isActive={isActive(item.url)}>
                     <NavLink 
                       to={item.url} 
@@ -100,7 +102,7 @@ export function AppSidebar() {
                       onClick={handleNavClick}
                     >
                       <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
+                      {!collapsed && <span>{t(item.titleKey)}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -121,7 +123,7 @@ export function AppSidebar() {
               className="text-destructive hover:text-destructive hover:bg-destructive/10"
             >
               <LogOut className="h-4 w-4" />
-              {!collapsed && <span>Keluar</span>}
+              {!collapsed && <span>{t("logout")}</span>}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

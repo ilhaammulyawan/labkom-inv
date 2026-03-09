@@ -9,6 +9,7 @@ import { formatCurrency } from "@/lib/mock-data";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const CHART_COLORS = ['hsl(217,91%,60%)', 'hsl(160,84%,39%)', 'hsl(38,92%,50%)', 'hsl(0,84%,60%)', 'hsl(199,89%,48%)', 'hsl(280,65%,60%)', 'hsl(340,75%,55%)', 'hsl(30,80%,55%)'];
 
@@ -18,6 +19,7 @@ const Dashboard = () => {
   const { data: categories = [] } = useCategories();
   const { data: rooms = [] } = useRooms();
   const { data: maintenanceRecords = [] } = useMaintenanceRecords();
+  const { t } = useLanguage();
 
   const getCategoryName = (id: string | null) => categories.find(c => c.id === id)?.name || 'Unknown';
   const getRoomName = (id: string | null) => rooms.find(r => r.id === id)?.name || 'Unknown';
@@ -25,7 +27,7 @@ const Dashboard = () => {
   if (loadingItems) {
     return (
       <div className="space-y-6 animate-fade-in">
-        <div><h1 className="text-2xl font-bold tracking-tight">Dashboard</h1></div>
+        <div><h1 className="text-2xl font-bold tracking-tight">{t("dashboard")}</h1></div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)}
         </div>
@@ -33,7 +35,6 @@ const Dashboard = () => {
     );
   }
 
-  // Find category IDs by name
   const pcCatId = categories.find(c => c.name === 'Komputer/PC')?.id;
   const laptopCatId = categories.find(c => c.name === 'Laptop')?.id;
   const monitorCatId = categories.find(c => c.name === 'Monitor')?.id;
@@ -53,10 +54,10 @@ const Dashboard = () => {
   })).filter(d => d.value > 0);
 
   const conditionData = [
-    { name: 'Baik', value: items.filter(i => i.condition === 'Baik').length },
-    { name: 'Rusak Ringan', value: items.filter(i => i.condition === 'Rusak Ringan').length },
-    { name: 'Rusak Berat', value: items.filter(i => i.condition === 'Rusak Berat').length },
-    { name: 'Diperbaiki', value: items.filter(i => i.condition === 'Diperbaiki').length },
+    { name: t("condGood"), value: items.filter(i => i.condition === 'Baik').length },
+    { name: t("condLightDamage"), value: items.filter(i => i.condition === 'Rusak Ringan').length },
+    { name: t("condHeavyDamage"), value: items.filter(i => i.condition === 'Rusak Berat').length },
+    { name: t("condRepaired"), value: items.filter(i => i.condition === 'Diperbaiki').length },
   ].filter(d => d.value > 0);
 
   const roomData = rooms.map(r => ({
@@ -69,26 +70,26 @@ const Dashboard = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Ringkasan inventaris laboratorium komputer</p>
+        <h1 className="text-2xl font-bold tracking-tight">{t("dashboard")}</h1>
+        <p className="text-sm text-muted-foreground">{t("dashboardSubtitle")}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard title="Total PC/Desktop" value={totalPC} icon={Monitor} gradient="gradient-primary" />
-        <KpiCard title="Total Laptop" value={totalLaptop} icon={Laptop} gradient="gradient-primary" />
-        <KpiCard title="Kondisi Baik" value={totalBaik} icon={CheckCircle} gradient="gradient-success" />
-        <KpiCard title="Perlu Perhatian" value={totalRusak} icon={AlertTriangle} gradient="gradient-danger" />
+        <KpiCard title={t("totalPC")} value={totalPC} icon={Monitor} gradient="gradient-primary" />
+        <KpiCard title={t("totalLaptop")} value={totalLaptop} icon={Laptop} gradient="gradient-primary" />
+        <KpiCard title={t("goodCondition")} value={totalBaik} icon={CheckCircle} gradient="gradient-success" />
+        <KpiCard title={t("needsAttention")} value={totalRusak} icon={AlertTriangle} gradient="gradient-danger" />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <KpiCard title="Total Monitor" value={totalMonitor} icon={Monitor} gradient="gradient-primary" />
-        <KpiCard title="Total Printer" value={totalPrinter} icon={Printer} gradient="gradient-warning" />
-        <KpiCard title="Total Nilai Aset" value={formatCurrency(totalAsset)} icon={Package} gradient="gradient-success" subtitle={`${items.length} item`} />
+        <KpiCard title={t("totalMonitor")} value={totalMonitor} icon={Monitor} gradient="gradient-primary" />
+        <KpiCard title={t("totalPrinter")} value={totalPrinter} icon={Printer} gradient="gradient-warning" />
+        <KpiCard title={t("totalAssetValue")} value={formatCurrency(totalAsset)} icon={Package} gradient="gradient-success" subtitle={`${items.length} ${t("item")}`} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="kpi-card">
-          <h3 className="text-sm font-semibold mb-4">Komposisi per Kategori</h3>
+          <h3 className="text-sm font-semibold mb-4">{t("categoryComposition")}</h3>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie data={categoryData} cx="50%" cy="50%" outerRadius={90} innerRadius={50} dataKey="value" paddingAngle={2} label={({ name, value }) => `${name} (${value})`} labelLine={false}>
@@ -100,7 +101,7 @@ const Dashboard = () => {
         </div>
 
         <div className="kpi-card">
-          <h3 className="text-sm font-semibold mb-4">Kondisi Barang</h3>
+          <h3 className="text-sm font-semibold mb-4">{t("itemCondition")}</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={conditionData}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -109,7 +110,7 @@ const Dashboard = () => {
               <Tooltip />
               <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                 {conditionData.map((entry, i) => {
-                  const colors: Record<string, string> = { 'Baik': 'hsl(160,84%,39%)', 'Rusak Ringan': 'hsl(38,92%,50%)', 'Rusak Berat': 'hsl(0,84%,60%)', 'Diperbaiki': 'hsl(199,89%,48%)' };
+                  const colors: Record<string, string> = { [t("condGood")]: 'hsl(160,84%,39%)', [t("condLightDamage")]: 'hsl(38,92%,50%)', [t("condHeavyDamage")]: 'hsl(0,84%,60%)', [t("condRepaired")]: 'hsl(199,89%,48%)' };
                   return <Cell key={i} fill={colors[entry.name] || CHART_COLORS[0]} />;
                 })}
               </Bar>
@@ -118,7 +119,7 @@ const Dashboard = () => {
         </div>
 
         <div className="kpi-card">
-          <h3 className="text-sm font-semibold mb-4">Sebaran per Ruangan</h3>
+          <h3 className="text-sm font-semibold mb-4">{t("roomDistribution")}</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={roomData} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -131,7 +132,7 @@ const Dashboard = () => {
         </div>
 
         <div className="kpi-card">
-          <h3 className="text-sm font-semibold mb-4">Perbaikan Terkini</h3>
+          <h3 className="text-sm font-semibold mb-4">{t("recentMaintenance")}</h3>
           <div className="space-y-3">
             {maintenanceRecords.slice(0, 5).map(m => {
               const item = items.find(i => i.id === m.item_id);
@@ -151,23 +152,23 @@ const Dashboard = () => {
                 </div>
               );
             })}
-            {maintenanceRecords.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">Belum ada catatan perbaikan</p>}
+            {maintenanceRecords.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">{t("noMaintenanceRecords")}</p>}
           </div>
         </div>
       </div>
 
       <div className="kpi-card">
-        <h3 className="text-sm font-semibold mb-4">Barang Terbaru</h3>
+        <h3 className="text-sm font-semibold mb-4">{t("recentItems")}</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left py-2 px-3 font-medium text-muted-foreground">Kode</th>
-                <th className="text-left py-2 px-3 font-medium text-muted-foreground">Nama</th>
-                <th className="text-left py-2 px-3 font-medium text-muted-foreground hidden sm:table-cell">Kategori</th>
-                <th className="text-left py-2 px-3 font-medium text-muted-foreground hidden md:table-cell">Ruangan</th>
-                <th className="text-left py-2 px-3 font-medium text-muted-foreground">Kondisi</th>
-                <th className="text-left py-2 px-3 font-medium text-muted-foreground">Status</th>
+                <th className="text-left py-2 px-3 font-medium text-muted-foreground">{t("code")}</th>
+                <th className="text-left py-2 px-3 font-medium text-muted-foreground">{t("name")}</th>
+                <th className="text-left py-2 px-3 font-medium text-muted-foreground hidden sm:table-cell">{t("category")}</th>
+                <th className="text-left py-2 px-3 font-medium text-muted-foreground hidden md:table-cell">{t("room")}</th>
+                <th className="text-left py-2 px-3 font-medium text-muted-foreground">{t("condition")}</th>
+                <th className="text-left py-2 px-3 font-medium text-muted-foreground">{t("status")}</th>
               </tr>
             </thead>
             <tbody>

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useAppSettings } from "@/hooks/useAppSettings";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Mode = "login" | "signup" | "forgot";
 
@@ -21,6 +22,7 @@ export default function Login() {
   const { login, signup, resetPassword } = useAuth();
   const navigate = useNavigate();
   const { logoUrl, settings } = useAppSettings();
+  const { t } = useLanguage();
 
   const appName = settings["app_name"] || "SiiLaKu";
   const appSubtitle = settings["app_subtitle"] || "Sistem Informasi Inventaris Laboratorium Komputer";
@@ -30,9 +32,9 @@ export default function Login() {
     setIsLoading(true);
     const { error } = await login(email, password);
     if (error) {
-      toast.error("Login gagal", { description: error });
+      toast.error(t("loginFailed"), { description: error });
     } else {
-      toast.success("Login berhasil!");
+      toast.success(t("loginSuccess"));
       navigate("/");
     }
     setIsLoading(false);
@@ -41,16 +43,16 @@ export default function Login() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password.length < 6) {
-      toast.error("Password minimal 6 karakter");
+      toast.error(t("passwordMin"));
       return;
     }
     setIsLoading(true);
     const { error } = await signup(email, password, fullName);
     if (error) {
-      toast.error("Pendaftaran gagal", { description: error });
+      toast.error(t("signupFailed"), { description: error });
     } else {
-      toast.success("Pendaftaran berhasil!", {
-        description: "Silakan cek email Anda untuk verifikasi akun.",
+      toast.success(t("signupSuccess"), {
+        description: t("signupVerify"),
       });
       setMode("login");
     }
@@ -62,10 +64,10 @@ export default function Login() {
     setIsLoading(true);
     const { error } = await resetPassword(email);
     if (error) {
-      toast.error("Gagal mengirim email reset", { description: error });
+      toast.error(t("resetEmailFailed"), { description: error });
     } else {
-      toast.success("Email reset password terkirim!", {
-        description: "Cek inbox email Anda.",
+      toast.success(t("resetEmailSent"), {
+        description: t("checkInbox"),
       });
       setMode("login");
     }
@@ -93,36 +95,36 @@ export default function Login() {
         <Card className="border-border shadow-lg">
           <CardHeader className="pb-4">
             <h2 className="text-lg font-semibold text-foreground text-center">
-              {mode === "login" && "Masuk ke Akun"}
-              {mode === "signup" && "Daftar Akun Baru"}
-              {mode === "forgot" && "Reset Password"}
+              {mode === "login" && t("loginTitle")}
+              {mode === "signup" && t("signupTitle")}
+              {mode === "forgot" && t("resetPasswordTitle")}
             </h2>
           </CardHeader>
           <CardContent>
             {mode === "login" && (
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t("email")}</Label>
                   <Input id="email" type="email" placeholder="nama@email.com" value={email} onChange={e => setEmail(e.target.value)} required autoComplete="email" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t("password")}</Label>
                   <div className="relative">
-                    <Input id="password" type={showPassword ? "text" : "password"} placeholder="Masukkan password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" />
+                    <Input id="password" type={showPassword ? "text" : "password"} placeholder={t("enterPassword")} value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" />
                     <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
                 </div>
                 <div className="flex justify-end">
-                  <button type="button" onClick={() => setMode("forgot")} className="text-xs text-primary hover:underline">Lupa password?</button>
+                  <button type="button" onClick={() => setMode("forgot")} className="text-xs text-primary hover:underline">{t("forgotPassword")}</button>
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? <Spinner /> : <><LogIn className="mr-2 h-4 w-4" /> Masuk</>}
+                  {isLoading ? <Spinner label={t("processing")} /> : <><LogIn className="mr-2 h-4 w-4" /> {t("login")}</>}
                 </Button>
                 <p className="text-center text-xs text-muted-foreground">
-                  Belum punya akun?{" "}
-                  <button type="button" onClick={() => setMode("signup")} className="text-primary font-medium hover:underline">Daftar</button>
+                  {t("noAccount")}{" "}
+                  <button type="button" onClick={() => setMode("signup")} className="text-primary font-medium hover:underline">{t("signup")}</button>
                 </p>
               </form>
             )}
@@ -130,44 +132,44 @@ export default function Login() {
             {mode === "signup" && (
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Nama Lengkap</Label>
-                  <Input id="fullName" placeholder="Nama lengkap Anda" value={fullName} onChange={e => setFullName(e.target.value)} required />
+                  <Label htmlFor="fullName">{t("fullName")}</Label>
+                  <Input id="fullName" placeholder={t("fullName")} value={fullName} onChange={e => setFullName(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signupEmail">Email</Label>
+                  <Label htmlFor="signupEmail">{t("email")}</Label>
                   <Input id="signupEmail" type="email" placeholder="nama@email.com" value={email} onChange={e => setEmail(e.target.value)} required autoComplete="email" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signupPassword">Password</Label>
+                  <Label htmlFor="signupPassword">{t("password")}</Label>
                   <div className="relative">
-                    <Input id="signupPassword" type={showPassword ? "text" : "password"} placeholder="Minimal 6 karakter" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="new-password" />
+                    <Input id="signupPassword" type={showPassword ? "text" : "password"} placeholder={t("minChars")} value={password} onChange={e => setPassword(e.target.value)} required autoComplete="new-password" />
                     <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? <Spinner /> : <><UserPlus className="mr-2 h-4 w-4" /> Daftar</>}
+                  {isLoading ? <Spinner label={t("processing")} /> : <><UserPlus className="mr-2 h-4 w-4" /> {t("signup")}</>}
                 </Button>
                 <p className="text-center text-xs text-muted-foreground">
-                  Sudah punya akun?{" "}
-                  <button type="button" onClick={() => setMode("login")} className="text-primary font-medium hover:underline">Masuk</button>
+                  {t("hasAccount")}{" "}
+                  <button type="button" onClick={() => setMode("login")} className="text-primary font-medium hover:underline">{t("login")}</button>
                 </p>
               </form>
             )}
 
             {mode === "forgot" && (
               <form onSubmit={handleForgotPassword} className="space-y-4">
-                <p className="text-xs text-muted-foreground">Masukkan email Anda, kami akan mengirim link untuk reset password.</p>
+                <p className="text-xs text-muted-foreground">{t("resetEmailDesc")}</p>
                 <div className="space-y-2">
-                  <Label htmlFor="resetEmail">Email</Label>
+                  <Label htmlFor="resetEmail">{t("email")}</Label>
                   <Input id="resetEmail" type="email" placeholder="nama@email.com" value={email} onChange={e => setEmail(e.target.value)} required autoComplete="email" />
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? <Spinner /> : <><Mail className="mr-2 h-4 w-4" /> Kirim Link Reset</>}
+                  {isLoading ? <Spinner label={t("processing")} /> : <><Mail className="mr-2 h-4 w-4" /> {t("sendResetLink")}</>}
                 </Button>
                 <p className="text-center text-xs text-muted-foreground">
-                  <button type="button" onClick={() => setMode("login")} className="text-primary font-medium hover:underline">Kembali ke login</button>
+                  <button type="button" onClick={() => setMode("login")} className="text-primary font-medium hover:underline">{t("backToLogin")}</button>
                 </p>
               </form>
             )}
@@ -175,18 +177,18 @@ export default function Login() {
         </Card>
 
         <p className="text-center text-xs text-muted-foreground">
-          Developed by <span className="font-semibold text-primary">Guru Informatika</span>
+          {t("developedBy")} <span className="font-semibold text-primary">Guru Informatika</span>
         </p>
       </div>
     </div>
   );
 }
 
-function Spinner() {
+function Spinner({ label }: { label: string }) {
   return (
     <span className="flex items-center gap-2">
       <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-      Memproses...
+      {label}
     </span>
   );
 }

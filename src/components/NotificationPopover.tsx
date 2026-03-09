@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const severityIcon = {
   destructive: <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />,
@@ -17,6 +18,7 @@ export function NotificationPopover() {
   const { notifications, count } = useNotifications();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -32,13 +34,13 @@ export function NotificationPopover() {
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80 p-0">
         <div className="px-4 py-3 border-b border-border">
-          <p className="text-sm font-semibold">Notifikasi</p>
-          <p className="text-[11px] text-muted-foreground">{count} notifikasi aktif</p>
+          <p className="text-sm font-semibold">{t("notifications")}</p>
+          <p className="text-[11px] text-muted-foreground">{count} {t("activeNotifications")}</p>
         </div>
         <ScrollArea className="max-h-[320px]">
           {notifications.length === 0 ? (
             <div className="py-8 text-center text-sm text-muted-foreground">
-              Tidak ada notifikasi
+              {t("noNotifications")}
             </div>
           ) : (
             <div className="divide-y divide-border">
@@ -60,7 +62,7 @@ export function NotificationPopover() {
                     variant={n.severity === "destructive" ? "destructive" : "secondary"}
                     className="text-[9px] shrink-0"
                   >
-                    {n.severity === "destructive" ? "Urgent" : n.severity === "warning" ? "Perlu Aksi" : "Info"}
+                    {n.severity === "destructive" ? t("urgent") : n.severity === "warning" ? t("needsAction") : t("info")}
                   </Badge>
                 </button>
               ))}
