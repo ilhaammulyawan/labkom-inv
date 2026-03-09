@@ -17,6 +17,7 @@ const iconOptions = [
 
 const ManageCategories = () => {
   const { data: categories, isLoading } = useCategories();
+  const { isAdmin } = useUserRole();
   const createMut = useCreateCategory();
   const updateMut = useUpdateCategory();
   const deleteMut = useDeleteCategory();
