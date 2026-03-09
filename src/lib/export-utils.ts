@@ -354,16 +354,7 @@ export async function exportNilaiPdf(items: InventoryItem[], cats: Category[], r
     footStyles: { fillColor: [41, 55, 76], textColor: [255, 255, 255] },
   });
 
-  // Signature area
-  const pageH = doc.internal.pageSize.getHeight();
-  const manager = settings["lab_manager"] || "___________________";
-  const nip = settings["lab_manager_nip"] || "";
-  doc.setFontSize(9);
-  doc.text(`Mengetahui,`, doc.internal.pageSize.getWidth() - 60, pageH - 40);
-  doc.text(`Pengelola Lab`, doc.internal.pageSize.getWidth() - 60, pageH - 35);
-  doc.text(manager, doc.internal.pageSize.getWidth() - 60, pageH - 15);
-  if (nip) doc.text(`NIP. ${nip}`, doc.internal.pageSize.getWidth() - 60, pageH - 10);
-
+  pdfSignature(doc, settings);
   doc.save(`Laporan_Nilai_Aset_${ts()}.pdf`);
 }
 
