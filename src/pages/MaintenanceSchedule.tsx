@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useItems } from "@/hooks/useItems";
 import { useMaintenanceSchedules, useInsertSchedule, useUpdateSchedule, useDeleteSchedule, type MaintenanceSchedule } from "@/hooks/useMaintenanceSchedules";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -13,6 +13,7 @@ import { CalendarClock, PlusCircle, Pencil, Trash2, CheckCircle, AlertTriangle }
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
+import { useSearchParams } from "react-router-dom";
 
 const FREQ_LABELS: Record<string, string> = {
   weekly: "Mingguan",
@@ -23,6 +24,8 @@ const FREQ_LABELS: Record<string, string> = {
 };
 
 const MaintenanceSchedulePage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const highlightId = searchParams.get("highlight");
   const [formOpen, setFormOpen] = useState(false);
   const [editRecord, setEditRecord] = useState<MaintenanceSchedule | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -33,6 +36,19 @@ const MaintenanceSchedulePage = () => {
   const updateMut = useUpdateSchedule();
   const deleteMut = useDeleteSchedule();
   const { toast } = useToast();
+  const highlightRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to highlighted item
+  useEffect(() => {
+    if (highlightId && highlightRef.current && !isLoading) {
+      highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      // Clear highlight param after 3s
+      const timer = setTimeout(() => {
+        setSearchParams({}, { replace: true });
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [highlightId, isLoading, setSearchParams]);
 
   // Form state
   const [formItemId, setFormItemId] = useState("");
@@ -83,7 +99,6 @@ const MaintenanceSchedulePage = () => {
 
   const handleMarkDone = async (s: MaintenanceSchedule) => {
     const today = new Date().toISOString().split("T")[0];
-    // Calculate next due date based on frequency
     const nextDate = new Date(s.next_due_date);
     const freqDays: Record<string, number> = { weekly: 7, monthly: 30, quarterly: 90, biannual: 180, yearly: 365 };
     nextDate.setDate(nextDate.getDate() + (freqDays[s.frequency] || 30));
@@ -135,8 +150,13 @@ const MaintenanceSchedulePage = () => {
         {schedules.map(s => {
           const item = getItemById(s.item_id);
           const isOverdue = s.next_due_date <= today && s.is_active;
+          const isHighlighted = highlightId === s.id;
           return (
-            <div key={s.id} className={`kpi-card space-y-3 ${isOverdue ? 'border-destructive/50' : ''}`}>
+            <div
+              key={s.id}
+              ref={isHighlighted ? highlightRef : undefined}
+              className={`kpi-card space-y-3 transition-all duration-500 ${isOverdue ? 'border-destructive/50' : ''} ${isHighlighted ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' : ''}`}
+            >
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-sm font-semibold flex items-center gap-2">

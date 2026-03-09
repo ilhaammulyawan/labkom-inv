@@ -12,6 +12,7 @@ export interface AppNotification {
   date: string;
   severity: "warning" | "destructive" | "info";
   link?: string;
+  entityId?: string;
 }
 
 export function useNotifications() {
@@ -35,11 +36,12 @@ export function useNotifications() {
           description: s.title,
           date: s.next_due_date,
           severity: "destructive",
-          link: "/maintenance-schedule",
+          link: `/maintenance-schedule?highlight=${s.id}`,
+          entityId: s.id,
         });
       });
 
-    // Borrowing overdue (status Dipinjam & past expected return)
+    // Borrowing overdue
     borrowings
       .filter(b => b.status === "Dipinjam" && b.expected_return_date < today)
       .forEach(b => {
@@ -50,7 +52,8 @@ export function useNotifications() {
           description: `${b.borrower_name} - jatuh tempo ${b.expected_return_date}`,
           date: b.expected_return_date,
           severity: "destructive",
-          link: "/borrowings",
+          link: `/borrowings?highlight=${b.id}&filter=Dipinjam`,
+          entityId: b.id,
         });
       });
 
@@ -66,11 +69,11 @@ export function useNotifications() {
             description: `${b.borrower_name} mengajukan peminjaman`,
             date: b.created_at,
             severity: "info",
-            link: "/borrowings",
+            link: `/borrowings?highlight=${b.id}&filter=Menunggu`,
+            entityId: b.id,
           });
         });
 
-      // Return requests pending admin confirmation
       borrowings
         .filter(b => b.status === "Pengembalian")
         .forEach(b => {
@@ -81,7 +84,8 @@ export function useNotifications() {
             description: `${b.borrower_name} mengembalikan barang`,
             date: b.created_at,
             severity: "warning",
-            link: "/borrowings",
+            link: `/borrowings?highlight=${b.id}&filter=Pengembalian`,
+            entityId: b.id,
           });
         });
     }
@@ -91,7 +95,6 @@ export function useNotifications() {
       borrowings
         .filter(b => b.borrower_id === user.id && b.status === "Dipinjam" && b.expected_return_date < today)
         .forEach(b => {
-          // Avoid duplicate if already added above
           const exists = notifs.some(n => n.id === `borrow-overdue-${b.id}`);
           if (!exists) {
             notifs.push({
@@ -101,13 +104,13 @@ export function useNotifications() {
               description: `Jatuh tempo ${b.expected_return_date}`,
               date: b.expected_return_date,
               severity: "destructive",
-              link: "/borrowings",
+              link: `/borrowings?highlight=${b.id}&filter=Dipinjam`,
+              entityId: b.id,
             });
           }
         });
     }
 
-    // Sort by severity (destructive first)
     const severityOrder = { destructive: 0, warning: 1, info: 2 };
     notifs.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
 
