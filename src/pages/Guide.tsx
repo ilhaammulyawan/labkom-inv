@@ -32,10 +32,12 @@ const chapters = [
     title: "BAB 4: Manajemen Inventaris",
     sections: [
       { title: "Melihat Daftar Barang", content: "📋 Akses: Semua pengguna\n\nBuka menu 'Inventaris' di sidebar. Gunakan fitur pencarian dan filter kategori/ruangan/kondisi untuk menemukan barang tertentu." },
+      { title: "Print Daftar Inventaris", content: "🖨️ Akses: Semua pengguna\n\nKlik tombol 'Print' di halaman Inventaris untuk mencetak tabel daftar barang yang sedang ditampilkan (sesuai filter aktif). Hasil print berisi nomor, kode, nama, merk, kategori, ruangan, kondisi, dan status." },
       { title: "Menambah Barang", content: "➕ Akses: Admin only\n\nKlik 'Tambah Barang' dari sidebar atau halaman Inventaris. Isi form:\n• Pilih kategori (PC, Monitor, Printer, dll)\n• Kode inventaris otomatis ter-generate\n• Isi spesifikasi sesuai jenis barang\n• Pilih ruangan penempatan\n• Upload foto barang (opsional)\n• Tentukan kondisi dan status barang" },
       { title: "Edit Barang", content: "✏️ Akses: Admin only\n\nBuka detail barang, lalu klik tombol 'Edit'. Anda dapat mengubah semua informasi termasuk spesifikasi, kondisi, ruangan, dan foto." },
       { title: "Import dari Excel", content: "📥 Akses: Admin only\n\nUntuk import data dalam jumlah banyak:\n1. Buka menu 'Import Excel' di sidebar\n2. Download template Excel yang disediakan\n3. Isi data sesuai format template\n4. Upload file Excel/CSV\n5. Sistem akan memvalidasi data\n6. Klik 'Import' untuk menyimpan data valid\n\nPastikan nama Kategori dan Ruangan sudah terdaftar di sistem." },
-      { title: "Melihat Detail Barang", content: "🔍 Akses: Semua pengguna\n\nKlik nama barang di daftar inventaris untuk melihat detail lengkap:\n• Informasi umum (kode, merk, model, serial number)\n• Spesifikasi teknis (CPU, RAM, Storage, VGA, dll)\n• Foto barang\n• QR Code unik\n• Riwayat perbaikan terkait\n• Software yang terinstal" },
+      { title: "Melihat Detail Barang", content: "🔍 Akses: Semua pengguna\n\nKlik nama barang di daftar inventaris untuk melihat detail lengkap:\n• Informasi umum (kode, merk, model, serial number)\n• Spesifikasi teknis (CPU, RAM, Storage, VGA, dll)\n• Foto barang (jika sudah di-upload)\n• QR Code unik\n• Riwayat perbaikan terkait\n• Software yang terinstal" },
+      { title: "Print Detail Barang", content: "🖨️ Akses: Semua pengguna\n\nDi halaman detail barang, klik tombol 'Print' di bagian atas. Hasil cetak meliputi:\n• Foto barang\n• Informasi umum lengkap\n• Spesifikasi teknis\n• Riwayat perbaikan" },
     ],
   },
   {
@@ -48,9 +50,9 @@ const chapters = [
   {
     title: "BAB 6: QR Code",
     sections: [
-      { title: "Mencetak QR Code", content: "🖨️ Akses: Semua pengguna\n\nBuka menu 'Cetak QR' di sidebar. Pilih barang yang ingin dicetak QR-nya, atur ukuran label, lalu klik 'Cetak'." },
-      { title: "Scan QR Code", content: "📷 Akses: Semua pengguna\n\nBuka menu 'Scan QR' di sidebar atau arahkan kamera HP ke QR Code pada barang. Browser akan membuka halaman detail barang secara otomatis." },
-      { title: "Akses Publik via QR", content: "🌐 QR Code dapat diakses tanpa login (jika diaktifkan di Pengaturan oleh Admin). Pengguna publik bisa melihat detail barang dan melaporkan kerusakan." },
+      { title: "Mencetak QR Code", content: "🖨️ Akses: Semua pengguna\n\nBuka menu 'Cetak QR' di sidebar. Pilih barang yang ingin dicetak QR-nya, atur ukuran label (2×2, 3×3, atau 4×4 cm), lalu klik 'Cetak'. Anda juga bisa mencetak QR dari halaman detail barang." },
+      { title: "Scan QR Code", content: "📷 Akses: Semua pengguna\n\nBuka menu 'Scan QR' di sidebar, klik 'Mulai Scan', lalu arahkan kamera ke QR Code pada barang. Anda juga bisa mengarahkan kamera HP langsung ke QR Code — browser akan membuka halaman detail barang secara otomatis." },
+      { title: "Akses Publik via QR", content: "🌐 QR Code dapat diakses tanpa login. Halaman publik menampilkan:\n• Foto barang (jika tersedia)\n• Informasi umum (kode, nama, merk, model)\n• Kondisi & status barang\n• Spesifikasi teknis lengkap\n• Riwayat perbaikan\n\nTampilan dioptimalkan untuk perangkat mobile." },
     ],
   },
   {
