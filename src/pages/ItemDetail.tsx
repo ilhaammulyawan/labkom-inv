@@ -10,6 +10,7 @@ import { ConditionBadge, StatusBadge, MaintenanceBadge } from "@/components/Cond
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
 import { ArrowLeft, Edit, Printer, Monitor, Cpu, HardDrive, Wifi, Calendar, MapPin, Wrench, Trash2 } from "lucide-react";
+import { useRef } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
