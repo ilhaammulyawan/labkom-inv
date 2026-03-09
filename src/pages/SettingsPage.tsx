@@ -86,6 +86,8 @@ const SettingsPage = () => {
         institution_address: institutionAddress,
         lab_manager: labManager,
         lab_manager_nip: labManagerNip,
+        principal_name: principalName,
+        principal_nip: principalNip,
         phone,
         email,
         report_header: reportHeader,
