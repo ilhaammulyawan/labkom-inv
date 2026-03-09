@@ -151,21 +151,28 @@ const InventoryList = () => {
         </div>
       </div>
 
-      {/* Hidden print content */}
-      <div className="print-area" style={{display:'none'}}>
-        <style>{`
-          @media print {
-            .print-area { display: block !important; font-family: 'Segoe UI', sans-serif; color: #111; }
-            .print-area h1 { font-size: 18px; margin: 0 0 4px; }
-            .print-area .print-sub { color: #666; font-size: 12px; margin-bottom: 12px; }
-            .print-area table { width: 100%; border-collapse: collapse; font-size: 11px; }
-            .print-area th { background: #f0f0f0; text-align: left; padding: 6px 8px; font-weight: 600; border-bottom: 2px solid #ddd; }
-            .print-area td { padding: 5px 8px; border-bottom: 1px solid #eee; }
-            .print-area .mono { font-family: monospace; }
-          }
-        `}</style>
-        <h1>Daftar Inventaris Barang</h1>
-        <p className="print-sub">Total: {filtered.length} barang • Dicetak: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+       {/* Hidden print content */}
+       <div className="print-area" style={{display:'none'}}>
+         <style>{`
+           @media print {
+             .print-area { display: block !important; font-family: 'Segoe UI', sans-serif; color: #111; }
+             .print-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; border-bottom: 2px solid #333; padding-bottom: 12px; }
+             .print-logo { max-width: 80px; max-height: 80px; object-fit: contain; }
+             .print-area h1 { font-size: 18px; margin: 0 0 4px; }
+             .print-area .print-sub { color: #666; font-size: 12px; margin-bottom: 12px; }
+             .print-area table { width: 100%; border-collapse: collapse; font-size: 11px; }
+             .print-area th { background: #f0f0f0; text-align: left; padding: 6px 8px; font-weight: 600; border-bottom: 2px solid #ddd; }
+             .print-area td { padding: 5px 8px; border-bottom: 1px solid #eee; }
+             .print-area .mono { font-family: monospace; }
+           }
+         `}</style>
+         <div className="print-header">
+           {settings?.app_logo && <img className="print-logo" src={settings.app_logo} alt="Logo" />}
+           <div>
+             <h1>Daftar Inventaris Barang</h1>
+             <p className="print-sub">Total: {filtered.length} barang • Dicetak: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+           </div>
+         </div>
         <table>
           <thead>
             <tr>
