@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRooms, useCreateRoom, useUpdateRoom, useDeleteRoom, Room } from "@/hooks/useRooms";
+import { useUserRole } from "@/hooks/useUserRole";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +11,7 @@ import { toast } from "sonner";
 
 const ManageRooms = () => {
   const { data: rooms, isLoading } = useRooms();
+  const { isAdmin } = useUserRole();
   const createMut = useCreateRoom();
   const updateMut = useUpdateRoom();
   const deleteMut = useDeleteRoom();
@@ -72,9 +74,11 @@ const ManageRooms = () => {
           </h1>
           <p className="text-sm text-muted-foreground">Tambah, edit, atau hapus ruangan</p>
         </div>
-        <Button onClick={openCreate} size="sm">
-          <Plus className="mr-2 h-4 w-4" /> Tambah
-        </Button>
+        {isAdmin && (
+          <Button onClick={openCreate} size="sm">
+            <Plus className="mr-2 h-4 w-4" /> Tambah
+          </Button>
+        )}
       </div>
 
       <div className="kpi-card">
@@ -95,14 +99,16 @@ const ManageRooms = () => {
                     <p className="text-[10px] text-muted-foreground">{room.location || "—"}</p>
                   </div>
                 </div>
-                <div className="flex gap-1">
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(room)}>
-                    <Pencil className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => { setDeleting(room); setDeleteDialogOpen(true); }}>
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
+                {isAdmin && (
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(room)}>
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => { setDeleting(room); setDeleteDialogOpen(true); }}>
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

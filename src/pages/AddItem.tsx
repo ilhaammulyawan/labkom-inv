@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useCategories } from "@/hooks/useCategories";
 import { useRooms } from "@/hooks/useRooms";
 import { useInsertItem, useItems, type ItemInsert } from "@/hooks/useItems";
+import { useUserRole } from "@/hooks/useUserRole";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,8 +27,17 @@ const categoryPrefixMap: Record<string, string> = {
 
 const AddItem = () => {
   const navigate = useNavigate();
+  const { isAdmin, isLoading: roleLoading } = useUserRole();
   const { data: categories = [] } = useCategories();
   const { data: rooms = [] } = useRooms();
+
+  // Redirect non-admin users
+  useEffect(() => {
+    if (!roleLoading && !isAdmin) {
+      toast.error("Akses ditolak", { description: "Hanya admin yang dapat menambah barang" });
+      navigate("/inventory");
+    }
+  }, [isAdmin, roleLoading, navigate]);
   const { data: items = [] } = useItems();
   const insertItem = useInsertItem();
 

@@ -3,6 +3,7 @@ import {
   BookOpen, Settings, Monitor, LogOut, Tag, MapPin, FileSpreadsheet,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAppSettings } from "@/hooks/useAppSettings";
@@ -13,19 +14,20 @@ import {
   SidebarHeader, SidebarFooter, useSidebar,
 } from "@/components/ui/sidebar";
 
-const mainNav = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "Inventaris", url: "/inventory", icon: Package },
-  { title: "Tambah Barang", url: "/inventory/add", icon: PlusCircle },
-  { title: "Import Excel", url: "/inventory/import", icon: FileSpreadsheet },
-  { title: "Perbaikan", url: "/maintenance", icon: Wrench },
-  { title: "Scan QR", url: "/scan-qr", icon: QrCode },
-  { title: "Cetak QR", url: "/qr-print", icon: QrCode },
-  { title: "Laporan", url: "/reports", icon: FileText },
-  { title: "Kategori", url: "/categories", icon: Tag },
-  { title: "Ruangan", url: "/rooms", icon: MapPin },
-  { title: "Buku Panduan", url: "/guide", icon: BookOpen },
-  { title: "Pengaturan", url: "/settings", icon: Settings },
+// Define nav items with admin flag
+const allNavItems = [
+  { title: "Dashboard", url: "/", icon: LayoutDashboard, adminOnly: false },
+  { title: "Inventaris", url: "/inventory", icon: Package, adminOnly: false },
+  { title: "Tambah Barang", url: "/inventory/add", icon: PlusCircle, adminOnly: true },
+  { title: "Import Excel", url: "/inventory/import", icon: FileSpreadsheet, adminOnly: true },
+  { title: "Perbaikan", url: "/maintenance", icon: Wrench, adminOnly: false },
+  { title: "Scan QR", url: "/scan-qr", icon: QrCode, adminOnly: false },
+  { title: "Cetak QR", url: "/qr-print", icon: QrCode, adminOnly: false },
+  { title: "Laporan", url: "/reports", icon: FileText, adminOnly: false },
+  { title: "Kategori", url: "/categories", icon: Tag, adminOnly: true },
+  { title: "Ruangan", url: "/rooms", icon: MapPin, adminOnly: true },
+  { title: "Buku Panduan", url: "/guide", icon: BookOpen, adminOnly: false },
+  { title: "Pengaturan", url: "/settings", icon: Settings, adminOnly: true },
 ];
 
 export function AppSidebar() {
@@ -34,9 +36,13 @@ export function AppSidebar() {
   const isMobile = useIsMobile();
   const location = useLocation();
   const { logout, username } = useAuth();
+  const { isAdmin } = useUserRole();
   const { logoUrl, settings } = useAppSettings();
   const appName = settings["app_name"] || "SiiLaKu";
   const appSubtitle = settings["app_subtitle"] || "Inventaris Lab Komputer";
+
+  // Filter nav items based on role
+  const mainNav = allNavItems.filter(item => !item.adminOnly || isAdmin);
 
   const isActive = (path: string) => {
     if (path === "/") return location.pathname === "/";

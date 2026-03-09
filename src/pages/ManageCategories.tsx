@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory, Category } from "@/hooks/useCategories";
+import { useUserRole } from "@/hooks/useUserRole";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +17,7 @@ const iconOptions = [
 
 const ManageCategories = () => {
   const { data: categories, isLoading } = useCategories();
+  const { isAdmin } = useUserRole();
   const createMut = useCreateCategory();
   const updateMut = useUpdateCategory();
   const deleteMut = useDeleteCategory();
@@ -78,9 +80,11 @@ const ManageCategories = () => {
           </h1>
           <p className="text-sm text-muted-foreground">Tambah, edit, atau hapus kategori barang</p>
         </div>
-        <Button onClick={openCreate} size="sm">
-          <Plus className="mr-2 h-4 w-4" /> Tambah
-        </Button>
+        {isAdmin && (
+          <Button onClick={openCreate} size="sm">
+            <Plus className="mr-2 h-4 w-4" /> Tambah
+          </Button>
+        )}
       </div>
 
       <div className="kpi-card">
@@ -101,14 +105,16 @@ const ManageCategories = () => {
                     <p className="text-[10px] text-muted-foreground">Icon: {cat.icon}</p>
                   </div>
                 </div>
-                <div className="flex gap-1">
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(cat)}>
-                    <Pencil className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => { setDeleting(cat); setDeleteDialogOpen(true); }}>
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
+                {isAdmin && (
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(cat)}>
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => { setDeleting(cat); setDeleteDialogOpen(true); }}>
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

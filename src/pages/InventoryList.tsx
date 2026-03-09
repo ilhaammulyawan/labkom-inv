@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useItems } from "@/hooks/useItems";
 import { useCategories } from "@/hooks/useCategories";
 import { useRooms } from "@/hooks/useRooms";
+import { useUserRole } from "@/hooks/useUserRole";
 import { ConditionBadge, StatusBadge } from "@/components/ConditionBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ const InventoryList = () => {
   const { data: items = [], isLoading } = useItems();
   const { data: categories = [] } = useCategories();
   const { data: rooms = [] } = useRooms();
+  const { isAdmin } = useUserRole();
 
   const getCategoryName = (id: string | null) => categories.find(c => c.id === id)?.name || 'Unknown';
   const getRoomName = (id: string | null) => rooms.find(r => r.id === id)?.name || 'Unknown';
@@ -53,9 +55,11 @@ const InventoryList = () => {
           <h1 className="text-2xl font-bold tracking-tight">Inventaris</h1>
           <p className="text-sm text-muted-foreground">{filtered.length} dari {items.length} barang</p>
         </div>
-        <Button onClick={() => navigate("/inventory/add")} className="gradient-primary text-primary-foreground border-0 shadow-md">
-          <PlusCircle className="mr-2 h-4 w-4" /> Tambah Barang
-        </Button>
+        {isAdmin && (
+          <Button onClick={() => navigate("/inventory/add")} className="gradient-primary text-primary-foreground border-0 shadow-md">
+            <PlusCircle className="mr-2 h-4 w-4" /> Tambah Barang
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">

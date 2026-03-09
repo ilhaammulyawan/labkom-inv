@@ -4,6 +4,7 @@ import { useItem, useDeleteItem } from "@/hooks/useItems";
 import { useItemMaintenanceRecords } from "@/hooks/useMaintenance";
 import { useCategories } from "@/hooks/useCategories";
 import { useRooms } from "@/hooks/useRooms";
+import { useUserRole } from "@/hooks/useUserRole";
 import { formatCurrency } from "@/lib/mock-data";
 import { ConditionBadge, StatusBadge, MaintenanceBadge } from "@/components/ConditionBadge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ const ItemDetail = () => {
   const { data: itemMaintenance = [] } = useItemMaintenanceRecords(id);
   const { data: categories = [] } = useCategories();
   const { data: rooms = [] } = useRooms();
+  const { isAdmin } = useUserRole();
   const deleteItem = useDeleteItem();
 
   const [editOpen, setEditOpen] = useState(false);
@@ -81,12 +83,16 @@ const ItemDetail = () => {
           <h1 className="text-xl font-bold tracking-tight">{item.name}</h1>
           <p className="text-sm text-muted-foreground font-mono">{item.inventory_code}</p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
-          <Edit className="mr-2 h-3.5 w-3.5" /> Edit
-        </Button>
-        <Button variant="outline" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30" onClick={() => setDeleteOpen(true)}>
-          <Trash2 className="mr-2 h-3.5 w-3.5" /> Hapus
-        </Button>
+        {isAdmin && (
+          <>
+            <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
+              <Edit className="mr-2 h-3.5 w-3.5" /> Edit
+            </Button>
+            <Button variant="outline" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30" onClick={() => setDeleteOpen(true)}>
+              <Trash2 className="mr-2 h-3.5 w-3.5" /> Hapus
+            </Button>
+          </>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
