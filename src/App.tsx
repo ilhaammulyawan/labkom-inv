@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import InventoryList from "./pages/InventoryList";
 import ItemDetail from "./pages/ItemDetail";
 import AddItem from "./pages/AddItem";
+import ImportExcel from "./pages/ImportExcel";
 import Maintenance from "./pages/Maintenance";
 import QRPrint from "./pages/QRPrint";
 import ScanQR from "./pages/ScanQR";
@@ -43,6 +44,7 @@ function ProtectedRoutes() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/inventory" element={<InventoryList />} />
         <Route path="/inventory/add" element={<AddItem />} />
+        <Route path="/inventory/import" element={<ImportExcel />} />
         <Route path="/inventory/:id" element={<ItemDetail />} />
         <Route path="/maintenance" element={<Maintenance />} />
         <Route path="/scan-qr" element={<ScanQR />} />

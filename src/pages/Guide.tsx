@@ -29,6 +29,7 @@ const chapters = [
     sections: [
       { title: "Melihat Daftar Barang", content: "Buka menu 'Inventaris' di sidebar. Gunakan fitur pencarian dan filter kategori/ruangan/kondisi untuk menemukan barang tertentu." },
       { title: "Menambah Barang", content: "Klik 'Tambah Barang' dari sidebar atau halaman Inventaris. Isi form:\n• Pilih kategori (PC, Monitor, Printer, dll)\n• Kode inventaris otomatis ter-generate\n• Isi spesifikasi sesuai jenis barang\n• Pilih ruangan penempatan\n• Tentukan kondisi dan status barang" },
+      { title: "Import dari Excel", content: "Untuk import data dalam jumlah banyak:\n1. Buka menu 'Import Excel' di sidebar\n2. Download template Excel yang disediakan\n3. Isi data sesuai format template\n4. Upload file Excel/CSV\n5. Sistem akan memvalidasi data\n6. Klik 'Import' untuk menyimpan data valid\n\nPastikan nama Kategori dan Ruangan sudah terdaftar di sistem." },
       { title: "Melihat Detail Barang", content: "Klik nama barang di daftar inventaris untuk melihat detail lengkap:\n• Informasi umum (kode, merk, model, serial number)\n• Spesifikasi teknis (CPU, RAM, Storage, VGA, dll)\n• QR Code unik untuk barang tersebut\n• Riwayat perbaikan terkait" },
     ],
   },
