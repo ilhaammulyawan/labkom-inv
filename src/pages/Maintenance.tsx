@@ -13,6 +13,7 @@ const Maintenance = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const { data: items = [] } = useItems();
   const { data: maintenanceRecords = [], isLoading } = useMaintenanceRecords();
+  const { isAdmin } = useUserRole();
 
   const getItemById = (id: string) => items.find(i => i.id === id);
   const filtered = maintenanceRecords.filter(m => statusFilter === "all" || m.status === statusFilter);
