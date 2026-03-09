@@ -110,27 +110,31 @@ const ItemDetail = () => {
 
   return (
     <div className="space-y-6 animate-fade-in max-w-5xl">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/inventory")}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-xl font-bold tracking-tight">{item.name}</h1>
-          <p className="text-sm text-muted-foreground font-mono">{item.inventory_code}</p>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={() => navigate("/inventory")}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl font-bold tracking-tight truncate">{item.name}</h1>
+            <p className="text-sm text-muted-foreground font-mono">{item.inventory_code}</p>
+          </div>
         </div>
-        {isAdmin && (
-          <>
-            <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
-              <Edit className="mr-2 h-3.5 w-3.5" /> Edit
-            </Button>
-            <Button variant="outline" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30" onClick={() => setDeleteOpen(true)}>
-              <Trash2 className="mr-2 h-3.5 w-3.5" /> Hapus
-            </Button>
-          </>
-        )}
-        <Button variant="outline" size="sm" onClick={handlePrintDetail}>
-          <Printer className="mr-2 h-3.5 w-3.5" /> Print
-        </Button>
+        <div className="flex flex-wrap gap-2 pl-1">
+          {isAdmin && (
+            <>
+              <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
+                <Edit className="mr-2 h-3.5 w-3.5" /> Edit
+              </Button>
+              <Button variant="outline" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30" onClick={() => setDeleteOpen(true)}>
+                <Trash2 className="mr-2 h-3.5 w-3.5" /> Hapus
+              </Button>
+            </>
+          )}
+          <Button variant="outline" size="sm" onClick={handlePrintDetail}>
+            <Printer className="mr-2 h-3.5 w-3.5" /> Print
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
