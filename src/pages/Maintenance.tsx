@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useItems } from "@/hooks/useItems";
 import { useMaintenanceRecords } from "@/hooks/useMaintenance";
+import { useUserRole } from "@/hooks/useUserRole";
 import { formatCurrency } from "@/lib/mock-data";
 import { MaintenanceBadge } from "@/components/ConditionBadge";
 import { Button } from "@/components/ui/button";
