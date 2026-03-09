@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, PlusCircle, Eye, Printer } from "lucide-react";
-import { useRef } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const InventoryList = () => {
   const navigate = useNavigate();
@@ -25,6 +25,7 @@ const InventoryList = () => {
   const { data: rooms = [] } = useRooms();
   const { isAdmin } = useUserRole();
   const { settings } = useAppSettings();
+  const { t } = useLanguage();
 
   const getCategoryName = (id: string | null) => categories.find(c => c.id === id)?.name || 'Unknown';
   const getRoomName = (id: string | null) => rooms.find(r => r.id === id)?.name || 'Unknown';
@@ -32,7 +33,6 @@ const InventoryList = () => {
   const handlePrintTable = () => {
     window.print();
   };
-
 
   const filtered = items.filter(item => {
     const matchSearch = search === "" || item.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -60,16 +60,16 @@ const InventoryList = () => {
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Inventaris</h1>
-          <p className="text-sm text-muted-foreground">{filtered.length} dari {items.length} barang</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t("inventoryTitle")}</h1>
+          <p className="text-sm text-muted-foreground">{filtered.length} {t("itemsOf")} {items.length} {t("items")}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handlePrintTable} disabled={filtered.length === 0}>
-            <Printer className="mr-2 h-4 w-4" /> Print
+            <Printer className="mr-2 h-4 w-4" /> {t("print")}
           </Button>
           {isAdmin && (
             <Button onClick={() => navigate("/inventory/add")} className="gradient-primary text-primary-foreground border-0 shadow-md">
-              <PlusCircle className="mr-2 h-4 w-4" /> Tambah Barang
+              <PlusCircle className="mr-2 h-4 w-4" /> {t("addItemBtn")}
             </Button>
           )}
         </div>
@@ -78,29 +78,29 @@ const InventoryList = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Cari nama, kode, merk..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t("searchPlaceholder")} value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger><SelectValue placeholder="Kategori" /></SelectTrigger>
+          <SelectTrigger><SelectValue placeholder={t("category")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Semua Kategori</SelectItem>
+            <SelectItem value="all">{t("allCategories")}</SelectItem>
             {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={conditionFilter} onValueChange={setConditionFilter}>
-          <SelectTrigger><SelectValue placeholder="Kondisi" /></SelectTrigger>
+          <SelectTrigger><SelectValue placeholder={t("condition")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Semua Kondisi</SelectItem>
-            <SelectItem value="Baik">Baik</SelectItem>
-            <SelectItem value="Rusak Ringan">Rusak Ringan</SelectItem>
-            <SelectItem value="Rusak Berat">Rusak Berat</SelectItem>
-            <SelectItem value="Diperbaiki">Diperbaiki</SelectItem>
+            <SelectItem value="all">{t("allConditions")}</SelectItem>
+            <SelectItem value="Baik">{t("condGood")}</SelectItem>
+            <SelectItem value="Rusak Ringan">{t("condLightDamage")}</SelectItem>
+            <SelectItem value="Rusak Berat">{t("condHeavyDamage")}</SelectItem>
+            <SelectItem value="Diperbaiki">{t("condRepaired")}</SelectItem>
           </SelectContent>
         </Select>
         <Select value={roomFilter} onValueChange={setRoomFilter}>
-          <SelectTrigger><SelectValue placeholder="Ruangan" /></SelectTrigger>
+          <SelectTrigger><SelectValue placeholder={t("room")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Semua Ruangan</SelectItem>
+            <SelectItem value="all">{t("allRooms")}</SelectItem>
             {rooms.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}
           </SelectContent>
         </Select>
@@ -111,14 +111,14 @@ const InventoryList = () => {
           <table className="w-full text-xs">
             <thead>
               <tr className="bg-muted/50">
-                <th className="text-left py-3 px-4 font-semibold text-muted-foreground">Kode</th>
-                <th className="text-left py-3 px-4 font-semibold text-muted-foreground">Nama Barang</th>
-                <th className="text-left py-3 px-4 font-semibold text-muted-foreground hidden md:table-cell">Merk</th>
-                <th className="text-left py-3 px-4 font-semibold text-muted-foreground hidden lg:table-cell">Kategori</th>
-                <th className="text-left py-3 px-4 font-semibold text-muted-foreground hidden lg:table-cell">Ruangan</th>
-                <th className="text-left py-3 px-4 font-semibold text-muted-foreground">Kondisi</th>
-                <th className="text-left py-3 px-4 font-semibold text-muted-foreground hidden sm:table-cell">Status</th>
-                <th className="text-center py-3 px-4 font-semibold text-muted-foreground">Aksi</th>
+                <th className="text-left py-3 px-4 font-semibold text-muted-foreground">{t("code")}</th>
+                <th className="text-left py-3 px-4 font-semibold text-muted-foreground">{t("itemName")}</th>
+                <th className="text-left py-3 px-4 font-semibold text-muted-foreground hidden md:table-cell">{t("brand")}</th>
+                <th className="text-left py-3 px-4 font-semibold text-muted-foreground hidden lg:table-cell">{t("category")}</th>
+                <th className="text-left py-3 px-4 font-semibold text-muted-foreground hidden lg:table-cell">{t("room")}</th>
+                <th className="text-left py-3 px-4 font-semibold text-muted-foreground">{t("condition")}</th>
+                <th className="text-left py-3 px-4 font-semibold text-muted-foreground hidden sm:table-cell">{t("status")}</th>
+                <th className="text-center py-3 px-4 font-semibold text-muted-foreground">{t("actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -144,7 +144,7 @@ const InventoryList = () => {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={8} className="py-12 text-center text-muted-foreground">Tidak ada barang ditemukan</td></tr>
+                <tr><td colSpan={8} className="py-12 text-center text-muted-foreground">{t("noItemsFound")}</td></tr>
               )}
             </tbody>
           </table>
@@ -169,14 +169,14 @@ const InventoryList = () => {
          <div className="print-header">
            {settings?.app_logo && <img className="print-logo" src={settings.app_logo} alt="Logo" />}
            <div>
-             <h1>Daftar Inventaris Barang</h1>
-             <p className="print-sub">Total: {filtered.length} barang • Dicetak: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+             <h1>{t("inventoryListTitle")}</h1>
+             <p className="print-sub">{t("total")}: {filtered.length} {t("items")} • {t("printedAt")}: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
            </div>
          </div>
         <table>
           <thead>
             <tr>
-              <th>No</th><th>Kode</th><th>Nama Barang</th><th>Merk</th><th>Kategori</th><th>Ruangan</th><th>Kondisi</th><th>Status</th>
+              <th>No</th><th>{t("code")}</th><th>{t("itemName")}</th><th>{t("brand")}</th><th>{t("category")}</th><th>{t("room")}</th><th>{t("condition")}</th><th>{t("status")}</th>
             </tr>
           </thead>
           <tbody>

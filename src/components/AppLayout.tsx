@@ -4,6 +4,8 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { User, LogOut, Settings } from "lucide-react";
 import { NotificationPopover } from "@/components/NotificationPopover";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -17,6 +19,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, logout, username } = useAuth();
   const { data: profile } = useProfile();
   const { isAdmin } = useUserRole();
+  const { t } = useLanguage();
   const [profileOpen, setProfileOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -38,6 +41,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <SidebarTrigger className="h-8 w-8 md:h-9 md:w-9" />
             </div>
             <div className="flex items-center gap-1 md:gap-2">
+              <LanguageSwitcher />
               <ThemeToggle />
               <NotificationPopover />
               <div className="pl-1 md:pl-2 border-l border-border">
@@ -58,18 +62,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   </DropdownMenuTrigger>
                    <DropdownMenuContent align="end" className="w-48">
                      <DropdownMenuItem onClick={() => setProfileOpen(true)}>
-                       <User className="mr-2 h-4 w-4" /> Edit Profil
+                       <User className="mr-2 h-4 w-4" /> {t("editProfile")}
                      </DropdownMenuItem>
                      {isAdmin && (
                        <>
                          <DropdownMenuItem onClick={() => navigate("/settings")}>
-                           <Settings className="mr-2 h-4 w-4" /> Pengaturan
+                           <Settings className="mr-2 h-4 w-4" /> {t("settings")}
                          </DropdownMenuItem>
                          <DropdownMenuSeparator />
                        </>
                      )}
                      <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
-                       <LogOut className="mr-2 h-4 w-4" /> Keluar
+                       <LogOut className="mr-2 h-4 w-4" /> {t("logout")}
                      </DropdownMenuItem>
                    </DropdownMenuContent>
                 </DropdownMenu>
