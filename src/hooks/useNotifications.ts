@@ -36,7 +36,7 @@ export function useNotifications() {
           description: s.title,
           date: s.next_due_date,
           severity: "destructive",
-          link: `/maintenance-schedule?highlight=${s.id}`,
+          link: `/maintenance/schedule?highlight=${s.id}`,
           entityId: s.id,
         });
       });
