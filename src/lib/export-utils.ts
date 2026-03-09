@@ -273,9 +273,9 @@ export function exportNilaiExcel(items: InventoryItem[], cats: Category[], rooms
   downloadXlsx(ws, `Laporan_Nilai_Aset_${ts()}.xlsx`);
 }
 
-export function exportNilaiPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+export async function exportNilaiPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
   const doc = new jsPDF();
-  const startY = pdfHeader(doc, "LAPORAN NILAI ASET INVENTARIS", settings);
+  const startY = await pdfHeader(doc, "LAPORAN NILAI ASET INVENTARIS", settings);
   const total = items.reduce((s, i) => s + (i.price ?? 0), 0);
 
   doc.setFontSize(10);
