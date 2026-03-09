@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Package, PlusCircle, Wrench, FileText, QrCode,
-  BookOpen, Settings, Monitor, LogOut, Tag, MapPin,
+  BookOpen, Settings, Monitor, LogOut, Tag, MapPin, FileSpreadsheet,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { NavLink } from "@/components/NavLink";
@@ -17,6 +17,7 @@ const mainNav = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Inventaris", url: "/inventory", icon: Package },
   { title: "Tambah Barang", url: "/inventory/add", icon: PlusCircle },
+  { title: "Import Excel", url: "/inventory/import", icon: FileSpreadsheet },
   { title: "Perbaikan", url: "/maintenance", icon: Wrench },
   { title: "Scan QR", url: "/scan-qr", icon: QrCode },
   { title: "Cetak QR", url: "/qr-print", icon: QrCode },

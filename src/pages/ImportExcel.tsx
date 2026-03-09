@@ -461,9 +461,9 @@ const ImportExcel = () => {
       )}
 
       {/* Info Box */}
-      <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950">
-        <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-2">💡 Tips Import</h4>
-        <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1 list-disc list-inside">
+      <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+        <h4 className="text-sm font-semibold text-primary mb-2">💡 Tips Import</h4>
+        <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
           <li>Gunakan template yang disediakan untuk menghindari error format</li>
           <li>Pastikan nama Kategori dan Ruangan sudah terdaftar di sistem</li>
           <li>Kondisi harus diisi dengan: Baik, Rusak Ringan, Rusak Berat, atau Diperbaiki</li>

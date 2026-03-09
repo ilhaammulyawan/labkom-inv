@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import InventoryList from "./pages/InventoryList";
 import ItemDetail from "./pages/ItemDetail";
 import AddItem from "./pages/AddItem";
+import ImportExcel from "./pages/ImportExcel";
 import Maintenance from "./pages/Maintenance";
 import QRPrint from "./pages/QRPrint";
 import ScanQR from "./pages/ScanQR";
