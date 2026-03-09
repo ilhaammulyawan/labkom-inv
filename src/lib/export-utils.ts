@@ -104,9 +104,9 @@ export function exportInventarisExcel(items: InventoryItem[], cats: Category[], 
   downloadXlsx(ws, `Laporan_Inventaris_${ts()}.xlsx`);
 }
 
-export function exportInventarisPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+export async function exportInventarisPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN INVENTARIS LABORATORIUM", settings);
+  const startY = await pdfHeader(doc, "LAPORAN INVENTARIS LABORATORIUM", settings);
   autoTable(doc, {
     startY,
     head: [["No", "Kode", "Nama Barang", "Merk", "Kategori", "Ruangan", "Kondisi", "Status", "Harga"]],
