@@ -10,6 +10,7 @@ import { ConditionBadge, StatusBadge, MaintenanceBadge } from "@/components/Cond
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
 import { ArrowLeft, Edit, Printer, Monitor, Cpu, HardDrive, Wifi, Calendar, MapPin, Wrench, Trash2 } from "lucide-react";
+import { useRef } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
@@ -27,6 +28,40 @@ const ItemDetail = () => {
 
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
+
+  const handlePrintDetail = () => {
+    const printContent = printRef.current;
+    if (!printContent) return;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    printWindow.document.write(`
+      <html><head><title>Detail Barang - ${item?.name || ''}</title>
+      <style>
+        body { font-family: 'Segoe UI', sans-serif; padding: 24px; color: #1a1a2e; }
+        h1 { font-size: 18px; margin-bottom: 4px; }
+        .code { font-family: monospace; color: #555; font-size: 13px; }
+        .section { margin-top: 20px; border: 1px solid #ddd; border-radius: 8px; padding: 16px; }
+        .section h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .field label { font-size: 11px; color: #888; display: block; }
+        .field p { font-size: 13px; font-weight: 500; margin: 2px 0 0; }
+        .spec { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #f5f5f5; border-radius: 6px; font-size: 12px; }
+        .spec .label { color: #888; font-size: 10px; }
+        .spec .val { font-family: monospace; font-weight: 500; }
+        img { max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; }
+        .qr-section { text-align: center; margin-top: 16px; }
+        .header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .maintenance { padding: 8px 12px; background: #f9f9f9; border-radius: 6px; margin-bottom: 8px; font-size: 12px; }
+        @media print { body { padding: 0; } }
+      </style></head><body>
+    `);
+    printWindow.document.write(printContent.innerHTML);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => { printWindow.print(); printWindow.close(); }, 300);
+  };
 
   const getCategoryName = (cid: string | null) => categories.find(c => c.id === cid)?.name || 'Unknown';
   const getRoomName = (rid: string | null) => rooms.find(r => r.id === rid)?.name || 'Unknown';
@@ -93,6 +128,9 @@ const ItemDetail = () => {
             </Button>
           </>
         )}
+        <Button variant="outline" size="sm" onClick={handlePrintDetail}>
+          <Printer className="mr-2 h-3.5 w-3.5" /> Print
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -198,6 +236,57 @@ const ItemDetail = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Hidden print content */}
+      <div ref={printRef} className="hidden">
+        <div className="header">
+          <div>
+            <h1>{item.name}</h1>
+            <p className="code">{item.inventory_code}</p>
+          </div>
+          {item.image_url && <img src={item.image_url} alt={item.name} />}
+        </div>
+        <div className="section">
+          <h3>Informasi Umum</h3>
+          <div className="grid">
+            <div className="field"><label>Kategori</label><p>{getCategoryName(item.category_id)}</p></div>
+            <div className="field"><label>Merk / Model</label><p>{item.brand} {item.model}</p></div>
+            <div className="field"><label>Serial Number</label><p style={{fontFamily:'monospace'}}>{item.serial_number}</p></div>
+            <div className="field"><label>Ruangan</label><p>{getRoomName(item.room_id)}</p></div>
+            <div className="field"><label>Kondisi</label><p>{item.condition}</p></div>
+            <div className="field"><label>Status</label><p>{item.status}</p></div>
+            {item.year_acquired && <div className="field"><label>Tahun Perolehan</label><p>{item.year_acquired}</p></div>}
+            {item.price && <div className="field"><label>Harga</label><p>{formatCurrency(item.price)}</p></div>}
+            {item.last_service_date && <div className="field"><label>Service Terakhir</label><p>{item.last_service_date}</p></div>}
+            {item.notes && <div className="field"><label>Catatan</label><p>{item.notes}</p></div>}
+          </div>
+        </div>
+        {specs.length > 0 && (
+          <div className="section">
+            <h3>Spesifikasi Teknis</h3>
+            <div className="grid">
+              {specs.map(spec => (
+                <div key={spec.label} className="spec">
+                  <div><span className="label">{spec.label}</span><br/><span className="val">{spec.value}</span></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {itemMaintenance.length > 0 && (
+          <div className="section">
+            <h3>Riwayat Perbaikan</h3>
+            {itemMaintenance.map(m => (
+              <div key={m.id} className="maintenance">
+                <strong>{m.issue_date}</strong> — {m.status}<br/>
+                {m.description}
+                {m.action && <><br/>Tindakan: {m.action}</>}
+                <br/><small>Teknisi: {m.technician}{m.cost ? ` • Biaya: ${formatCurrency(m.cost)}` : ''}</small>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
