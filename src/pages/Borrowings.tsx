@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useItems } from "@/hooks/useItems";
 import { useBorrowings, useInsertBorrowing, useUpdateBorrowing, useDeleteBorrowing, type Borrowing, type BorrowingStatus } from "@/hooks/useBorrowings";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -14,6 +14,7 @@ import { HandCoins, PlusCircle, CheckCircle, XCircle, Undo2, Trash2, PackageChec
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
+import { useSearchParams } from "react-router-dom";
 
 const STATUS_COLORS: Record<BorrowingStatus, string> = {
   Menunggu: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
@@ -34,8 +35,12 @@ const STATUS_LABELS: Record<BorrowingStatus, string> = {
 };
 
 const BorrowingsPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const highlightId = searchParams.get("highlight");
+  const filterParam = searchParams.get("filter");
+
   const [formOpen, setFormOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState(filterParam || "all");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const { data: items = [] } = useItems();
   const { data: borrowings = [], isLoading } = useBorrowings();
@@ -45,6 +50,23 @@ const BorrowingsPage = () => {
   const updateMut = useUpdateBorrowing();
   const deleteMut = useDeleteBorrowing();
   const { toast } = useToast();
+  const highlightRef = useRef<HTMLDivElement>(null);
+
+  // Apply filter from URL
+  useEffect(() => {
+    if (filterParam) setStatusFilter(filterParam);
+  }, [filterParam]);
+
+  // Scroll to highlighted item
+  useEffect(() => {
+    if (highlightId && highlightRef.current && !isLoading) {
+      highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      const timer = setTimeout(() => {
+        setSearchParams({}, { replace: true });
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [highlightId, isLoading, setSearchParams]);
 
   // Form state
   const [fItemId, setFItemId] = useState("");
@@ -154,8 +176,13 @@ const BorrowingsPage = () => {
         {filtered.map(b => {
           const item = getItemById(b.item_id);
           const isOverdue = b.status === "Dipinjam" && b.expected_return_date < today;
+          const isHighlighted = highlightId === b.id;
           return (
-            <div key={b.id} className={`kpi-card space-y-3 ${isOverdue ? 'border-destructive/50' : ''}`}>
+            <div
+              key={b.id}
+              ref={isHighlighted ? highlightRef : undefined}
+              className={`kpi-card space-y-3 transition-all duration-500 ${isOverdue ? 'border-destructive/50' : ''} ${isHighlighted ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' : ''}`}
+            >
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-sm font-semibold">{item?.name || "Unknown"}</p>
@@ -178,14 +205,12 @@ const BorrowingsPage = () => {
 
               {/* Action buttons based on role and status */}
               <div className="flex flex-wrap gap-2 pt-1">
-                {/* User: can return item when status is Dipinjam and they own it */}
                 {b.status === "Dipinjam" && isOwner(b) && !isAdmin && (
                   <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => handleStatusChange(b, "Pengembalian")}>
                     <Undo2 className="h-3 w-3" /> Kembalikan Barang
                   </Button>
                 )}
 
-                {/* Admin actions */}
                 {isAdmin && (
                   <>
                     {b.status === "Menunggu" && (
