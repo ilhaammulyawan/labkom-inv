@@ -540,9 +540,9 @@ export function exportPerKategoriExcel(items: InventoryItem[], cats: Category[],
   downloadXlsx(ws, `Laporan_Per_Kategori_${ts()}.xlsx`);
 }
 
-export function exportPerKategoriPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+export async function exportPerKategoriPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN BARANG PER KATEGORI", settings);
+  const startY = await pdfHeader(doc, "LAPORAN BARANG PER KATEGORI", settings);
 
   const catCounts = cats.map(c => ({
     name: c.name,
