@@ -74,9 +74,11 @@ const ManageRooms = () => {
           </h1>
           <p className="text-sm text-muted-foreground">Tambah, edit, atau hapus ruangan</p>
         </div>
-        <Button onClick={openCreate} size="sm">
-          <Plus className="mr-2 h-4 w-4" /> Tambah
-        </Button>
+        {isAdmin && (
+          <Button onClick={openCreate} size="sm">
+            <Plus className="mr-2 h-4 w-4" /> Tambah
+          </Button>
+        )}
       </div>
 
       <div className="kpi-card">
