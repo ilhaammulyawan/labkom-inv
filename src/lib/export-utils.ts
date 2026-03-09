@@ -261,6 +261,7 @@ export async function exportKondisiPdf(items: InventoryItem[], cats: Category[],
     styles: { fontSize: 7 },
     headStyles: { fillColor: [41, 55, 76] },
   });
+  pdfSignature(doc, settings);
   doc.save(`Laporan_Kondisi_${ts()}.pdf`);
 }
 
