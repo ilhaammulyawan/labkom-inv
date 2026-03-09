@@ -79,17 +79,18 @@ const ScanQR = () => {
       </div>
 
       <div className="kpi-card overflow-hidden">
-        <div
-          id="qr-reader"
-          ref={containerRef}
-          className="w-full aspect-square rounded-lg overflow-hidden bg-muted flex items-center justify-center relative"
-        >
+        <div className="w-full aspect-square rounded-lg overflow-hidden bg-muted relative">
           {!scanning && !error && (
-            <div className="flex flex-col items-center gap-3 text-muted-foreground">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-muted-foreground z-10">
               <ScanLine className="h-12 w-12" />
               <p className="text-sm">Tekan tombol untuk mulai scan</p>
             </div>
           )}
+          <div
+            id="qr-reader"
+            ref={containerRef}
+            className="w-full h-full"
+          />
         </div>
 
         {error && (
