@@ -71,8 +71,6 @@ const InventoryList = () => {
     setTimeout(() => { printWindow.print(); printWindow.close(); }, 300);
   };
 
-  const getCategoryName = (id: string | null) => categories.find(c => c.id === id)?.name || 'Unknown';
-  const getRoomName = (id: string | null) => rooms.find(r => r.id === id)?.name || 'Unknown';
 
   const filtered = items.filter(item => {
     const matchSearch = search === "" || item.name.toLowerCase().includes(search.toLowerCase()) ||
