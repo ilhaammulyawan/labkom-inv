@@ -56,29 +56,47 @@ async function pdfHeader(doc: jsPDF, title: string, settings: Record<string, str
   const inst = settings["institution_name"] || "";
   const addr = settings["institution_address"] || "";
   const logoUrl = settings["app_logo"] || "";
-  let startX = 14;
-  let logoEndY = 0;
+  const pageW = doc.internal.pageSize.getWidth();
+  const centerX = pageW / 2;
+  let headerBottom = 30;
 
-  // Add logo if available
   if (logoUrl) {
     const logoData = await loadImageAsDataUrl(logoUrl);
     if (logoData) {
-      doc.addImage(logoData, "PNG", 14, 8, 20, 20);
-      startX = 38;
-      logoEndY = 28;
+      // Logo on the left, text centered on the page
+      doc.addImage(logoData, "PNG", 14, 8, 18, 18);
     }
   }
 
-  const pageW = doc.internal.pageSize.getWidth();
-  doc.setFontSize(14);
-  doc.text(inst, (pageW + startX - 14) / 2 + (startX - 14) / 2, 15, { align: "center" });
-  doc.setFontSize(9);
-  doc.text(addr, (pageW + startX - 14) / 2 + (startX - 14) / 2, 21, { align: "center" });
-  doc.setFontSize(12);
-  doc.text(title, pageW / 2, 30, { align: "center" });
+  // Institution name & address always centered on page
+  if (inst) {
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text(inst, centerX, 14, { align: "center" });
+  }
+  if (addr) {
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.text(addr, centerX, 19, { align: "center" });
+  }
+
+  // Separator line
+  doc.setDrawColor(50, 50, 50);
+  doc.setLineWidth(0.5);
+  doc.line(14, 23, pageW - 14, 23);
+
+  // Report title
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text(title, centerX, 29, { align: "center" });
+  doc.setFont("helvetica", "normal");
+
+  // Print date
   doc.setFontSize(8);
-  doc.text(`Dicetak: ${today()}`, startX, 37);
-  return 42;
+  doc.text(`Dicetak: ${today()}`, 14, 35);
+  headerBottom = 40;
+
+  return headerBottom;
 }
 
 // ══════════════════════════════════════════════
