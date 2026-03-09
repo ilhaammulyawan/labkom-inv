@@ -99,6 +99,45 @@ async function pdfHeader(doc: jsPDF, title: string, settings: Record<string, str
   return 42;
 }
 
+function pdfSignature(doc: jsPDF, settings: Record<string, string>) {
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const labManager = settings["lab_manager"] || "___________________";
+  const labNip = settings["lab_manager_nip"] || "";
+  const principal = settings["principal_name"] || "___________________";
+  const principalNip = settings["principal_nip"] || "";
+
+  const leftX = 30;
+  const rightX = pageW - 70;
+  const topY = pageH - 45;
+
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+
+  // Left: Pengelola Lab
+  doc.text("Mengetahui,", leftX, topY);
+  doc.text("Pengelola Laboratorium", leftX, topY + 5);
+  doc.text(labManager, leftX, topY + 25);
+  doc.setLineWidth(0.3);
+  doc.line(leftX, topY + 26, leftX + 50, topY + 26);
+  if (labNip) {
+    doc.setFontSize(8);
+    doc.text(`NIP. ${labNip}`, leftX, topY + 30);
+  }
+
+  // Right: Kepala Sekolah
+  doc.setFontSize(9);
+  doc.text("Menyetujui,", rightX, topY);
+  doc.text("Kepala Sekolah", rightX, topY + 5);
+  doc.text(principal, rightX, topY + 25);
+  doc.setLineWidth(0.3);
+  doc.line(rightX, topY + 26, rightX + 50, topY + 26);
+  if (principalNip) {
+    doc.setFontSize(8);
+    doc.text(`NIP. ${principalNip}`, rightX, topY + 30);
+  }
+}
+
 // ══════════════════════════════════════════════
 // 1. Laporan Inventaris
 // ══════════════════════════════════════════════
