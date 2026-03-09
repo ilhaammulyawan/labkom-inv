@@ -333,9 +333,9 @@ export function exportPeminjamanExcel(borrowings: Borrowing[], items: InventoryI
   downloadXlsx(ws, `Laporan_Peminjaman_${ts()}.xlsx`);
 }
 
-export function exportPeminjamanPdf(borrowings: Borrowing[], items: InventoryItem[], settings: Record<string, string>) {
+export async function exportPeminjamanPdf(borrowings: Borrowing[], items: InventoryItem[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN PEMINJAMAN BARANG", settings);
+  const startY = await pdfHeader(doc, "LAPORAN PEMINJAMAN BARANG", settings);
 
   const aktif = borrowings.filter((b) => b.status === "Dipinjam").length;
   const selesai = borrowings.filter((b) => b.status === "Dikembalikan").length;
