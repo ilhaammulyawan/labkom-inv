@@ -233,12 +233,9 @@ const ItemDetail = () => {
           }
         `}</style>
          <div className="print-header">
-          <div className="print-header-left">
-            {settings?.app_logo && <img className="print-logo" src={settings.app_logo} alt="Logo" />}
-            <div>
-              <h1>{item.name}</h1>
-              <p className="print-code">{item.inventory_code}</p>
-            </div>
+          <div>
+            <h1>{item.name}</h1>
+            <p className="print-code">{item.inventory_code}</p>
           </div>
           {item.image_url && <img className="print-img" src={item.image_url} alt={item.name} />}
         </div>
