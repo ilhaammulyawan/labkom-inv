@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { User, LogOut, Settings } from "lucide-react";
 import { NotificationPopover } from "@/components/NotificationPopover";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -37,6 +38,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <SidebarTrigger className="h-8 w-8 md:h-9 md:w-9" />
             </div>
             <div className="flex items-center gap-1 md:gap-2">
+              <ThemeToggle />
               <NotificationPopover />
               <div className="pl-1 md:pl-2 border-l border-border">
                 <DropdownMenu>
