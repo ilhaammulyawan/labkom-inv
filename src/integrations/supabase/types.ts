@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       app_settings: {
         Row: {
           id: string
@@ -34,6 +64,59 @@ export type Database = {
           value?: string
         }
         Relationships: []
+      }
+      borrowings: {
+        Row: {
+          actual_return_date: string | null
+          approved_by: string | null
+          borrow_date: string
+          borrower_id: string
+          borrower_name: string
+          created_at: string
+          expected_return_date: string
+          id: string
+          item_id: string
+          notes: string | null
+          purpose: string | null
+          status: Database["public"]["Enums"]["borrowing_status"]
+        }
+        Insert: {
+          actual_return_date?: string | null
+          approved_by?: string | null
+          borrow_date?: string
+          borrower_id: string
+          borrower_name: string
+          created_at?: string
+          expected_return_date: string
+          id?: string
+          item_id: string
+          notes?: string | null
+          purpose?: string | null
+          status?: Database["public"]["Enums"]["borrowing_status"]
+        }
+        Update: {
+          actual_return_date?: string | null
+          approved_by?: string | null
+          borrow_date?: string
+          borrower_id?: string
+          borrower_name?: string
+          created_at?: string
+          expected_return_date?: string
+          id?: string
+          item_id?: string
+          notes?: string | null
+          purpose?: string | null
+          status?: Database["public"]["Enums"]["borrowing_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "borrowings_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       categories: {
         Row: {
@@ -211,6 +294,53 @@ export type Database = {
           },
         ]
       }
+      maintenance_schedules: {
+        Row: {
+          assigned_technician: string | null
+          created_at: string
+          description: string | null
+          frequency: string
+          id: string
+          is_active: boolean
+          item_id: string
+          last_performed_date: string | null
+          next_due_date: string
+          title: string
+        }
+        Insert: {
+          assigned_technician?: string | null
+          created_at?: string
+          description?: string | null
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          item_id: string
+          last_performed_date?: string | null
+          next_due_date: string
+          title: string
+        }
+        Update: {
+          assigned_technician?: string | null
+          created_at?: string
+          description?: string | null
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          item_id?: string
+          last_performed_date?: string | null
+          next_due_date?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_schedules_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -256,6 +386,50 @@ export type Database = {
         }
         Relationships: []
       }
+      software_inventory: {
+        Row: {
+          created_at: string
+          expiry_date: string | null
+          id: string
+          item_id: string
+          license_key: string | null
+          license_type: string | null
+          notes: string | null
+          software_name: string
+          version: string | null
+        }
+        Insert: {
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          item_id: string
+          license_key?: string | null
+          license_type?: string | null
+          notes?: string | null
+          software_name: string
+          version?: string | null
+        }
+        Update: {
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          item_id?: string
+          license_key?: string | null
+          license_type?: string | null
+          notes?: string | null
+          software_name?: string
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "software_inventory_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -289,6 +463,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      borrowing_status:
+        | "Menunggu"
+        | "Disetujui"
+        | "Ditolak"
+        | "Dipinjam"
+        | "Dikembalikan"
       item_condition: "Baik" | "Rusak Ringan" | "Rusak Berat" | "Diperbaiki"
       item_status: "Aktif" | "Dipinjam" | "Dihapus"
       maintenance_status: "Antrian" | "Dalam Perbaikan" | "Selesai"
@@ -420,6 +600,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      borrowing_status: [
+        "Menunggu",
+        "Disetujui",
+        "Ditolak",
+        "Dipinjam",
+        "Dikembalikan",
+      ],
       item_condition: ["Baik", "Rusak Ringan", "Rusak Berat", "Diperbaiki"],
       item_status: ["Aktif", "Dipinjam", "Dihapus"],
       maintenance_status: ["Antrian", "Dalam Perbaikan", "Selesai"],
