@@ -28,6 +28,40 @@ const ItemDetail = () => {
 
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
+
+  const handlePrintDetail = () => {
+    const printContent = printRef.current;
+    if (!printContent) return;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    printWindow.document.write(`
+      <html><head><title>Detail Barang - ${item?.name || ''}</title>
+      <style>
+        body { font-family: 'Segoe UI', sans-serif; padding: 24px; color: #1a1a2e; }
+        h1 { font-size: 18px; margin-bottom: 4px; }
+        .code { font-family: monospace; color: #555; font-size: 13px; }
+        .section { margin-top: 20px; border: 1px solid #ddd; border-radius: 8px; padding: 16px; }
+        .section h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .field label { font-size: 11px; color: #888; display: block; }
+        .field p { font-size: 13px; font-weight: 500; margin: 2px 0 0; }
+        .spec { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #f5f5f5; border-radius: 6px; font-size: 12px; }
+        .spec .label { color: #888; font-size: 10px; }
+        .spec .val { font-family: monospace; font-weight: 500; }
+        img { max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; }
+        .qr-section { text-align: center; margin-top: 16px; }
+        .header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .maintenance { padding: 8px 12px; background: #f9f9f9; border-radius: 6px; margin-bottom: 8px; font-size: 12px; }
+        @media print { body { padding: 0; } }
+      </style></head><body>
+    `);
+    printWindow.document.write(printContent.innerHTML);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => { printWindow.print(); printWindow.close(); }, 300);
+  };
 
   const getCategoryName = (cid: string | null) => categories.find(c => c.id === cid)?.name || 'Unknown';
   const getRoomName = (rid: string | null) => rooms.find(r => r.id === rid)?.name || 'Unknown';
