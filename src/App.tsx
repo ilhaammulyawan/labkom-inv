@@ -15,6 +15,7 @@ import QRPrint from "./pages/QRPrint";
 import ScanQR from "./pages/ScanQR";
 import ManageCategories from "./pages/ManageCategories";
 import ManageRooms from "./pages/ManageRooms";
+import ManageUsers from "./pages/ManageUsers";
 import Reports from "./pages/Reports";
 import Guide from "./pages/Guide";
 import SettingsPage from "./pages/SettingsPage";
@@ -54,6 +55,7 @@ function ProtectedRoutes() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/categories" element={<ManageCategories />} />
         <Route path="/rooms" element={<ManageRooms />} />
+        <Route path="/users" element={<ManageUsers />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AppLayout>
