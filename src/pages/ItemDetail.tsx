@@ -151,6 +151,19 @@ const ItemDetail = () => {
         </div>
 
         <div className="space-y-6">
+          {item.image_url && (
+            <div className="kpi-card">
+              <h3 className="text-sm font-semibold mb-3">Foto Barang</h3>
+              <div className="rounded-lg overflow-hidden border border-border bg-muted/30">
+                <img
+                  src={item.image_url}
+                  alt={item.name}
+                  className="w-full h-auto object-contain max-h-64"
+                />
+              </div>
+            </div>
+          )}
+
           <div className="kpi-card flex flex-col items-center">
             <h3 className="text-sm font-semibold mb-4">QR Code</h3>
             <div className="bg-card p-4 rounded-xl border border-border">
