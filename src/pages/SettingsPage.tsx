@@ -37,6 +37,8 @@ const SettingsPage = () => {
     if (settings["institution_address"]) setInstitutionAddress(settings["institution_address"]);
     if (settings["lab_manager"]) setLabManager(settings["lab_manager"]);
     if (settings["lab_manager_nip"]) setLabManagerNip(settings["lab_manager_nip"]);
+    if (settings["principal_name"]) setPrincipalName(settings["principal_name"]);
+    if (settings["principal_nip"]) setPrincipalNip(settings["principal_nip"]);
     if (settings["phone"]) setPhone(settings["phone"]);
     if (settings["email"]) setEmail(settings["email"]);
     if (settings["report_header"]) setReportHeader(settings["report_header"]);
