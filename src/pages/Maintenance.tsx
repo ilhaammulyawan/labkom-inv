@@ -4,6 +4,7 @@ import { useMaintenanceRecords } from "@/hooks/useMaintenance";
 import { useUserRole } from "@/hooks/useUserRole";
 import { formatCurrency } from "@/lib/mock-data";
 import { MaintenanceBadge } from "@/components/ConditionBadge";
+import { AddMaintenanceDialog } from "@/components/AddMaintenanceDialog";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Wrench, PlusCircle } from "lucide-react";
@@ -11,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const Maintenance = () => {
   const [statusFilter, setStatusFilter] = useState("all");
+  const [addOpen, setAddOpen] = useState(false);
   const { data: items = [] } = useItems();
   const { data: maintenanceRecords = [], isLoading } = useMaintenanceRecords();
   const { isAdmin } = useUserRole();
@@ -30,7 +32,7 @@ const Maintenance = () => {
           <p className="text-sm text-muted-foreground">{filtered.length} catatan perbaikan</p>
         </div>
         {isAdmin && (
-          <Button className="gradient-primary text-primary-foreground border-0 shadow-md">
+          <Button onClick={() => setAddOpen(true)} className="gradient-primary text-primary-foreground border-0 shadow-md">
             <PlusCircle className="mr-2 h-4 w-4" /> Catat Perbaikan
           </Button>
         )}
@@ -71,6 +73,8 @@ const Maintenance = () => {
         })}
         {filtered.length === 0 && <p className="text-center text-muted-foreground py-12">Tidak ada catatan perbaikan</p>}
       </div>
+
+      <AddMaintenanceDialog open={addOpen} onOpenChange={setAddOpen} items={items} />
     </div>
   );
 };
