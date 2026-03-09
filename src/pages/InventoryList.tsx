@@ -24,6 +24,7 @@ const InventoryList = () => {
   const { data: categories = [] } = useCategories();
   const { data: rooms = [] } = useRooms();
   const { isAdmin } = useUserRole();
+  const { settings } = useAppSettings();
 
   const getCategoryName = (id: string | null) => categories.find(c => c.id === id)?.name || 'Unknown';
   const getRoomName = (id: string | null) => rooms.find(r => r.id === id)?.name || 'Unknown';
