@@ -19,6 +19,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, logout, username } = useAuth();
   const { data: profile } = useProfile();
   const { isAdmin } = useUserRole();
+  const { t } = useLanguage();
   const [profileOpen, setProfileOpen] = useState(false);
   const navigate = useNavigate();
 
