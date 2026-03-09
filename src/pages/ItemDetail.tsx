@@ -27,7 +27,6 @@ const ItemDetail = () => {
 
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrintDetail = () => {
     window.print();
