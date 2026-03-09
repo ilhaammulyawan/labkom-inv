@@ -62,18 +62,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   </DropdownMenuTrigger>
                    <DropdownMenuContent align="end" className="w-48">
                      <DropdownMenuItem onClick={() => setProfileOpen(true)}>
-                       <User className="mr-2 h-4 w-4" /> Edit Profil
+                       <User className="mr-2 h-4 w-4" /> {t("editProfile")}
                      </DropdownMenuItem>
                      {isAdmin && (
                        <>
                          <DropdownMenuItem onClick={() => navigate("/settings")}>
-                           <Settings className="mr-2 h-4 w-4" /> Pengaturan
+                           <Settings className="mr-2 h-4 w-4" /> {t("settings")}
                          </DropdownMenuItem>
                          <DropdownMenuSeparator />
                        </>
                      )}
                      <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
-                       <LogOut className="mr-2 h-4 w-4" /> Keluar
+                       <LogOut className="mr-2 h-4 w-4" /> {t("logout")}
                      </DropdownMenuItem>
                    </DropdownMenuContent>
                 </DropdownMenu>
