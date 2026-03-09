@@ -136,9 +136,9 @@ const Reports = () => {
     },
   ];
 
-  const handleExport = (fn: () => void, type: string) => {
+  const handleExport = async (fn: () => void | Promise<void>, type: string) => {
     try {
-      fn();
+      await fn();
       toast.success(`Laporan ${type} berhasil diunduh!`);
     } catch (err: any) {
       toast.error("Gagal mengunduh laporan", { description: err.message });

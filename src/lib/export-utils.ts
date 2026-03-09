@@ -25,6 +25,23 @@ function ts() {
   return new Date().toISOString().slice(0, 10);
 }
 
+// ── Image loader helper ──
+
+async function loadImageAsDataUrl(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
 // ── Excel helpers ──
 
 function downloadXlsx(ws: XLSX.WorkSheet, filename: string) {
@@ -35,17 +52,32 @@ function downloadXlsx(ws: XLSX.WorkSheet, filename: string) {
 
 // ── PDF helpers ──
 
-function pdfHeader(doc: jsPDF, title: string, settings: Record<string, string>) {
+async function pdfHeader(doc: jsPDF, title: string, settings: Record<string, string>) {
   const inst = settings["institution_name"] || "";
   const addr = settings["institution_address"] || "";
+  const logoUrl = settings["app_logo"] || "";
+  let startX = 14;
+  let logoEndY = 0;
+
+  // Add logo if available
+  if (logoUrl) {
+    const logoData = await loadImageAsDataUrl(logoUrl);
+    if (logoData) {
+      doc.addImage(logoData, "PNG", 14, 8, 20, 20);
+      startX = 38;
+      logoEndY = 28;
+    }
+  }
+
+  const pageW = doc.internal.pageSize.getWidth();
   doc.setFontSize(14);
-  doc.text(inst, doc.internal.pageSize.getWidth() / 2, 15, { align: "center" });
+  doc.text(inst, (pageW + startX - 14) / 2 + (startX - 14) / 2, 15, { align: "center" });
   doc.setFontSize(9);
-  doc.text(addr, doc.internal.pageSize.getWidth() / 2, 21, { align: "center" });
+  doc.text(addr, (pageW + startX - 14) / 2 + (startX - 14) / 2, 21, { align: "center" });
   doc.setFontSize(12);
-  doc.text(title, doc.internal.pageSize.getWidth() / 2, 30, { align: "center" });
+  doc.text(title, pageW / 2, 30, { align: "center" });
   doc.setFontSize(8);
-  doc.text(`Dicetak: ${today()}`, 14, 37);
+  doc.text(`Dicetak: ${today()}`, startX, 37);
   return 42;
 }
 
@@ -72,9 +104,9 @@ export function exportInventarisExcel(items: InventoryItem[], cats: Category[], 
   downloadXlsx(ws, `Laporan_Inventaris_${ts()}.xlsx`);
 }
 
-export function exportInventarisPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+export async function exportInventarisPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN INVENTARIS LABORATORIUM", settings);
+  const startY = await pdfHeader(doc, "LAPORAN INVENTARIS LABORATORIUM", settings);
   autoTable(doc, {
     startY,
     head: [["No", "Kode", "Nama Barang", "Merk", "Kategori", "Ruangan", "Kondisi", "Status", "Harga"]],
@@ -113,9 +145,9 @@ export function exportSpesifikasiExcel(items: InventoryItem[], cats: Category[],
   downloadXlsx(ws, `Laporan_Spesifikasi_PC_${ts()}.xlsx`);
 }
 
-export function exportSpesifikasiPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+export async function exportSpesifikasiPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN SPESIFIKASI KOMPUTER", settings);
+  const startY = await pdfHeader(doc, "LAPORAN SPESIFIKASI KOMPUTER", settings);
   const pcItems = items.filter((i) => i.cpu || i.ram || i.storage);
   autoTable(doc, {
     startY,
@@ -149,9 +181,9 @@ export function exportKondisiExcel(items: InventoryItem[], cats: Category[], roo
   downloadXlsx(ws, `Laporan_Kondisi_${ts()}.xlsx`);
 }
 
-export function exportKondisiPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+export async function exportKondisiPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
   const doc = new jsPDF();
-  const startY = pdfHeader(doc, "LAPORAN KONDISI BARANG", settings);
+  const startY = await pdfHeader(doc, "LAPORAN KONDISI BARANG", settings);
 
   const baik = items.filter((i) => i.condition === "Baik").length;
   const ringan = items.filter((i) => i.condition === "Rusak Ringan").length;
@@ -199,9 +231,9 @@ export function exportPerbaikanExcel(records: MaintenanceRecord[], items: Invent
   downloadXlsx(ws, `Laporan_Perbaikan_${ts()}.xlsx`);
 }
 
-export function exportPerbaikanPdf(records: MaintenanceRecord[], items: InventoryItem[], settings: Record<string, string>) {
+export async function exportPerbaikanPdf(records: MaintenanceRecord[], items: InventoryItem[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN PERBAIKAN BARANG", settings);
+  const startY = await pdfHeader(doc, "LAPORAN PERBAIKAN BARANG", settings);
   autoTable(doc, {
     startY,
     head: [["No", "Kode", "Nama Barang", "Tgl Lapor", "Deskripsi", "Teknisi", "Tgl Selesai", "Tindakan", "Biaya", "Status"]],
@@ -241,9 +273,9 @@ export function exportNilaiExcel(items: InventoryItem[], cats: Category[], rooms
   downloadXlsx(ws, `Laporan_Nilai_Aset_${ts()}.xlsx`);
 }
 
-export function exportNilaiPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+export async function exportNilaiPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
   const doc = new jsPDF();
-  const startY = pdfHeader(doc, "LAPORAN NILAI ASET INVENTARIS", settings);
+  const startY = await pdfHeader(doc, "LAPORAN NILAI ASET INVENTARIS", settings);
   const total = items.reduce((s, i) => s + (i.price ?? 0), 0);
 
   doc.setFontSize(10);
@@ -301,9 +333,9 @@ export function exportPeminjamanExcel(borrowings: Borrowing[], items: InventoryI
   downloadXlsx(ws, `Laporan_Peminjaman_${ts()}.xlsx`);
 }
 
-export function exportPeminjamanPdf(borrowings: Borrowing[], items: InventoryItem[], settings: Record<string, string>) {
+export async function exportPeminjamanPdf(borrowings: Borrowing[], items: InventoryItem[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN PEMINJAMAN BARANG", settings);
+  const startY = await pdfHeader(doc, "LAPORAN PEMINJAMAN BARANG", settings);
 
   const aktif = borrowings.filter((b) => b.status === "Dipinjam").length;
   const selesai = borrowings.filter((b) => b.status === "Dikembalikan").length;
@@ -359,9 +391,9 @@ export function exportJadwalMaintenanceExcel(schedules: MaintenanceSchedule[], i
   downloadXlsx(ws, `Laporan_Jadwal_Maintenance_${ts()}.xlsx`);
 }
 
-export function exportJadwalMaintenancePdf(schedules: MaintenanceSchedule[], items: InventoryItem[], settings: Record<string, string>) {
+export async function exportJadwalMaintenancePdf(schedules: MaintenanceSchedule[], items: InventoryItem[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN JADWAL MAINTENANCE", settings);
+  const startY = await pdfHeader(doc, "LAPORAN JADWAL MAINTENANCE", settings);
   const todayStr = new Date().toISOString().split("T")[0];
   const overdue = schedules.filter(s => s.is_active && s.next_due_date <= todayStr).length;
   const aktif = schedules.filter(s => s.is_active).length;
@@ -411,9 +443,9 @@ export function exportSoftwareExcel(software: SoftwareItem[], items: InventoryIt
   downloadXlsx(ws, `Laporan_Software_${ts()}.xlsx`);
 }
 
-export function exportSoftwarePdf(software: SoftwareItem[], items: InventoryItem[], settings: Record<string, string>) {
+export async function exportSoftwarePdf(software: SoftwareItem[], items: InventoryItem[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN SOFTWARE & LISENSI", settings);
+  const startY = await pdfHeader(doc, "LAPORAN SOFTWARE & LISENSI", settings);
   const todayStr = new Date().toISOString().split("T")[0];
   const expired = software.filter(s => s.expiry_date && s.expiry_date < todayStr).length;
 
@@ -459,9 +491,9 @@ export function exportPerRuanganExcel(items: InventoryItem[], cats: Category[], 
   downloadXlsx(ws, `Laporan_Per_Ruangan_${ts()}.xlsx`);
 }
 
-export function exportPerRuanganPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+export async function exportPerRuanganPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN BARANG PER RUANGAN", settings);
+  const startY = await pdfHeader(doc, "LAPORAN BARANG PER RUANGAN", settings);
 
   // Summary per room
   const roomCounts = rooms.map(r => ({
@@ -508,9 +540,9 @@ export function exportPerKategoriExcel(items: InventoryItem[], cats: Category[],
   downloadXlsx(ws, `Laporan_Per_Kategori_${ts()}.xlsx`);
 }
 
-export function exportPerKategoriPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
+export async function exportPerKategoriPdf(items: InventoryItem[], cats: Category[], rooms: Room[], settings: Record<string, string>) {
   const doc = new jsPDF({ orientation: "landscape" });
-  const startY = pdfHeader(doc, "LAPORAN BARANG PER KATEGORI", settings);
+  const startY = await pdfHeader(doc, "LAPORAN BARANG PER KATEGORI", settings);
 
   const catCounts = cats.map(c => ({
     name: c.name,
