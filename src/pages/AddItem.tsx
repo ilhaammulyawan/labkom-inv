@@ -27,8 +27,17 @@ const categoryPrefixMap: Record<string, string> = {
 
 const AddItem = () => {
   const navigate = useNavigate();
+  const { isAdmin, isLoading: roleLoading } = useUserRole();
   const { data: categories = [] } = useCategories();
   const { data: rooms = [] } = useRooms();
+
+  // Redirect non-admin users
+  useEffect(() => {
+    if (!roleLoading && !isAdmin) {
+      toast.error("Akses ditolak", { description: "Hanya admin yang dapat menambah barang" });
+      navigate("/inventory");
+    }
+  }, [isAdmin, roleLoading, navigate]);
   const { data: items = [] } = useItems();
   const insertItem = useInsertItem();
 
