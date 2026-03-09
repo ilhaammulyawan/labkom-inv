@@ -3,6 +3,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import type { InventoryItem } from "@/hooks/useItems";
 import type { MaintenanceRecord } from "@/hooks/useMaintenance";
+import type { Borrowing } from "@/hooks/useBorrowings";
 import type { Category } from "@/hooks/useCategories";
 import type { Room } from "@/hooks/useRooms";
 import { formatCurrency } from "@/lib/mock-data";
