@@ -8,12 +8,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
+import { useUserRole } from "@/hooks/useUserRole";
 import { ProfileDialog } from "@/components/ProfileDialog";
 import { useNavigate } from "react-router-dom";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, logout, username } = useAuth();
   const { data: profile } = useProfile();
+  const { isAdmin } = useUserRole();
   const [profileOpen, setProfileOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -52,18 +54,22 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       </div>
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem onClick={() => setProfileOpen(true)}>
-                      <User className="mr-2 h-4 w-4" /> Edit Profil
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/settings")}>
-                      <Settings className="mr-2 h-4 w-4" /> Pengaturan
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
-                      <LogOut className="mr-2 h-4 w-4" /> Keluar
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
+                   <DropdownMenuContent align="end" className="w-48">
+                     <DropdownMenuItem onClick={() => setProfileOpen(true)}>
+                       <User className="mr-2 h-4 w-4" /> Edit Profil
+                     </DropdownMenuItem>
+                     {isAdmin && (
+                       <>
+                         <DropdownMenuItem onClick={() => navigate("/settings")}>
+                           <Settings className="mr-2 h-4 w-4" /> Pengaturan
+                         </DropdownMenuItem>
+                         <DropdownMenuSeparator />
+                       </>
+                     )}
+                     <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
+                       <LogOut className="mr-2 h-4 w-4" /> Keluar
+                     </DropdownMenuItem>
+                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
             </div>
