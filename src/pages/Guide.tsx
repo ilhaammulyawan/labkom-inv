@@ -126,24 +126,20 @@ const chapters = [
 ];
 
 const Guide = () => {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [openChapter, setOpenChapter] = useState<string | null>(chapters[0].title);
 
   const filteredChapters = chapters.map(chapter => {
     if (!searchQuery) return chapter;
-    
     const query = searchQuery.toLowerCase();
     const matchChapterTitle = chapter.title.toLowerCase().includes(query);
     const matchedSections = chapter.sections.filter(section => 
       section.title.toLowerCase().includes(query) || 
       section.content.toLowerCase().includes(query)
     );
-
-    if (matchChapterTitle) {
-      return chapter;
-    } else if (matchedSections.length > 0) {
-      return { ...chapter, sections: matchedSections };
-    }
+    if (matchChapterTitle) return chapter;
+    else if (matchedSections.length > 0) return { ...chapter, sections: matchedSections };
     return null;
   }).filter(Boolean) as typeof chapters;
 
@@ -151,14 +147,14 @@ const Guide = () => {
     <div className="space-y-6 animate-fade-in max-w-3xl">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2"><BookOpen className="h-6 w-6" /> Buku Panduan</h1>
-          <p className="text-sm text-muted-foreground">Panduan lengkap penggunaan SiiLaKu</p>
+          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2"><BookOpen className="h-6 w-6" /> {t("guideTitle")}</h1>
+          <p className="text-sm text-muted-foreground">{t("guideSubtitle")}</p>
         </div>
         <div className="relative w-full md:w-64">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input 
             type="text" 
-            placeholder="Cari panduan..." 
+            placeholder={t("searchGuide")}
             className="pl-9"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
