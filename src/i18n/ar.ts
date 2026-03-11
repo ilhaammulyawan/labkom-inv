@@ -560,4 +560,12 @@ export const ar: Record<TranslationKeys, string> = {
 
   // Reset Password
   resetPassword: "إعادة تعيين كلمة المرور",
+
+  // Import Tips
+  importTips: "نصائح الاستيراد",
+  importTip1: "استخدم القالب المقدم لتجنب أخطاء التنسيق",
+  importTip2: "تأكد من تسجيل أسماء الفئات والغرف في النظام",
+  importTip3: "يجب أن تكون الحالة واحدة من: Baik, Rusak Ringan, Rusak Berat, أو Diperbaiki",
+  importTip4: "يجب أن يكون رمز المخزون فريدًا لكل عنصر",
+  importTip5: "الحقول المميزة بـ (*) مطلوبة",
 };

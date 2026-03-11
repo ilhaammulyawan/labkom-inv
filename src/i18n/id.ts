@@ -559,8 +559,13 @@ export const id = {
   // Reset Password
   resetPassword: "Reset Password",
 
-  // ConditionBadge - these map DB enum values to display text
-  // Note: DB values stay in Indonesian, these are for display
+  // Import Tips
+  importTips: "Tips Import",
+  importTip1: "Gunakan template yang disediakan untuk menghindari error format",
+  importTip2: "Pastikan nama Kategori dan Ruangan sudah terdaftar di sistem",
+  importTip3: "Kondisi harus diisi dengan: Baik, Rusak Ringan, Rusak Berat, atau Diperbaiki",
+  importTip4: "Kode Inventaris harus unik untuk setiap barang",
+  importTip5: "Field dengan tanda (*) adalah wajib diisi",
 } as const;
 
 export type TranslationKeys = keyof typeof id;
