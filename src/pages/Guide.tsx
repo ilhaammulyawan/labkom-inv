@@ -187,7 +187,7 @@ const Guide = () => {
           ))
         ) : (
           <div className="text-center py-10 text-muted-foreground kpi-card">
-            Tidak ada panduan yang cocok dengan pencarian "{searchQuery}"
+            {t("noGuideFound")} "{searchQuery}"
           </div>
         )}
       </div>
