@@ -560,4 +560,12 @@ export const en: Record<TranslationKeys, string> = {
 
   // Reset Password
   resetPassword: "Reset Password",
+
+  // Import Tips
+  importTips: "Import Tips",
+  importTip1: "Use the provided template to avoid format errors",
+  importTip2: "Make sure Category and Room names are already registered in the system",
+  importTip3: "Condition must be one of: Baik, Rusak Ringan, Rusak Berat, or Diperbaiki",
+  importTip4: "Inventory Code must be unique for each item",
+  importTip5: "Fields marked with (*) are required",
 };
