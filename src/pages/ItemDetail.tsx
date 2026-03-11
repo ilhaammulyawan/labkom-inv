@@ -6,6 +6,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useRooms } from "@/hooks/useRooms";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useAppSettings } from "@/hooks/useAppSettings";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { formatCurrency } from "@/lib/mock-data";
 import { ConditionBadge, StatusBadge, MaintenanceBadge } from "@/components/ConditionBadge";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import EditItemDialog from "@/components/EditItemDialog";
 const ItemDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const { data: item, isLoading } = useItem(id);
   const { data: itemMaintenance = [] } = useItemMaintenanceRecords(id);
   const { data: categories = [] } = useCategories();
@@ -30,10 +32,7 @@ const ItemDetail = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const handlePrintDetail = () => {
-    window.print();
-  };
-
+  const handlePrintDetail = () => { window.print(); };
   const getCategoryName = (cid: string | null) => categories.find(c => c.id === cid)?.name || 'Unknown';
   const getRoomName = (rid: string | null) => rooms.find(r => r.id === rid)?.name || 'Unknown';
 
@@ -45,8 +44,8 @@ const ItemDetail = () => {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
-          <h2 className="text-lg font-semibold">Barang tidak ditemukan</h2>
-          <Button variant="outline" className="mt-4" onClick={() => navigate("/inventory")}>Kembali ke Inventaris</Button>
+          <h2 className="text-lg font-semibold">{t("itemNotFound")}</h2>
+          <Button variant="outline" className="mt-4" onClick={() => navigate("/inventory")}>{t("backToInventory")}</Button>
         </div>
       </div>
     );
@@ -55,10 +54,10 @@ const ItemDetail = () => {
   const handleDelete = async () => {
     try {
       await deleteItem.mutateAsync(item.id);
-      toast.success("Barang berhasil dihapus!");
+      toast.success(t("itemDeleted"));
       navigate("/inventory");
     } catch (err: any) {
-      toast.error("Gagal menghapus barang", { description: err.message });
+      toast.error(t("itemDeleteFailed"), { description: err.message });
     }
   };
 
@@ -66,17 +65,17 @@ const ItemDetail = () => {
   const catName = getCategoryName(item.category_id);
 
   const specs = [
-    { label: 'Hostname', value: item.hostname, icon: Monitor },
-    { label: 'Prosesor', value: item.cpu, icon: Cpu },
-    { label: 'RAM', value: item.ram, icon: Cpu },
-    { label: 'Penyimpanan', value: item.storage, icon: HardDrive },
-    { label: 'VGA/Graphics', value: item.vga, icon: Monitor },
-    { label: 'Sistem Operasi', value: item.os, icon: Monitor },
-    { label: 'Lisensi OS', value: item.os_license, icon: Monitor },
-    { label: 'IP Address', value: item.ip_address, icon: Wifi },
-    { label: 'MAC Address', value: item.mac_address, icon: Wifi },
-    { label: 'Ukuran Layar', value: item.screen_size, icon: Monitor },
-    { label: 'Jenis Printer', value: item.printer_type, icon: Printer },
+    { label: t("hostname"), value: item.hostname, icon: Monitor },
+    { label: t("processor"), value: item.cpu, icon: Cpu },
+    { label: t("ram"), value: item.ram, icon: Cpu },
+    { label: t("storage"), value: item.storage, icon: HardDrive },
+    { label: t("vga"), value: item.vga, icon: Monitor },
+    { label: t("operatingSystem"), value: item.os, icon: Monitor },
+    { label: t("osLicense"), value: item.os_license, icon: Monitor },
+    { label: t("ipAddress"), value: item.ip_address, icon: Wifi },
+    { label: t("macAddress"), value: item.mac_address, icon: Wifi },
+    { label: t("screenSize"), value: item.screen_size, icon: Monitor },
+    { label: t("printerType"), value: item.printer_type, icon: Printer },
   ].filter(s => s.value);
 
   return (
@@ -95,15 +94,15 @@ const ItemDetail = () => {
           {isAdmin && (
             <>
               <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
-                <Edit className="mr-2 h-3.5 w-3.5" /> Edit
+                <Edit className="mr-2 h-3.5 w-3.5" /> {t("edit")}
               </Button>
               <Button variant="outline" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30" onClick={() => setDeleteOpen(true)}>
-                <Trash2 className="mr-2 h-3.5 w-3.5" /> Hapus
+                <Trash2 className="mr-2 h-3.5 w-3.5" /> {t("delete")}
               </Button>
             </>
           )}
           <Button variant="outline" size="sm" onClick={handlePrintDetail}>
-            <Printer className="mr-2 h-3.5 w-3.5" /> Print
+            <Printer className="mr-2 h-3.5 w-3.5" /> {t("print")}
           </Button>
         </div>
       </div>
@@ -111,24 +110,24 @@ const ItemDetail = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <div className="kpi-card">
-            <h3 className="text-sm font-semibold mb-4">Informasi Umum</h3>
+            <h3 className="text-sm font-semibold mb-4">{t("generalInfo")}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div><span className="text-muted-foreground">Kategori</span><p className="font-medium mt-0.5">{getCategoryName(item.category_id)}</p></div>
-              <div><span className="text-muted-foreground">Merk / Model</span><p className="font-medium mt-0.5">{item.brand} {item.model}</p></div>
-              <div><span className="text-muted-foreground">Serial Number</span><p className="font-medium font-mono mt-0.5">{item.serial_number}</p></div>
-              <div><span className="text-muted-foreground">Ruangan</span><p className="font-medium mt-0.5 flex items-center gap-1"><MapPin className="h-3 w-3" />{getRoomName(item.room_id)}</p></div>
-              <div><span className="text-muted-foreground">Kondisi</span><div className="mt-1"><ConditionBadge condition={item.condition} /></div></div>
-              <div><span className="text-muted-foreground">Status</span><div className="mt-1"><StatusBadge status={item.status} /></div></div>
-              {item.year_acquired && <div><span className="text-muted-foreground">Tahun Perolehan</span><p className="font-medium mt-0.5">{item.year_acquired}</p></div>}
-              {item.price && <div><span className="text-muted-foreground">Harga</span><p className="font-medium mt-0.5">{formatCurrency(item.price)}</p></div>}
-              {item.last_service_date && <div><span className="text-muted-foreground">Service Terakhir</span><p className="font-medium mt-0.5 flex items-center gap-1"><Calendar className="h-3 w-3" />{item.last_service_date}</p></div>}
-              {item.notes && <div className="sm:col-span-2"><span className="text-muted-foreground">Catatan</span><p className="font-medium mt-0.5">{item.notes}</p></div>}
+              <div><span className="text-muted-foreground">{t("category")}</span><p className="font-medium mt-0.5">{getCategoryName(item.category_id)}</p></div>
+              <div><span className="text-muted-foreground">{t("brandModel")}</span><p className="font-medium mt-0.5">{item.brand} {item.model}</p></div>
+              <div><span className="text-muted-foreground">{t("serialNumber")}</span><p className="font-medium font-mono mt-0.5">{item.serial_number}</p></div>
+              <div><span className="text-muted-foreground">{t("room")}</span><p className="font-medium mt-0.5 flex items-center gap-1"><MapPin className="h-3 w-3" />{getRoomName(item.room_id)}</p></div>
+              <div><span className="text-muted-foreground">{t("condition")}</span><div className="mt-1"><ConditionBadge condition={item.condition} /></div></div>
+              <div><span className="text-muted-foreground">{t("status")}</span><div className="mt-1"><StatusBadge status={item.status} /></div></div>
+              {item.year_acquired && <div><span className="text-muted-foreground">{t("yearAcquisition")}</span><p className="font-medium mt-0.5">{item.year_acquired}</p></div>}
+              {item.price && <div><span className="text-muted-foreground">{t("price")}</span><p className="font-medium mt-0.5">{formatCurrency(item.price)}</p></div>}
+              {item.last_service_date && <div><span className="text-muted-foreground">{t("lastService")}</span><p className="font-medium mt-0.5 flex items-center gap-1"><Calendar className="h-3 w-3" />{item.last_service_date}</p></div>}
+              {item.notes && <div className="sm:col-span-2"><span className="text-muted-foreground">{t("notes")}</span><p className="font-medium mt-0.5">{item.notes}</p></div>}
             </div>
           </div>
 
           {specs.length > 0 && (
             <div className="kpi-card">
-              <h3 className="text-sm font-semibold mb-4">Spesifikasi Teknis</h3>
+              <h3 className="text-sm font-semibold mb-4">{t("technicalSpecs")}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {specs.map(spec => (
                   <div key={spec.label} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
@@ -145,7 +144,7 @@ const ItemDetail = () => {
 
           {itemMaintenance.length > 0 && (
             <div className="kpi-card">
-              <h3 className="text-sm font-semibold mb-4 flex items-center gap-2"><Wrench className="h-4 w-4" /> Riwayat Perbaikan</h3>
+              <h3 className="text-sm font-semibold mb-4 flex items-center gap-2"><Wrench className="h-4 w-4" /> {t("repairHistory")}</h3>
               <div className="space-y-3">
                 {itemMaintenance.map(m => (
                   <div key={m.id} className="p-3 rounded-lg bg-muted/50 text-xs space-y-1">
@@ -154,8 +153,8 @@ const ItemDetail = () => {
                       <MaintenanceBadge status={m.status} />
                     </div>
                     <p className="text-muted-foreground">{m.description}</p>
-                    {m.action && <p><span className="text-muted-foreground">Tindakan:</span> {m.action}</p>}
-                    <p className="text-[10px] text-muted-foreground">Teknisi: {m.technician}{m.cost ? ` • Biaya: ${formatCurrency(m.cost)}` : ''}</p>
+                    {m.action && <p><span className="text-muted-foreground">{t("actionTaken")}:</span> {m.action}</p>}
+                    <p className="text-[10px] text-muted-foreground">{t("technician")}: {m.technician}{m.cost ? ` • ${t("cost")}: ${formatCurrency(m.cost)}` : ''}</p>
                   </div>
                 ))}
               </div>
@@ -166,53 +165,47 @@ const ItemDetail = () => {
         <div className="space-y-6">
           {item.image_url && (
             <div className="kpi-card">
-              <h3 className="text-sm font-semibold mb-3">Foto Barang</h3>
+              <h3 className="text-sm font-semibold mb-3">{t("itemPhoto")}</h3>
               <div className="rounded-lg overflow-hidden border border-border bg-muted/30">
-                <img
-                  src={item.image_url}
-                  alt={item.name}
-                  className="w-full h-auto object-contain max-h-64"
-                />
+                <img src={item.image_url} alt={item.name} className="w-full h-auto object-contain max-h-64" />
               </div>
             </div>
           )}
 
           <div className="kpi-card flex flex-col items-center">
-            <h3 className="text-sm font-semibold mb-4">QR Code</h3>
+            <h3 className="text-sm font-semibold mb-4">{t("qrCode")}</h3>
             <div className="bg-card p-4 rounded-xl border border-border">
               <QRCodeSVG value={qrUrl} size={180} level="M" includeMargin />
             </div>
             <p className="text-[10px] text-muted-foreground mt-2 text-center font-mono break-all">{item.inventory_code}</p>
             <p className="text-[10px] text-center text-muted-foreground mt-1 max-w-[200px] truncate">{item.name}</p>
             <Button variant="outline" size="sm" className="mt-4 w-full" onClick={() => navigate(`/qr-print?items=${item.id}`)}>
-              <Printer className="mr-2 h-3.5 w-3.5" /> Cetak QR Code
+              <Printer className="mr-2 h-3.5 w-3.5" /> {t("printQRCode")}
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Edit Dialog */}
       <EditItemDialog item={item} open={editOpen} onOpenChange={setEditOpen} />
 
-      {/* Delete Confirmation */}
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Hapus Barang</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteItem")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Apakah Anda yakin ingin menghapus <strong>{item.name}</strong> ({item.inventory_code})? Tindakan ini tidak dapat dibatalkan dan semua data terkait akan hilang.
+              {t("deleteItemConfirm")} <strong>{item.name}</strong> ({item.inventory_code})? {t("deleteItemWarning")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              {deleteItem.isPending ? "Menghapus..." : "Ya, Hapus"}
+              {deleteItem.isPending ? t("deleting") : t("yesDelete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Hidden print content — only visible during print */}
+      {/* Hidden print content */}
       <div className="print-area" style={{display:'none'}}>
         <style>{`
           @media print {
@@ -232,7 +225,7 @@ const ItemDetail = () => {
             .print-img { max-width: 180px; max-height: 180px; border-radius: 6px; border: 1px solid #ddd; }
           }
         `}</style>
-         <div className="print-header">
+        <div className="print-header">
           <div>
             <h1>{item.name}</h1>
             <p className="print-code">{item.inventory_code}</p>
@@ -240,23 +233,23 @@ const ItemDetail = () => {
           {item.image_url && <img className="print-img" src={item.image_url} alt={item.name} />}
         </div>
         <div className="print-section">
-          <h3>Informasi Umum</h3>
+          <h3>{t("generalInfo")}</h3>
           <div className="print-grid">
-            <div className="print-field"><label>Kategori</label><p>{getCategoryName(item.category_id)}</p></div>
-            <div className="print-field"><label>Merk / Model</label><p>{item.brand} {item.model}</p></div>
-            <div className="print-field"><label>Serial Number</label><p style={{fontFamily:'monospace'}}>{item.serial_number || '-'}</p></div>
-            <div className="print-field"><label>Ruangan</label><p>{getRoomName(item.room_id)}</p></div>
-            <div className="print-field"><label>Kondisi</label><p>{item.condition}</p></div>
-            <div className="print-field"><label>Status</label><p>{item.status}</p></div>
-            {item.year_acquired && <div className="print-field"><label>Tahun Perolehan</label><p>{item.year_acquired}</p></div>}
-            {item.price && <div className="print-field"><label>Harga</label><p>{formatCurrency(item.price)}</p></div>}
-            {item.last_service_date && <div className="print-field"><label>Service Terakhir</label><p>{item.last_service_date}</p></div>}
-            {item.notes && <div className="print-field" style={{gridColumn:'span 2'}}><label>Catatan</label><p>{item.notes}</p></div>}
+            <div className="print-field"><label>{t("category")}</label><p>{getCategoryName(item.category_id)}</p></div>
+            <div className="print-field"><label>{t("brandModel")}</label><p>{item.brand} {item.model}</p></div>
+            <div className="print-field"><label>{t("serialNumber")}</label><p style={{fontFamily:'monospace'}}>{item.serial_number || '-'}</p></div>
+            <div className="print-field"><label>{t("room")}</label><p>{getRoomName(item.room_id)}</p></div>
+            <div className="print-field"><label>{t("condition")}</label><p>{item.condition}</p></div>
+            <div className="print-field"><label>{t("status")}</label><p>{item.status}</p></div>
+            {item.year_acquired && <div className="print-field"><label>{t("yearAcquisition")}</label><p>{item.year_acquired}</p></div>}
+            {item.price && <div className="print-field"><label>{t("price")}</label><p>{formatCurrency(item.price)}</p></div>}
+            {item.last_service_date && <div className="print-field"><label>{t("lastService")}</label><p>{item.last_service_date}</p></div>}
+            {item.notes && <div className="print-field" style={{gridColumn:'span 2'}}><label>{t("notes")}</label><p>{item.notes}</p></div>}
           </div>
         </div>
         {specs.length > 0 && (
           <div className="print-section">
-            <h3>Spesifikasi Teknis</h3>
+            <h3>{t("technicalSpecs")}</h3>
             <div className="print-grid">
               {specs.map(spec => (
                 <div key={spec.label} className="print-spec">
@@ -269,13 +262,13 @@ const ItemDetail = () => {
         )}
         {itemMaintenance.length > 0 && (
           <div className="print-section">
-            <h3>Riwayat Perbaikan</h3>
+            <h3>{t("repairHistory")}</h3>
             {itemMaintenance.map(m => (
               <div key={m.id} className="print-maintenance">
                 <strong>{m.issue_date}</strong> — {m.status}<br/>
                 {m.description}
-                {m.action && <><br/>Tindakan: {m.action}</>}
-                <br/><small>Teknisi: {m.technician}{m.cost ? ` • Biaya: ${formatCurrency(m.cost)}` : ''}</small>
+                {m.action && <><br/>{t("actionTaken")}: {m.action}</>}
+                <br/><small>{t("technician")}: {m.technician}{m.cost ? ` • ${t("cost")}: ${formatCurrency(m.cost)}` : ''}</small>
               </div>
             ))}
           </div>

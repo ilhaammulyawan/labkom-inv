@@ -10,13 +10,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUpdateMaintenance, type MaintenanceRecord } from "@/hooks/useMaintenance";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import type { InventoryItem } from "@/hooks/useItems";
 
 const schema = z.object({
-  item_id: z.string().min(1, "Pilih barang"),
-  issue_date: z.string().min(1, "Masukkan tanggal kerusakan"),
-  description: z.string().min(1, "Masukkan deskripsi masalah"),
-  technician: z.string().min(1, "Masukkan nama teknisi"),
+  item_id: z.string().min(1),
+  issue_date: z.string().min(1),
+  description: z.string().min(1),
+  technician: z.string().min(1),
   status: z.enum(["Antrian", "Dalam Perbaikan", "Selesai"]),
   repair_date: z.string().optional(),
   action: z.string().optional(),
@@ -34,6 +35,7 @@ interface Props {
 
 export function EditMaintenanceDialog({ open, onOpenChange, items, record }: Props) {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const update = useUpdateMaintenance();
 
   const form = useForm<FormValues>({
@@ -47,14 +49,10 @@ export function EditMaintenanceDialog({ open, onOpenChange, items, record }: Pro
   useEffect(() => {
     if (record && open) {
       form.reset({
-        item_id: record.item_id,
-        issue_date: record.issue_date,
-        description: record.description,
-        technician: record.technician,
-        status: record.status,
-        repair_date: record.repair_date || "",
-        action: record.action || "",
-        cost: record.cost ? String(record.cost) : "",
+        item_id: record.item_id, issue_date: record.issue_date,
+        description: record.description, technician: record.technician,
+        status: record.status, repair_date: record.repair_date || "",
+        action: record.action || "", cost: record.cost ? String(record.cost) : "",
       });
     }
   }, [record, open]);
@@ -63,20 +61,15 @@ export function EditMaintenanceDialog({ open, onOpenChange, items, record }: Pro
     if (!record) return;
     try {
       await update.mutateAsync({
-        id: record.id,
-        item_id: values.item_id,
-        issue_date: values.issue_date,
-        description: values.description,
-        technician: values.technician,
-        status: values.status,
-        repair_date: values.repair_date || null,
-        action: values.action || null,
-        cost: values.cost ? Number(values.cost) : null,
+        id: record.id, item_id: values.item_id, issue_date: values.issue_date,
+        description: values.description, technician: values.technician,
+        status: values.status, repair_date: values.repair_date || null,
+        action: values.action || null, cost: values.cost ? Number(values.cost) : null,
       });
-      toast({ title: "Berhasil", description: "Catatan perbaikan berhasil diperbarui." });
+      toast({ title: t("success"), description: t("maintenanceUpdated") });
       onOpenChange(false);
     } catch (e: any) {
-      toast({ title: "Gagal", description: e.message, variant: "destructive" });
+      toast({ title: t("failed"), description: e.message, variant: "destructive" });
     }
   };
 
@@ -84,15 +77,15 @@ export function EditMaintenanceDialog({ open, onOpenChange, items, record }: Pro
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Catatan Perbaikan</DialogTitle>
+          <DialogTitle>{t("editMaintenance")}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField control={form.control} name="item_id" render={({ field }) => (
               <FormItem>
-                <FormLabel>Barang *</FormLabel>
+                <FormLabel>{t("item")} *</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl><SelectTrigger><SelectValue placeholder="Pilih barang..." /></SelectTrigger></FormControl>
+                  <FormControl><SelectTrigger><SelectValue placeholder={t("selectItem")} /></SelectTrigger></FormControl>
                   <SelectContent>
                     {items.map(item => (
                       <SelectItem key={item.id} value={item.id}>
@@ -106,34 +99,34 @@ export function EditMaintenanceDialog({ open, onOpenChange, items, record }: Pro
             )} />
             <FormField control={form.control} name="issue_date" render={({ field }) => (
               <FormItem>
-                <FormLabel>Tanggal Kerusakan *</FormLabel>
+                <FormLabel>{t("damageDate")} *</FormLabel>
                 <FormControl><Input type="date" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
             <FormField control={form.control} name="description" render={({ field }) => (
               <FormItem>
-                <FormLabel>Deskripsi Masalah *</FormLabel>
-                <FormControl><Textarea placeholder="Jelaskan kerusakan/masalah..." {...field} /></FormControl>
+                <FormLabel>{t("issueDescription")} *</FormLabel>
+                <FormControl><Textarea placeholder={t("describeIssue")} {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
             <FormField control={form.control} name="technician" render={({ field }) => (
               <FormItem>
-                <FormLabel>Teknisi *</FormLabel>
-                <FormControl><Input placeholder="Nama teknisi..." {...field} /></FormControl>
+                <FormLabel>{t("technician")} *</FormLabel>
+                <FormControl><Input placeholder={t("technicianName")} {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
             <FormField control={form.control} name="status" render={({ field }) => (
               <FormItem>
-                <FormLabel>Status *</FormLabel>
+                <FormLabel>{t("status")} *</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
                   <SelectContent>
-                    <SelectItem value="Antrian">Antrian</SelectItem>
-                    <SelectItem value="Dalam Perbaikan">Dalam Perbaikan</SelectItem>
-                    <SelectItem value="Selesai">Selesai</SelectItem>
+                    <SelectItem value="Antrian">{t("maintenanceQueue")}</SelectItem>
+                    <SelectItem value="Dalam Perbaikan">{t("maintenanceInProgress")}</SelectItem>
+                    <SelectItem value="Selesai">{t("maintenanceDone")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -141,29 +134,29 @@ export function EditMaintenanceDialog({ open, onOpenChange, items, record }: Pro
             )} />
             <FormField control={form.control} name="repair_date" render={({ field }) => (
               <FormItem>
-                <FormLabel>Tanggal Selesai Perbaikan</FormLabel>
+                <FormLabel>{t("repairCompletionDate")}</FormLabel>
                 <FormControl><Input type="date" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
             <FormField control={form.control} name="action" render={({ field }) => (
               <FormItem>
-                <FormLabel>Tindakan yang Dilakukan</FormLabel>
-                <FormControl><Textarea placeholder="Tindakan perbaikan..." {...field} /></FormControl>
+                <FormLabel>{t("actionPerformed")}</FormLabel>
+                <FormControl><Textarea placeholder={t("repairAction")} {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
             <FormField control={form.control} name="cost" render={({ field }) => (
               <FormItem>
-                <FormLabel>Biaya (Rp)</FormLabel>
+                <FormLabel>{t("priceRp")}</FormLabel>
                 <FormControl><Input type="number" placeholder="0" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
             <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Batal</Button>
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t("cancel")}</Button>
               <Button type="submit" disabled={update.isPending} className="gradient-primary text-primary-foreground border-0">
-                {update.isPending ? "Menyimpan..." : "Simpan Perubahan"}
+                {update.isPending ? t("saving") : t("saveChanges")}
               </Button>
             </div>
           </form>
