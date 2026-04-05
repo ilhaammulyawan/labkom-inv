@@ -23,6 +23,8 @@ import ManageCategories from "./pages/ManageCategories";
 import ManageRooms from "./pages/ManageRooms";
 import ManageUsers from "./pages/ManageUsers";
 import Reports from "./pages/Reports";
+import StockOpname from "./pages/StockOpname";
+import StockOpnameDetail from "./pages/StockOpnameDetail";
 import Guide from "./pages/Guide";
 import SettingsPage from "./pages/SettingsPage";
 import Login from "./pages/Login";
