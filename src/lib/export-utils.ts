@@ -8,6 +8,7 @@ import type { Borrowing } from "@/hooks/useBorrowings";
 import type { SoftwareItem } from "@/hooks/useSoftwareInventory";
 import type { Category } from "@/hooks/useCategories";
 import type { Room } from "@/hooks/useRooms";
+import type { StockOpnameSession, StockOpnameItem } from "@/hooks/useStockOpname";
 import { formatCurrency } from "@/lib/mock-data";
 
 // ── helpers ──
