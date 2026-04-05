@@ -616,3 +616,80 @@ export async function exportPerKategoriPdf(items: InventoryItem[], cats: Categor
   });
   doc.save(`Laporan_Per_Kategori_${ts()}.pdf`);
 }
+
+// ══════════════════════════════════════════════
+// 11. Laporan Stock Opname
+// ══════════════════════════════════════════════
+
+export function exportStockOpnameExcel(
+  session: StockOpnameSession,
+  opnameItems: StockOpnameItem[],
+  items: InventoryItem[],
+  cats: Category[],
+  rooms: Room[],
+) {
+  const itemMap = new Map(items.map(i => [i.id, i]));
+  const opMap = new Map(opnameItems.map(oi => [oi.item_id, oi]));
+
+  const rows = items.map((item, idx) => {
+    const oi = opMap.get(item.id);
+    return {
+      No: idx + 1,
+      "Kode Inventaris": item.inventory_code,
+      "Nama Barang": item.name,
+      Kategori: catName(item.category_id, cats),
+      Ruangan: roomName(item.room_id, rooms),
+      "Kondisi Sistem": item.condition,
+      Status: oi?.is_found === null ? "Belum Dicek" : oi?.is_found ? "Ditemukan" : "Tidak Ditemukan",
+      "Kondisi Aktual": oi?.actual_condition || "-",
+      Catatan: oi?.notes || "-",
+    };
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  downloadXlsx(ws, `Stock_Opname_${session.title.replace(/\s+/g, "_")}_${ts()}.xlsx`);
+}
+
+export async function exportStockOpnamePdf(
+  session: StockOpnameSession,
+  opnameItems: StockOpnameItem[],
+  items: InventoryItem[],
+  cats: Category[],
+  rooms: Room[],
+  settings: Record<string, string>,
+) {
+  const doc = new jsPDF({ orientation: "landscape" });
+  const startY = await pdfHeader(doc, `LAPORAN STOCK OPNAME: ${session.title}`, settings);
+
+  const opMap = new Map(opnameItems.map(oi => [oi.item_id, oi]));
+  const checkedCount = opnameItems.filter(oi => oi.is_found !== null).length;
+  const foundCount = opnameItems.filter(oi => oi.is_found === true).length;
+  const notFoundCount = opnameItems.filter(oi => oi.is_found === false).length;
+
+  doc.setFontSize(9);
+  doc.text(`Periode: ${session.start_date}${session.end_date ? " s/d " + session.end_date : ""}`, 14, startY);
+  doc.text(`Total: ${items.length} barang | Dicek: ${checkedCount} | Ditemukan: ${foundCount} | Tidak Ditemukan: ${notFoundCount}`, 14, startY + 5);
+
+  autoTable(doc, {
+    startY: startY + 10,
+    head: [["No", "Kode", "Nama Barang", "Kategori", "Ruangan", "Kondisi Sistem", "Status", "Kondisi Aktual", "Catatan"]],
+    body: items.map((item, idx) => {
+      const oi = opMap.get(item.id);
+      return [
+        idx + 1,
+        item.inventory_code,
+        item.name,
+        catName(item.category_id, cats),
+        roomName(item.room_id, rooms),
+        item.condition,
+        oi?.is_found === null || oi?.is_found === undefined ? "Belum Dicek" : oi.is_found ? "Ditemukan" : "Tidak Ditemukan",
+        oi?.actual_condition || "-",
+        oi?.notes || "-",
+      ];
+    }),
+    styles: { fontSize: 7 },
+    headStyles: { fillColor: [41, 55, 76] },
+  });
+
+  pdfSignature(doc, settings);
+  doc.save(`Stock_Opname_${session.title.replace(/\s+/g, "_")}_${ts()}.pdf`);
+}

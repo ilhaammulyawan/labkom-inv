@@ -602,7 +602,6 @@ export const id = {
   soStatus: "Status Cek",
   soReport: "Laporan Stock Opname",
   soReportDesc: "Hasil verifikasi fisik aset",
-  description: "Deskripsi",
 } as const;
 
 export type TranslationKeys = keyof typeof id;

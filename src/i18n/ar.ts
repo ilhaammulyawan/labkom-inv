@@ -604,5 +604,4 @@ export const ar: Record<TranslationKeys, string> = {
   soStatus: "حالة التحقق",
   soReport: "تقرير الجرد الفعلي",
   soReportDesc: "نتائج التحقق المادي من الأصول",
-  description: "الوصف",
 };

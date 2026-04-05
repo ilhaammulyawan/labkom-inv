@@ -63,6 +63,8 @@ function ProtectedRoutes() {
         <Route path="/scan-qr" element={<ScanQR />} />
         <Route path="/qr-print" element={<QRPrint />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/stock-opname" element={<StockOpname />} />
+        <Route path="/stock-opname/:id" element={<StockOpnameDetail />} />
         <Route path="/guide" element={<Guide />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/categories" element={<ManageCategories />} />

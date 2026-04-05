@@ -30,6 +30,7 @@ const allNavItems: { titleKey: TranslationKeys; url: string; icon: any; adminOnl
   { titleKey: "scanQR", url: "/scan-qr", icon: QrCode, adminOnly: false },
   { titleKey: "printQR", url: "/qr-print", icon: QrCode, adminOnly: false },
   { titleKey: "reports", url: "/reports", icon: FileText, adminOnly: false },
+  { titleKey: "stockOpname", url: "/stock-opname", icon: ClipboardCheck, adminOnly: false },
   { titleKey: "activityLog", url: "/activity-log", icon: History, adminOnly: true },
   { titleKey: "categories", url: "/categories", icon: Tag, adminOnly: true },
   { titleKey: "rooms", url: "/rooms", icon: MapPin, adminOnly: true },

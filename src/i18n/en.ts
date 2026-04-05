@@ -604,5 +604,4 @@ export const en: Record<TranslationKeys, string> = {
   soStatus: "Check Status",
   soReport: "Stock Opname Report",
   soReportDesc: "Physical asset verification results",
-  description: "Description",
 };
