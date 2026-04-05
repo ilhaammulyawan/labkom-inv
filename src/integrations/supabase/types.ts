@@ -433,6 +433,90 @@ export type Database = {
           },
         ]
       }
+      stock_opname_items: {
+        Row: {
+          actual_condition: string | null
+          checked_at: string | null
+          checked_by: string | null
+          created_at: string
+          id: string
+          is_found: boolean | null
+          item_id: string
+          notes: string | null
+          session_id: string
+        }
+        Insert: {
+          actual_condition?: string | null
+          checked_at?: string | null
+          checked_by?: string | null
+          created_at?: string
+          id?: string
+          is_found?: boolean | null
+          item_id: string
+          notes?: string | null
+          session_id: string
+        }
+        Update: {
+          actual_condition?: string | null
+          checked_at?: string | null
+          checked_by?: string | null
+          created_at?: string
+          id?: string
+          is_found?: boolean | null
+          item_id?: string
+          notes?: string | null
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_opname_items_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_opname_items_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "stock_opname_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_opname_sessions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          start_date: string
+          status: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          start_date?: string
+          status?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          start_date?: string
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
