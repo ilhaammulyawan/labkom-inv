@@ -23,6 +23,8 @@ import ManageCategories from "./pages/ManageCategories";
 import ManageRooms from "./pages/ManageRooms";
 import ManageUsers from "./pages/ManageUsers";
 import Reports from "./pages/Reports";
+import StockOpname from "./pages/StockOpname";
+import StockOpnameDetail from "./pages/StockOpnameDetail";
 import Guide from "./pages/Guide";
 import SettingsPage from "./pages/SettingsPage";
 import Login from "./pages/Login";
@@ -61,6 +63,8 @@ function ProtectedRoutes() {
         <Route path="/scan-qr" element={<ScanQR />} />
         <Route path="/qr-print" element={<QRPrint />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/stock-opname" element={<StockOpname />} />
+        <Route path="/stock-opname/:id" element={<StockOpnameDetail />} />
         <Route path="/guide" element={<Guide />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/categories" element={<ManageCategories />} />
