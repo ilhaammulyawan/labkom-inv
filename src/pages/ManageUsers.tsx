@@ -27,7 +27,7 @@ const ManageUsers = () => {
   useEffect(() => {
     if (!roleLoading && !isAdmin) {
       toast.error(t("accessDenied"), { description: t("onlyAdmin") });
-      navigate("/");
+      navigate("/dashboard");
     }
   }, [isAdmin, roleLoading, navigate, t]);
 

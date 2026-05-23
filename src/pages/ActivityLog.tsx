@@ -19,7 +19,7 @@ const ActivityLogPage = () => {
   };
 
   if (roleLoading) return <Skeleton className="h-32" />;
-  if (!isAdmin) return <Navigate to="/" replace />;
+  if (!isAdmin) return <Navigate to="/dashboard" replace />;
   if (isLoading) return <div className="space-y-6 animate-fade-in"><Skeleton className="h-8 w-64" /><Skeleton className="h-32" /><Skeleton className="h-32" /></div>;
 
   return (

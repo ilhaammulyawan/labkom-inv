@@ -19,7 +19,7 @@ import type { TranslationKeys } from "@/i18n";
 
 // Define nav items with admin flag and translation key
 const allNavItems: { titleKey: TranslationKeys; url: string; icon: any; adminOnly: boolean }[] = [
-  { titleKey: "dashboard", url: "/", icon: LayoutDashboard, adminOnly: false },
+  { titleKey: "dashboard", url: "/dashboard", icon: LayoutDashboard, adminOnly: false },
   { titleKey: "inventory", url: "/inventory", icon: Package, adminOnly: false },
   { titleKey: "addItem", url: "/inventory/add", icon: PlusCircle, adminOnly: true },
   { titleKey: "importExcel", url: "/inventory/import", icon: FileSpreadsheet, adminOnly: true },
