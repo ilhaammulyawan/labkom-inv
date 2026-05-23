@@ -35,7 +35,7 @@ export default function Login() {
       toast.error(t("loginFailed"), { description: error });
     } else {
       toast.success(t("loginSuccess"));
-      navigate("/");
+      navigate("/dashboard");
     }
     setIsLoading(false);
   };
