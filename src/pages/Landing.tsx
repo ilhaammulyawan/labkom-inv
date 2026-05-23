@@ -66,7 +66,7 @@ export default function Landing() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  const get = (k: keyof typeof DEFAULTS) => settings[`landing_${k}`] ?? DEFAULTS[k];
+  const get = (k: string): string => settings[`landing_${k}`] ?? (DEFAULTS as any)[k] ?? "";
 
   const features: Feature[] = useMemo(() => {
     try {
