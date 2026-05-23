@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAppSettings, uploadAppLogo } from "@/hooks/useAppSettings";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,6 @@ import {
   HandCoins, AppWindow, BookOpen, Sparkles, BarChart3, Users,
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 type Feature = { icon: string; title: string; desc: string };
 
