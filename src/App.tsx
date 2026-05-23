@@ -31,6 +31,7 @@ import Login from "./pages/Login";
 import ResetPassword from "./pages/ResetPassword";
 import PublicItemDetail from "./pages/PublicItemDetail";
 import NotFound from "./pages/NotFound";
+import Landing from "./pages/Landing";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ function ProtectedRoutes() {
     <AppLayout>
       <Routes>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/inventory" element={<InventoryList />} />
         <Route path="/inventory/add" element={<AddItem />} />
         <Route path="/inventory/import" element={<ImportExcel />} />
@@ -89,7 +91,8 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/item/:id" element={<PublicItemDetail />} />
       <Route path="/*" element={<ProtectedRoutes />} />
