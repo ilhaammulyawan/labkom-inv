@@ -58,6 +58,9 @@ const DEFAULTS = {
   cta_button: "Masuk ke Sistem",
   footer_text: "© 2026 SiiLaKu. Semua hak dilindungi.",
   footer_tagline: "Inventaris Lab Komputer · Modern · Aman · Multibahasa",
+  credits_prefix: "Build by ",
+  credits_name: "Mulyawan",
+  credits_url: "https://mulyawan.biz.id",
 };
 
 export default function Landing() {
@@ -204,9 +207,20 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="border-t border-border py-8 mt-auto">
-        <div className="max-w-6xl mx-auto px-4 md:px-6 text-center space-y-1">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 text-center space-y-2">
           <p className="text-sm font-medium">{get("footer_text")}</p>
           <p className="text-xs text-muted-foreground">{get("footer_tagline")}</p>
+          <p className="text-xs text-muted-foreground">
+            {get("credits_prefix")}
+            <a
+              href={get("credits_url")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-primary transition-colors"
+            >
+              {get("credits_name")}
+            </a>
+          </p>
         </div>
       </footer>
     </div>
@@ -349,6 +363,12 @@ function EditDialog({
           <Section title="Footer">
             <Field label="Teks Footer" value={form.footer_text} onChange={onField("footer_text")} />
             <Field label="Tagline" value={form.footer_tagline} onChange={onField("footer_tagline")} />
+          </Section>
+
+          <Section title="Credits">
+            <Field label="Teks Sebelum Nama" value={form.credits_prefix} onChange={onField("credits_prefix")} />
+            <Field label="Nama" value={form.credits_name} onChange={onField("credits_name")} />
+            <Field label="Link URL" value={form.credits_url} onChange={onField("credits_url")} />
           </Section>
         </div>
 
