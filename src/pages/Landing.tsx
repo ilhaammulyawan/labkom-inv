@@ -364,6 +364,12 @@ function EditDialog({
             <Field label="Teks Footer" value={form.footer_text} onChange={onField("footer_text")} />
             <Field label="Tagline" value={form.footer_tagline} onChange={onField("footer_tagline")} />
           </Section>
+
+          <Section title="Credits">
+            <Field label="Teks Sebelum Nama" value={form.credits_prefix} onChange={onField("credits_prefix")} />
+            <Field label="Nama" value={form.credits_name} onChange={onField("credits_name")} />
+            <Field label="Link URL" value={form.credits_url} onChange={onField("credits_url")} />
+          </Section>
         </div>
 
         <SheetFooter className="mt-6 sticky bottom-0 bg-background pt-3 pb-1 border-t">
