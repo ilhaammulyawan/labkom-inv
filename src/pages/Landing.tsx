@@ -58,6 +58,9 @@ const DEFAULTS = {
   cta_button: "Masuk ke Sistem",
   footer_text: "© 2026 SiiLaKu. Semua hak dilindungi.",
   footer_tagline: "Inventaris Lab Komputer · Modern · Aman · Multibahasa",
+  credits_prefix: "Build by ",
+  credits_name: "Mulyawan",
+  credits_url: "https://mulyawan.biz.id",
 };
 
 export default function Landing() {
