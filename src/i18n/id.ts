@@ -95,6 +95,11 @@ export const id = {
   guide: "Buku Panduan",
   settings: "Pengaturan",
   mainMenu: "Menu Utama",
+  groupAssets: "Aset & Inventaris",
+  groupOperations: "Operasional",
+  groupTools: "Alat & Laporan",
+  groupMaster: "Data Master",
+  groupOther: "Lainnya",
 
   // Dashboard
   dashboardSubtitle: "Ringkasan inventaris laboratorium komputer",
