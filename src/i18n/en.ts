@@ -97,6 +97,11 @@ export const en: Record<TranslationKeys, string> = {
   guide: "User Guide",
   settings: "Settings",
   mainMenu: "Main Menu",
+  groupAssets: "Assets & Inventory",
+  groupOperations: "Operations",
+  groupTools: "Tools & Reports",
+  groupMaster: "Master Data",
+  groupOther: "Others",
 
   // Dashboard
   dashboardSubtitle: "Computer lab inventory summary",

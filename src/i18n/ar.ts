@@ -97,6 +97,11 @@ export const ar: Record<TranslationKeys, string> = {
   guide: "دليل المستخدم",
   settings: "الإعدادات",
   mainMenu: "القائمة الرئيسية",
+  groupAssets: "الأصول والمخزون",
+  groupOperations: "العمليات",
+  groupTools: "الأدوات والتقارير",
+  groupMaster: "البيانات الرئيسية",
+  groupOther: "أخرى",
 
   // Dashboard
   dashboardSubtitle: "ملخص مخزون مختبر الحاسوب",
